@@ -1,0 +1,47 @@
+
+
+.brand{
+    margin-left: 200px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: white !important;
+    font-family: 'Rowdies', cursive;
+    text-shadow: 5px 5px 12px rgba(0, 0, 0, 0.5) ; 
+}
+
+.search-bar{
+    margin-left: 0px;
+    width: 450px;
+    height: 35px;
+    outline: none;
+    border-radius: 3px;
+    background: #F8F8F8; 
+	border: solid #BDBDBD 1px; 
+	box-shadow: 3px 3px 25px rgba(0, 0, 0, 0.7)  ; 
+	-webkit-box-shadow: 3px 3px 25px rgba(0, 0, 0, 0.7)  ; 
+	-moz-box-shadow: 3px 3px 25px rgba(0, 0, 0, 0.7)  ; 
+}
+.search-button{
+    position: relative;
+    left: -95px;
+    height: 35px;
+}
+
+
+#nav-link-box{
+    margin-right: 0px;
+    color:white !important;
+}
+
+.item{
+    margin: 0 25px;
+    font-weight: 500;
+}
+
+.navigation-bar{
+    background-color: #5F264A !important;
+}
+
+.nav-links{
+    font-family: 'Righteous', cursive;
+}
