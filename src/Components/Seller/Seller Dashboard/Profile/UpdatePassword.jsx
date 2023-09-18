@@ -3,6 +3,7 @@ import { Alert, AlertTitle } from "@mui/material";
 import axios from "axios";
 
 const UpdatePassword = (props) => {
+
   const [newPasswords, setNewPasswords] = useState({
     existing_password: "",
     new_password: "",
@@ -17,50 +18,51 @@ const UpdatePassword = (props) => {
     e.preventDefault();
 
     if (newPasswords.new_password !== newPasswords.confirm_new_password) {
-      props.setAlertEnable(true)
-      props.setAlertData("Passwords are not matching")
+      props.setAlertEnable(true);
+      props.setAlertData("Passwords are not matching");
       props.setAlertSeverity("warning");
-      return
+      return;
     }
 
-    if (newPasswords.existing_password === 0){
-      props.setAlertEnable(true)
-      props.setAlertData("Old Password Must not be blank")
+    if (newPasswords.existing_password === 0) {
+      props.setAlertEnable(true);
+      props.setAlertData("Old Password Must not be blank");
       props.setAlertSeverity("warning");
-      return
+      return;
     }
 
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem("token");
     try {
-    const passwordUpdateResponse = await axios.post(`${props.url}change-password/`, {
-      existing_password : newPasswords.existing_password,
-      new_password : newPasswords.new_password,
-    },
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
+      const passwordUpdateResponse = await axios.post(
+        `${props.url}change-password/`,
+        {
+          existing_password: newPasswords.existing_password,
+          new_password: newPasswords.new_password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
+      if (passwordUpdateResponse.status === 200) {
+        props.setAlertData("Password Updated Successfully");
+        props.setAlertEnable(true);
+        props.setAlertSeverity("success");
+        props.setIsUpdatePassword(false);
       }
-    })
-    if(passwordUpdateResponse.status === 200){
-      props.setAlertData("Password Updated Successfully")
-      props.setAlertEnable(true)
-      props.setAlertSeverity("success")
-      props.setIsUpdatePassword(false)
-
+    } catch (error) {
+      if (error.response.status === 406) {
+        props.setAlertData("Failed, Incorrect Password Entered");
+        props.setAlertEnable(true);
+        props.setAlertSeverity("error");
+      } else {
+        props.setAlertData("Error updating password, Try again Later");
+        props.setAlertEnable(true);
+        props.setAlertSeverity("error");
+      }
     }
-  } catch (error) {
-    if(error.response.status === 406){
-    props.setAlertData("Failed, Incorrect Password Entered")
-    props.setAlertEnable(true)
-    props.setAlertSeverity("error")
-    } else {
-      props.setAlertData("Error updating password, Try again Later")
-      props.setAlertEnable(true)
-      props.setAlertSeverity("error")
-    }
-  }
-
   };
 
   return (

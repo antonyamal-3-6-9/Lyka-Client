@@ -3,6 +3,7 @@ import axios from "axios";
 import AddNewAddressForm from "./AddNewAddressForm";
 import { useState } from "react";
 import { useEffect } from "react";
+import FloatingAlert from "../FloatingAlert/FloatingAlert";
 
 const CheckoutAddress = (props) => {
   const token = localStorage.getItem("token");
@@ -13,16 +14,20 @@ const CheckoutAddress = (props) => {
   const [isAddNewAddress, setIsAddNewAddress] = useState(false);
   const [isSelected, setIsSelected] = useState(false);
 
+  const [alertData, setAlertData] = useState('')
+  const [alertEnable, setAlertEnable] = useState(false)
+  const [alertSeverity, setAlertSeverity] = useState("")
+
   const onContinue = async () => {
     if (props.addessId !== 0){
       if(await props.addressAdding()){
         props.setAddressAdded(false)
         props.setIsPayment(true)
-      } else {
-        console.log("error adding address")
       }
     } else {
-      console.log("select an address before continuing")
+      setAlertData("Select an address before proceeding")
+      setAlertEnable(true)
+      setAlertSeverity("info")
     }
   };
 
@@ -39,14 +44,12 @@ const CheckoutAddress = (props) => {
           }
         );
         if (addressResponse.status === 200) {
-          console.log(addressResponse);
           setSavedAddress(addressResponse.data);
           const id = addressResponse.data[0].id
           props.setAddressId(id)
           setIsSavedAddress(true);
         }
       } catch (error) {
-        console.log(error);
         setIsSavedAddress(false);
       }
     };
@@ -62,15 +65,22 @@ const CheckoutAddress = (props) => {
 
   return (
     <>
-      <div className="container-fluid">
-        <div className="row">
+      <div className="container-fluid m-0 p-0">
+      <FloatingAlert 
+        message={alertData}
+        setEnable={setAlertEnable}
+        enable={alertEnable}
+        severity={alertSeverity}
+      />
+        <div className="row m-0 p-0">
           {isSavedAddress ? (
-            <div className="row">
+            <div className="row m-0 p-0">
               {savedAddress.map((address) => (
-                <div className="col-lg-12 p-3 border border-3 border-dark">
+                <div className="col-lg-6">
+                <div className="card p-3 m-3">
                 <input
                   type="radio"
-                  className="form-radio"
+                  className="form-check-input"
                   name={`address-radio-${address.id}`}
                   value={address.id}
                   onChange={handleRadioChange}
@@ -78,19 +88,17 @@ const CheckoutAddress = (props) => {
                   
                 />
                   <h5>{address.name}</h5>
-                  <p>{address.street_one}</p>
-                  <p>
-                    {address.street_two}, {address.landmark}
-                  </p>
-                  <p>
+                  <p className="m-0 p-0">{address.street_one} {address.street_two} {address.landmark}</p>
+                  <p className="m-0 p-0">
                     {address.phone}, {address.alternate_phone}
                   </p>
-                  <p>
+                  <p className="m-0 p-0">
                     {address.city}, {address.state}
                   </p>
-                  <p>
+                  <p className="m-0 p-0">
                     {address.country}, {address.zip_code}
                   </p>
+                </div>
                 </div>
               ))}
             </div>
@@ -109,16 +117,6 @@ const CheckoutAddress = (props) => {
           )}
         </div>
       </div>
-      <div className="row">
-        <button
-          className="btn btn-outline-warning"
-          onClick={() => {
-            setIsAddNewAddress(true);
-          }}
-        >
-          Add new address
-        </button>
-      </div>
       {isAddNewAddress && (
         <div className="container-fluid">
           <AddNewAddressForm
@@ -129,11 +127,24 @@ const CheckoutAddress = (props) => {
           />
         </div>
       )}
-      <div className="row">
-        <button className="btn btn-outline-success" onClick={onContinue}>
+      {!isAddNewAddress && 
+      <>
+      <div className="row d-flex justify-content-center">
+        <button className="btn btn-success w-25" onClick={onContinue}>
           Continue
         </button>
       </div>
+      <div className="row d-flex justify-content-center">
+        <button
+          className="btn btn-primary w-25"
+          onClick={() => {
+            setIsAddNewAddress(true);
+          }}
+        >
+          Add new address
+        </button>
+      </div>
+      </>}
     </>
   );
 };

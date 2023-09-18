@@ -53,21 +53,22 @@ const ShoppingCart = () => {
           if (cartItemsResponse.data.length === 0) {
             setIsCartEmpty(true);
           } else {
+            setIsCartEmpty(false);
             calculateSubTotal(cartItemsResponse.data);
             setCartItems(cartItemsResponse.data);
             setIsTotalItems(cartItemsResponse.data.length);
-            setIsCartEmpty(false);
           }
         }
       } catch (error) {
-        setAlertData(error.response.data.message);
-        setAlertEnable(true);
-        setAlertSeverity("error");
-        setIsCartEmpty(true);
+          setIsCartEmpty(true)
       }
     };
     fetchData();
   }, []);
+
+  if(isCartEmpty === null){
+    return null
+  }
 
   const incrementCart = (cart_item_id) => {
     const newItems = [...cartItems];
@@ -214,7 +215,7 @@ const ShoppingCart = () => {
   };
 
   return (
-    <section className="pt-5 pb-5">
+    <div className="container-fluid w-75 mt-5 p-5">
       <FloatingAlert
         message={alertData}
         severity={alertSeverity}
@@ -225,6 +226,7 @@ const ShoppingCart = () => {
         <>
           <div className="container d-flex justify-content-center align-items-center mt-5 pt-5">
             <div className="row">
+            <div className="card p-5">
               <h2 className="text-center">
                 {isLoggedIn ? "Cart is empty" : "Login to view your cart"}
               </h2>
@@ -237,9 +239,11 @@ const ShoppingCart = () => {
               </Link>
             </div>
           </div>
+          </div>
         </>
       ) : (
-        <div className="cart-container p-4 border rounded border-primary m-5">
+        
+        <div className="card p-5">
           <h3 className="display-4  text-center ">My Cart</h3>
           <p className="text-center">
             <i className="text-info font-weight-bold">{totalItems}</i>{" "}
@@ -282,12 +286,7 @@ const ShoppingCart = () => {
                           >
                             <FontAwesomeIcon icon={faMinus} />
                           </button>
-                          <input
-                            className="form-control"
-                            readOnly
-                            name="subtotal"
-                            value={item.quantity}
-                          />
+                          <span className="display-6">{item.quantity}</span>
                           <button
                             className="btn btn-outline-dark btn-sm ml-2"
                             onClick={() => handleIncrementCart(item.id)}
@@ -328,8 +327,9 @@ const ShoppingCart = () => {
             </div>
           </div>
         </div>
+     
       )}
-    </section>
+    </div>
   );
 };
 

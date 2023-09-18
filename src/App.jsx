@@ -13,7 +13,7 @@ import PickupStore from "./Components/Seller/Seller Dashboard/PickupStore/Pickup
 import SellerOrder from "./Components/Seller/Seller Dashboard/Orders/SellerOrder.jsx";
 import EditStore from "./Components/Seller/Seller Dashboard/PickupStore/EditStore.jsx";
 import Verification from "./Components/Seller/Seller Dashboard/Verification/Verification.jsx";
-import Profile from "./Components/Seller/Seller Dashboard/Profile/Profile.jsx";
+import SellerProfile from "./Components/Seller/Seller Dashboard/Profile/SellerProfile.jsx";
 import Navbar from "./Components/Navbar/Navbar.jsx";
 import ProductDetail from "./Components/Product/ProductDetail.jsx";
 import ShoppingCart from "./Components/Cart/Cart.jsx";
@@ -23,6 +23,12 @@ import AddItem from "./Components/Seller/Seller Dashboard/Products/AddProducts/A
 import CheckProduct from "./Components/Seller/Seller Dashboard/Products/AddProducts/CheckProduct.jsx";
 import Checkout from "./Components/Checkout/Checkout.jsx";
 import OrderPlaced from "./Components/Order/OrderPlaced.jsx";
+import SellerOrderDetails from "./Components/Seller/Seller Dashboard/Orders/SellerOrderDetails.jsx";
+import SellerHome from "./Components/Seller/Seller Dashboard/Home/Home.jsx";
+import Orderlist from "./Components/Order/Orderlist.jsx";
+import OrderDetails from "./Components/Order/OrderDetails.jsx";
+import CustomerProfile from "./Components/Customer/Profile/CustomerProfile.jsx";
+import OrderListings from "./Components/Order/OrderListings.jsx";
 
 function App() {
   return (
@@ -57,6 +63,24 @@ function App() {
             }
           />
           <Route
+            path="seller/order/:orderId"
+            element={
+              <>
+                <SellerHomeNavbar />
+                <SellerOrderDetails />
+              </>
+            }
+          />
+          <Route
+            path="seller/home"
+            element={
+              <>
+                <SellerHomeNavbar />
+                <SellerHome />
+              </>
+            }
+          />
+          <Route
             path="seller/verify"
             element={
               <>
@@ -70,7 +94,7 @@ function App() {
             element={
               <>
                 <SellerHomeNavbar />
-                <Profile />
+                <SellerProfile />
               </>
             }
           />
@@ -79,7 +103,7 @@ function App() {
             element={<EditProduct />}
           />
           <Route
-            path="seller/edit-address/:address_id"
+            path="seller/edit-address/:address_id" 
             element={<EditStore />}
           />
           <Route path="seller-login" element={<SellerLogin />} />
@@ -88,7 +112,6 @@ function App() {
           <Route path="seller/check-product" element={<CheckProduct />} />
           <Route path="seller/add-item" element={<AddItem />} />
           <Route path="seller/add-store" element={<AddPickupStore />} />
-
           <Route
             exact
             path="/"
@@ -109,7 +132,6 @@ function App() {
               </>
             }
           />
-
           <Route
             path="/cart"
             element={
@@ -128,6 +150,15 @@ function App() {
               </>
             }
           />
+          <Route
+            path="account"
+            element={
+              <>
+                <Navbar />
+                <CustomerProfile />
+              </>
+            }
+          />
           <Route path="customer-login" element={<LoginForm />} />
           <Route path="customer-register" element={<RegisterForm />} />
           <Route
@@ -136,6 +167,24 @@ function App() {
               <>
                 <Navbar />
                 <OrderPlaced />
+              </>
+            }
+          />
+          <Route
+            path="account/:option"
+            element={
+              <>
+                <Navbar />
+                <CustomerProfile />
+              </>
+            }
+          />
+          <Route
+            path="order/:orderId"
+            element={
+              <>
+                <Navbar />
+                <OrderDetails />
               </>
             }
           />

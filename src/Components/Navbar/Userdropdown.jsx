@@ -2,7 +2,7 @@ import axios from "axios";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
 import { customerLogin, customerLogout } from "../../redux/customerAuth/actions/authCustomerActions";
@@ -16,10 +16,9 @@ function Userdropdown(props) {
   const navigate = useNavigate()
 
   const BASE_URL = "http://127.0.0.1:8000/customer/";
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    console.log(token)
     const fetchData = async () => {
       try {
         const loggedInResponse = await axios.get(`${BASE_URL}is-loggedin/`, {
@@ -49,10 +48,20 @@ function Userdropdown(props) {
     }
   }
 
-  const handleLogout = () => {
-    localStorage.clear('token')
-    dispatch(customerLogout())
+  const handleLogout = async () => {
+    try{
+     const logoutResponse = await axios.post(`${BASE_URL}logout/`, {}, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        }
+      })
+    } catch (error) {
+      console.log(error)
     }
+    localStorage.clear("token");
+    dispatch(customerLogout())
+  };
 
   return (
     <>
@@ -74,19 +83,19 @@ function Userdropdown(props) {
         {isLoggedIn && (
           <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
             <li>
-              <a className="dropdown-item" href="#">
+              <Link className="dropdown-item" to="/orders">
                 Orders
-              </a>
+              </Link>
             </li>
             <li>
-              <a className="dropdown-item" href="#">
+              <Link className="dropdown-item" to="/cart">
                 Cart
-              </a>
+              </Link>
             </li>
             <li>
-              <a className="dropdown-item" href="#">
+              <Link className="dropdown-item" to="/account/profile">
                 Profile
-              </a>
+              </Link>
             </li>
             <li>
               <a className="dropdown-item" href="#" onClick={handleLogout}>

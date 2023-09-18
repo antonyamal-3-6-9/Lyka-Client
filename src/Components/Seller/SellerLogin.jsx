@@ -53,7 +53,7 @@ const SellerLogin = () => {
         if (response.status === 200) {
           const token = response.data.token;
           localStorage.setItem("token", token);
-          navigate("/seller-products");
+          navigate("/seller/home");
         }
       } else if (!useEmail && !loginWithOTP) {
         const payload = {
@@ -66,7 +66,7 @@ const SellerLogin = () => {
         if (response.status === 200) {
           const token = response.data.token;
           localStorage.setItem("token", token);
-          navigate("/seller/products");
+          navigate("/seller/home");
         }
       } else if (!useEmail && loginWithOTP) {
         const payload = {
@@ -81,7 +81,7 @@ const SellerLogin = () => {
         if (response.status === 200) {
           const token = response.data.token;
           localStorage.setItem("token", token);
-          navigate("/seller/products");
+          navigate("/seller/home");
         }
       }
     } catch (error) {

@@ -22,6 +22,7 @@ const AddItem = () => {
 
   const [variantData, setVariantData] = useState([]);
   const [colorData, setColorData] = useState([]);
+  const [pickupStore, setPickupStore] = useState([])
 
   const [lykaItemData, setLykaItemData] = useState({
     units: [],
@@ -38,7 +39,8 @@ const AddItem = () => {
     selling_price: "",
     original_price: "",
     offer_price: "",
-    product : p_id
+    product : p_id,
+    warehouse : ""
   });
 
 
@@ -71,7 +73,23 @@ const AddItem = () => {
         setAlertSeverity("error");
       }
     };
+    const fetchStore = async () => {
+      try {
+        const pickupResponse = await axios.get(`http://127.0.0.1:8000/seller/get-store/`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (pickupResponse.status === 200) {
+          setPickupStore(pickupResponse.data);
+          }
+      } catch (error) {
+        console.log(error);
+      }
+    };
     fetchData();
+    fetchStore()
   }, []);
 
   const handleVariantSubmit = (e) => {
@@ -148,6 +166,7 @@ const AddItem = () => {
               newVariant={newVariant}
               setLykaData={setLykaItemData}
               setNewVariant={setNewVariant}
+              pickupStore={pickupStore}
             />
           </form>
         </div>
@@ -158,6 +177,7 @@ const AddItem = () => {
           variants={variantData}
           colors={colorData}
           finalSubmission={finalSubmission}
+          store={pickupStore}
         />
       </div>
     </>

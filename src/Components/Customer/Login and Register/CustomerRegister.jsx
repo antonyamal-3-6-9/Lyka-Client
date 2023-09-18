@@ -110,14 +110,14 @@ const RegisterForm = () => {
     }
   }, [])
 
-  return (
+  return (<>
+    {alertEnable && (
+      <Alert severity={alertSeverity} onClose={handleAlertClose} className="custom-alert">
+        <AlertTitle>Error</AlertTitle>
+        {alertData}
+      </Alert>
+    )}
     <div className="container-fluid d-flex justify-content-center align-items-center vh-100">
-            {alertEnable && (
-          <Alert severity={alertSeverity} onClose={handleAlertClose} className="custom-alert">
-            <AlertTitle>Error</AlertTitle>
-            {alertData}
-          </Alert>
-        )}
       <div className="w-50">
         <h2 className="text-center mb-5">Customer Registration</h2>
         <div id="pills-register" role="tabpanel" aria-labelledby="tab-register">
@@ -154,6 +154,7 @@ const RegisterForm = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

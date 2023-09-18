@@ -5,7 +5,8 @@ const LykaItemList = ({
   handleRemoveVariant,
   colors,
   variants,
-  finalSubmission
+  finalSubmission,
+  store
 }) => {
   if (!lykaItemData.units || lykaItemData.units.length === 0) {
     return null;
@@ -23,6 +24,7 @@ const LykaItemList = ({
               <th>Original Price</th>
               <th>Selling Price</th>
               <th>Offer Price</th>
+              <th>Warehouse</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -43,6 +45,9 @@ const LykaItemList = ({
                 <td>{item.original_price}</td>
                 <td>{item.selling_price}</td>
                 <td>{item.offer_price}</td>
+                {store.map((s) => s.store_id === item.warehouse && 
+                  <td>{s.store_name}</td>
+                )}
                 <td>
                   <button
                     onClick={() => handleRemoveVariant(index)}

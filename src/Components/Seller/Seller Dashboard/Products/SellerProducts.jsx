@@ -238,7 +238,23 @@ const SellerProducts = () => {
         }
       );
       if (verifiedResponse.data.verified) {
-        navigate("/seller/check-product");
+        try{
+          const storeExistsResponse = await axios.get(`http://127.0.0.1:8000/seller/store-exists-or-not/`,         {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+          })
+          if (storeExistsResponse.status === 200){
+            navigate("/seller/check-product");
+          }
+        } catch {
+          setAlertData(
+            "You haven't added a warehouse yet, Add one now to continue"
+          );
+          setAlertEnable(true);
+          setAlertSeverity("warning");
+        }
       } else {
         setAlertData(
           "You are not verified, Verify First to Add and sale products"
@@ -347,17 +363,12 @@ const SellerProducts = () => {
                 }`}
               >
                 <div className="row">
-                  <div className="col-md-4 col-sm-12 col-xs-12">
-                    <div className="product-image d-flex align-items-center justify-content-center">
+                  <div className="col-md-4 col-sm-12 col-xs-12 d-flex align-items-center justify-content-center">
+                    <div className="">
                       <img
                         key={item.product.productId}
                         src={"http://localhost:8000" + item.product.thumbnail}
                         alt="hyy"
-                        style={
-                          item.product.main_category.name === "Laptops"
-                            ? { width: "400px", height: "300px" }
-                            : { width: "200px", height: "300px" }
-                        }
                       />
                     </div>
                   </div>

@@ -2,8 +2,14 @@ import React from "react";
 import { useState } from "react";
 import StateSelect from "./StateSelect";
 import axios from "axios";
+import FloatingAlert from "../FloatingAlert/FloatingAlert";
 
-const AddNewAddressForm = (props) => {
+const AddNewAddressForm = ({
+  setAddressId,
+  setSavedAddress,
+  setIsAddNewAddress,
+  savedAddress,
+}) => {
   const BASE_URL = "http://127.0.0.1:8000/address/";
 
   const [newAddress, setNewAddress] = useState({
@@ -20,13 +26,16 @@ const AddNewAddressForm = (props) => {
     address_type: "",
   });
 
+  const [alertData, setAlertData] = useState("");
+  const [alertEnable, setAlertEnable] = useState(false);
+  const [alertSeverity, setAlertSeverity] = useState("");
+
   const handleChange = (e) => {
-    setNewAddress({...newAddress, [e.target.name] : e.target.value})
-  }
+    setNewAddress({ ...newAddress, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    console.log(newAddress)
+    e.preventDefault();
     const token = localStorage.getItem("token");
     try {
       const newAddressResponse = await axios.post(
@@ -42,19 +51,32 @@ const AddNewAddressForm = (props) => {
         }
       );
       if (newAddressResponse.status === 200) {
-        const updatedAddress = props.savedAddress
-        updatedAddress.push(newAddressResponse.data)
-        props.setSavedAddress(updatedAddress)
-        props.setIsAddNewAddress(false)
-        props.setAddressId(newAddressResponse.data.id)
+        const updatedAddress = savedAddress;
+        updatedAddress.push(newAddressResponse.data);
+        setSavedAddress(updatedAddress);
+        setIsAddNewAddress(false);
+        setAddressId(newAddressResponse.data.id);
       }
     } catch (error) {
-      console.log(error);
+      setAlertData(error.response.data.message);
+      setAlertEnable(true);
+      setAlertSeverity("error");
     }
+  };
+
+  const handleCancel = () => {
+    setIsAddNewAddress(false);
   };
 
   return (
     <>
+      <FloatingAlert
+        message={alertData}
+        setEnable={setAlertEnable}
+        enable={alertEnable}
+        severity={alertSeverity}
+      />
+      <h3 className="text-center">Add New Address Here</h3>
       <form className="needs-validation" noValidate onSubmit={handleSubmit}>
         <div className="row g-3">
           <div className="col-6">
@@ -178,7 +200,7 @@ const AddNewAddressForm = (props) => {
 
           <div className="col-4">
             <label className="form-label">State</label>
-            <StateSelect value={newAddress.state} onChange={handleChange}/>
+            <StateSelect value={newAddress.state} onChange={handleChange} />
             <div className="invalid-feedback">
               Please provide a valid state.
             </div>
@@ -214,10 +236,22 @@ const AddNewAddressForm = (props) => {
             <div className="invalid-feedback">Zip code required.</div>
           </div>
         </div>
-        <div className="col-lg-12 mt-3 mb-3 d-flex align-items-center justify-content-center">
-          <button type="submit" className="btn btn-outline-success">
-            Save and Deliver Here
-          </button>
+        <div className="row mt-5">
+          <div className="col-lg-6 d-flex justify-content-center">
+            <button type="submit" className="btn btn-success">
+              Save
+            </button>
+          </div>
+
+          <div className="col-lg-6 d-flex justify-content-center">
+            <button
+              type="button"
+              className="btn btn-danger"
+              onClick={handleCancel}
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       </form>
       ;

@@ -16,9 +16,11 @@ function Navlinks(props) {
           <li className="nav-item item">
             <Link to="/seller-login" className="nav-link text-light">Login As Seller</Link>
           </li>
-          <Extradropdown />
+          <li>
+          <Link className="nav-link text-light" aria-current="page" to="/account/orders">Orders</Link>
+          </li>          
           <li className="nav-item item">
-            <Link className="nav-link active text-light" aria-current="page" to="/cart">
+            <Link className="nav-link text-light" aria-current="page" to="/cart">
             <FontAwesomeIcon icon={faShoppingCart} />
             </Link>
           </li>

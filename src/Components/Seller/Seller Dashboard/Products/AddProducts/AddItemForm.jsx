@@ -36,7 +36,7 @@ const AdditemForm = (props) => {
             ))}
           </select>
         </div>
-        <div className="col-lg-2">
+        <div className="col-lg-1">
           <label htmlFor="variant-select">Color</label>
           <select
             className="form-select form-select-sm"
@@ -70,6 +70,26 @@ const AdditemForm = (props) => {
             Please enter the stock
           </div>
         </div>
+
+        <div className="col-lg-1">
+        <label htmlFor="color-select">warehouse</label>
+          <select
+            className="form-select form-select-sm"
+            id="wareshouse-select"
+            aria-label=".form-select-sm example"
+            name="warehouse"
+            required
+            onChange={handleChange}
+          >
+            <option value="">Open this select menu</option>
+            {props.pickupStore.map((store) => (
+              <option key={store.store_id} value={store.store_id}>
+                {store.store_name}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="col-lg-2">
           <label htmlFor="original-price">Original Price</label>
           <input

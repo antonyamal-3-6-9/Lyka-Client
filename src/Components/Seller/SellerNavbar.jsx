@@ -6,19 +6,29 @@ const SellerHomeNavbar = (props) => {
   const [sellerData, setSelletData] = useState({});
 
   const navigate = useNavigate();
+  const BASE_URL = "http://127.0.0.1:8000/seller/";
 
-  const handleLogout = () => {
+  const token = localStorage.getItem("token");
+
+  const handleLogout = async () => {
+    try{
+     const logoutResponse = await axios.post(`${BASE_URL}logout/`, {}, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        }
+      })
+    } catch (error) {
+      console.log(error)
+    }
     localStorage.clear("token");
     navigate("/");
   };
 
-  const BASE_URL = "http://127.0.0.1:8000/seller/";
 
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("token");
-
         const response1 = await axios.get(
           BASE_URL + "seller-loggedin-or-not/",
           {
@@ -70,6 +80,11 @@ const SellerHomeNavbar = (props) => {
             <li className="nav-item ms-3 me-3">
               <Link className="nav-link" to="/seller/profile">
                 Hy {sellerData.user.first_name} {sellerData.user.last_name}
+              </Link>
+            </li>
+            <li className="nav-item ms-3 me-3">
+              <Link className="nav-link" to="/seller/home">
+                Home
               </Link>
             </li>
             <li className="nav-item ms-3 me-3">

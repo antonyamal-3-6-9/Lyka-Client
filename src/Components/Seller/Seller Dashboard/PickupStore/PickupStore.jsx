@@ -123,22 +123,17 @@ if(isStoreExists === null){
           </div>
         )}
         {pickupStores.map((store) => (
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="product-content product-wrap clearfix" key={store.store_id}>
-                <div className="row">
-                  <div className="col-md-3 col-sm-12 col-xs-12">
-                    <div className="product-image">
+          <div className="card p-3 mt-3">
+                <div className="row" key={store.store_id}>
+                  <div className="col-md-6 col-sm-12 col-xs-12 d-flex align-items-center justify-content-center">
                       <img
                         src={
                           "http://localhost:8000" + store.store_address.image
                         }
                         alt="hyy"
-                        style={{ width: "200px", height: "300px" }}
                       />
-                    </div>
                   </div>
-                  <div className="col-md-9 col-sm-12 col-xs-12">
+                  <div className="col-md-6 col-sm-12 col-xs-12">
                     <div className="row">
                       <div className="col-lg-12 pb-5">
                         <h2>{store.store_address.store_name}</h2>
@@ -160,7 +155,7 @@ if(isStoreExists === null){
                       </div>
                       <div className="col-lg-12">
                         <div className="row">
-                          <div className="col-lg-2">
+                          <div className="col-lg-6">
                             <button
                               className="btn btn-outline-danger"
                               onClick={() => handleDelete(store.store_id)}
@@ -168,7 +163,7 @@ if(isStoreExists === null){
                               Delete
                             </button>
                           </div>
-                          <div className="col-lg-2">
+                          <div className="col-lg-6">
                             <Link
                               className="btn btn-outline-primary"
                               to={`/seller/edit-address/${store.store_address.id}`}
@@ -181,9 +176,7 @@ if(isStoreExists === null){
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
+                </div>
         ))}
       </div>
     </>

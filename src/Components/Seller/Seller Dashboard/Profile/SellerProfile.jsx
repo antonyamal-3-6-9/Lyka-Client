@@ -6,7 +6,7 @@ import axios from "axios";
 import { Alert, AlertTitle } from "@mui/material";
 import ProfileModal from "./ProfileModal";
 
-const Profile = () => {
+const SellerProfile = () => {
   const [isBasicEdit, setIsBasicEdit] = useState(false);
   const [isEmailEdit, setIsEmailEdit] = useState(false);
   const [isPhoneEdit, setIsPhoneEdit] = useState(false);
@@ -39,7 +39,6 @@ const Profile = () => {
   });
 
   const [phoneOtp, setPhoneOtp] = useState("");
-
   const [isVerified, setIsVerified] = useState(false);
 
   const BASE_URL = "http://127.0.0.1:8000/seller/";
@@ -751,4 +750,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default SellerProfile;

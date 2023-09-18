@@ -136,8 +136,9 @@ const ProductCard = (props) => {
         enable={alertEnable}
         setEnable={setAlertEnable}
       />
-      <div className="row bg-primary p-1">
+      <div className="row">
         <div className="col-lg-12 m-0 p-0">
+        <div className="card">
           <ul className="list-group shadow">
             <li className="list-group-item">
               <div className="media align-items-lg-center flex-column flex-lg-row">
@@ -147,11 +148,11 @@ const ProductCard = (props) => {
                       <img
                         src={`${props.thumbnail}`}
                         alt="Generic placeholder image"
-                        style={
-                          props.mainCategory === "Laptops"
-                            ? { width: "400px", height: "300px" }
-                            : { width: "200px", height: "300px" }
-                        }
+                        // style={
+                        //   props.mainCategory === "Laptops"
+                        //     ? { width: "400px", height: "300px" }
+                        //     : { width: "200px", height: "300px" }
+                        // }
                         className="order-1 order-lg-1"
                       />
                     </div>
@@ -170,9 +171,9 @@ const ProductCard = (props) => {
                     onClick={handleLinkClick}
                   >
                     {" "}
-                    <h5 className="mt-0 mb-1">
+                    <h2 className="mt-0 mb-1 text-dark">
                       {`${props.name} ${props.variant} ${props.color}`}
-                    </h5>
+                    </h2>
                   </Link>
 
                   <h5>
@@ -210,6 +211,7 @@ const ProductCard = (props) => {
           </ul>
         </div>
       </div>
+    </div>
     </div>
   );
 };

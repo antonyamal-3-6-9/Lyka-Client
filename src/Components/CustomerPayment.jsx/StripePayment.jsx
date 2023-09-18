@@ -31,7 +31,9 @@ export default function StripePayment() {
           }
         );
         setClientSecret(stripeCreateResponse.data.secret)
-      } catch (error) {}
+      } catch (error) {
+        console.log(error)
+      }
     };
     fetchData()
   }, []);

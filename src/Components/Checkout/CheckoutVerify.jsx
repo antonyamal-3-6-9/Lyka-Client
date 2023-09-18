@@ -1,9 +1,15 @@
-import React from "react";
+import React, {useState} from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import FloatingAlert from "../FloatingAlert/FloatingAlert";
 import axios from "axios";
 
 const CheckoutVerify = ({ data, setData, isSingle, setIsItemVerified, calculateMultipleSubTotal, calculateSingleSubTotal, subtotal, setAddressAdded, BASE_URL, itemConfirmation }) => {
+
+
+  const [alertData, setAlertData] = useState('')
+  const [alertEnable, setAlertEnable] = useState(false)
+  const [alertSeverity, setAlertSeverity] = useState("")
 
   const token = localStorage.getItem('token')
   const formatAmountWithRupeeSymbol = (amountStr) => {
@@ -52,7 +58,9 @@ const CheckoutVerify = ({ data, setData, isSingle, setIsItemVerified, calculateM
       handleIncreaseQuantity(order_id)
     }
     } catch (error) {
-      console.log(error)
+      setAlertData(error.response.data.message)
+      setAlertEnable(true)
+      setAlertSeverity("error")
     }
   }
 
@@ -94,7 +102,9 @@ const CheckoutVerify = ({ data, setData, isSingle, setIsItemVerified, calculateM
       handleDecreaseQuantity(order_id)
     }
     } catch (error) {
-      console.log(error)
+      setAlertData(error.response.data.message)
+      setAlertEnable(true)
+      setAlertSeverity("error")
     }
   }
 
@@ -103,7 +113,7 @@ const CheckoutVerify = ({ data, setData, isSingle, setIsItemVerified, calculateM
       setIsItemVerified(false)
       setAddressAdded(true)
     } else {
-      console.log("Item confirmation Failed")
+      console.log("Confirmation failed")
     }
   }
 
@@ -113,8 +123,14 @@ const CheckoutVerify = ({ data, setData, isSingle, setIsItemVerified, calculateM
 
   return (
     <>
+    <FloatingAlert 
+      message={alertData}
+      enable={alertEnable}
+      setEnable={setAlertEnable}
+      severity={alertSeverity}
+    />
       <div className="row w-100 h-75 checkout-verify-container">
-        <table className="table table-bordered table-hover">
+        <table className="table table-bordered table-hover border-dark">
           <thead>
             <tr>
               <th style={{ width: "20%" }}>Thumbnail</th>
@@ -130,7 +146,7 @@ const CheckoutVerify = ({ data, setData, isSingle, setIsItemVerified, calculateM
                   <td>
                     <img
                       style={{ width: "100px", height: "auto" }}
-                      src={item.item.product.thumbnail}
+                      src={`http://127.0.0.1:8000/${item.item.product.thumbnail}`}
                       alt={`${item.item.product.brand} ${item.item.product.name} ${item.item.product_variant.variation} ${item.item.product_color.color}`}
                     />
                   </td>
@@ -169,7 +185,7 @@ const CheckoutVerify = ({ data, setData, isSingle, setIsItemVerified, calculateM
                 <td>
                   <img
                     style={{ width: "100px", height: "auto" }}
-                    src={data.item.product.thumbnail}
+                    src={`http://127.0.0.1:8000/${data.item.product.thumbnail}`}
                     alt={`${data.item.product.brand} ${data.item.product.name} ${data.item.product_variant.variation} ${data.item.product_color.color}`}
                   />
                 </td>

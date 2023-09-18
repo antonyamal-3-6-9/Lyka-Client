@@ -6,5 +6,6 @@ export const customerLogin = () => ({
 });
 
 export const customerLogout = () => ({
-  type: CUSTOMER_LOGOUT,
+  type: CUSTOMER_LOGOUT
+  ,
 });

@@ -5,6 +5,8 @@ import CheckoutAddress from "./CheckoutAddress";
 import CheckoutPayment from "./CheckoutPayment";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import CheckOutNav from "./CheckoutNav";
+import FloatingAlert from "../FloatingAlert/FloatingAlert";
 
 const Checkout = () => {
   const [isSingleOrder, setIsSingleOrder] = useState(false);
@@ -14,7 +16,10 @@ const Checkout = () => {
 
   const [itemVerified, setItemVerified] = useState(true);
   const [addressAdded, setAddressAdded] = useState(false);
-  const [isPayment, setIsPayment] = useState(false);
+  const [isPayment, setIsPayment] = useState();
+  const [alertData, setAlertData] = useState('')
+  const [alertEnable, setAlertEnable] = useState(false)
+  const [alertSeverity, setAlertSeverity] = useState("")
 
   const [addressId, setAddressId] = useState({});
 
@@ -47,7 +52,9 @@ const Checkout = () => {
       });
       setPriceData(priceResponse.data)
     } catch (error) {
-      console.log("error")
+      setAlertData("Error getting price")
+      setAlertEnable(true)
+      setAlertSeverity("error")
     }
   };
 
@@ -76,7 +83,23 @@ const Checkout = () => {
       });
     } else {
       if (order.order_status !== null) {
-        navigate("/");
+        if (order.order_status === "Created") {
+          getOrderPrice()
+          if (
+            order.shipping_address === null ||
+            order.billing_address === null
+          ) {
+            setAddressAdded(true);
+            setItemVerified(false);
+            setIsPayment(false);
+          } else {
+            setAddressAdded(false);
+            setItemVerified(false);
+            setIsPayment(true);
+          }
+        } else {
+          navigate("/");
+        }
       }
     }
   };
@@ -106,7 +129,7 @@ const Checkout = () => {
           }
         }
       } catch (error) {
-        console.log(error);
+        navigate(-1)
       }
     };
     fetchData();
@@ -125,12 +148,13 @@ const Checkout = () => {
         }
       );
       if (itemConfirmationResponse.status === 200) {
-        setPriceData(itemConfirmationResponse.data);
         return true;
       }
     } catch (error) {
-      console.log(error);
-      return false;
+      setAlertData(error.response.data.message)
+      setAlertEnable(true)
+      setAlertSeverity("error")
+      return false
     }
   };
 
@@ -147,20 +171,53 @@ const Checkout = () => {
         }
       );
       if (addressAddingResponse.status === 200) {
+        getOrderPrice()
         return true;
       }
     } catch (error) {
+      setAlertData(error.response.data.message)
+      setAlertEnable(true)
+      setAlertSeverity("error")
       return false;
     }
   };
 
+  const handleCancel = async () => {
+    try{
+      const cancelResponse = await axios.delete(`${BASE_URL}cancel-order/${order_id}/`, {
+        headers: {
+          "content-Type": "Application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      if (cancelResponse.status === 200){
+        sessionStorage.clear("order_id")
+        navigate("/")
+      }
+    } catch (error){
+      navigate("/")
+    }
+  }
+
   return (
     <>
-      <div className="container-fluid p-5 mt-5">
-        <div className="row h-100">
-          <div className="col-lg-12 h-100">
-            <div className="card h-100 w-100 m-0 border-0 rounded-0">
-              <div className="container-fluid w-100 h-100">
+      <div className="container-fluid p-5 mt-4 w-75">
+      <FloatingAlert
+        message={alertData}
+        severity={alertSeverity}
+        enable={alertEnable}
+        setEnable={setAlertEnable}
+      />
+      <CheckOutNav
+        handleCancel={handleCancel}
+        setAddressAdded={setAddressAdded}
+        addressAdded={addressAdded}
+        isPayment={isPayment}
+        setIsPayment={setIsPayment}
+        setItemVerified={setItemVerified}
+        itemVerified={itemVerified}
+      />
+            <div className="card mt-3 p-5">
                 {itemVerified && (
                   <CheckoutVerify
                     data={orderData}
@@ -189,9 +246,7 @@ const Checkout = () => {
                 )}
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+
     </>
   );
 };

@@ -101,16 +101,17 @@ const AddPickupStore = () => {
             {alertData}
           </Alert>
         )}
+        <div className="card p-3 mt-5">
         <div className="row">
           <div className="col-lg-12">
-            <h4 className="text-center m-3">Add New Pickup Store</h4>
+            <h4 className="text-center">Add New Pickup Store</h4>
             <form
               className="needs-validation"
               onSubmit={handleSubmit}
               noValidate
             >
               <div className="row g-3">
-                <div className="col-sm-12">
+                <div className="col-sm-6">
                   <label className="form-label">Store Name</label>
                   <input
                     type="text"
@@ -126,7 +127,7 @@ const AddPickupStore = () => {
                   </div>
                 </div>
 
-                <div className="col-sm-12">
+                <div className="col-sm-6">
                   <label className="form-label">Street One</label>
                   <input
                     type="text"
@@ -283,6 +284,7 @@ const AddPickupStore = () => {
               </div>
             </form>
           </div>
+        </div>
         </div>
       </div>
     </>
