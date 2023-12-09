@@ -2,22 +2,23 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux/es/hooks/useSelector";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHandshake } from "@fortawesome/free-regular-svg-icons";
+import { faThumbsDown } from "@fortawesome/free-regular-svg-icons";
+import { faShopSlash } from "@fortawesome/free-solid-svg-icons";
+import { faTimesCircle } from "@fortawesome/free-regular-svg-icons";
+import { faThumbsUp } from "@fortawesome/free-regular-svg-icons";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { faTruckPickup } from "@fortawesome/free-solid-svg-icons";
+import { faTruckFast } from "@fortawesome/free-solid-svg-icons";
 
 const Orderlist = () => {
   const [exists, setExists] = useState(null);
-  const isLoggedIn = useSelector(
-    (state) => state.customerAuth.isCustomerLoggedIn
-  );
   const token = localStorage.getItem("token");
   const BASE_URL = "http://127.0.0.1:8000/order/";
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    console.log(isLoggedIn);
-    if (!isLoggedIn) {
-      setExists(false);
-      return;
-    }
     const fetchData = async () => {
       try {
         const orderResponse = await axios.get(
@@ -74,50 +75,95 @@ const Orderlist = () => {
     return null;
   }
 
+  const changeFont = (elementId) => {
+    const element = document.getElementById(elementId);
+    Array.from(element.getElementsByClassName("listing")).forEach((e) => {
+      e.classList.add("lyka-font");
+    });
+  };
+
+  const revertFont = (elementId) => {
+    const element = document.getElementById(elementId);
+    Array.from(element.getElementsByClassName("listing")).forEach((e) => {
+      e.classList.remove("lyka-font");
+    });
+  };
+
   return (
     <>
-      {isLoggedIn && exists ? (
-     <div className="container-fluid pt-5 mt-5">
-      {orders.map((order) => (
-        <div className="card p-3 mb-2 rounded-0">
-          <div className="row">
-            <div className="col-lg-2 d-flex justify-content-center align-items-center">
-              <img
-                src={`http://127.0.0.1:8000/${order.item.product.thumbnail}`}
-                style={{width : "50px", height : "100px"}}
-              />
-            </div>
-            <div className="col-lg-4 d-flex justify-content-center align-items-center">
-              <h4 className="h5">{`${order.item.product.brand} ${order.item.product.name} ${order.item.product_variant.variation} ${order.item.product_color.color}`}</h4>
-            </div>
-            <div className="col-lg-2 d-flex justify-content-center align-items-center">
-              <h4 className="h5">{order.item.product_price}</h4>
-            </div>
-            <div className="col-lg-4 d-flex justify-content-center align-items-center">
-              <h4>{order.order_status}</h4>
-            </div>
-          </div>
-        </div>
-      ))}
-      </div>) : !isLoggedIn ||
-        !exists ? (
-          <div className="container d-flex justify-content-center align-items-center mt-5 pt-5">
-            <div className="row mt-5">
-              <div className="card p-5">
-                <h2 className="text-center">
-                  {isLoggedIn ? "No orders" : "Login to view your Orders"}
-                </h2>
-                <Link
-                  to={isLoggedIn ? "/" : "/customer-login"}
-                  className="btn btn-outline-primary"
-                >
-                  {" "}
-                  {isLoggedIn ? "Continue Shopping" : "Login now"}
+      {exists ? (
+        orders.map((order) => (
+          <div
+            className="m-4 rounded-0 lyka-shadow"
+            id={order.order_id}
+            onMouseOver={() => changeFont(order.order_id)}
+            onMouseOut={() => revertFont(order.order_id)}
+          >
+            <div className="row pt-2 pb-2" style={{ height: "17vh" }}>
+              <div className="col-lg-2 d-flex justify-content-center align-items-center">
+                <FontAwesomeIcon
+                  icon={
+                    order.order_status === "Delivered"
+                      ? faHandshake
+                      : order.order_status === "Cancelled"
+                      ? faShopSlash
+                      : order.order_status === "Returned"
+                      ? faThumbsDown
+                      : order.order_status === "Rejected"
+                      ? faTimesCircle
+                      : order.order_status === "Placed"
+                      ? faThumbsUp
+                      : order.order_status === "Return Requested"
+                      ? faArrowLeft
+                      : order.order_status === "picked Up for Return"
+                      ? faTruckPickup
+                      : order.order_status === "In Transist"
+                      ? faTruckFast
+                      : null
+                  }
+                  style={{
+                    width: "100px",
+                    height: "50px",
+                  }}
+                />
+              </div>
+              <div
+                className="col-lg-4 d-flex justify-content-center align-items-center"
+                style={{ height: "100%" }}
+              >
+                <Link to={`/order/${order.order_id}`}>
+                  <h4 className="h5 m-0 listing">{`${order.item.product.brand} ${order.item.product.name} ${order.item.product_variant.variation} ${order.item.product_color.color}`}</h4>
                 </Link>
+              </div>
+              <div className="col-lg-2 d-flex justify-content-center align-items-center">
+                <h4 className="h5 m-0 listing">
+                  {formatAmountWithRupeeSymbol(order.item.product_price)}
+                </h4>
+              </div>
+              <div className="col-lg-4 d-flex justify-content-center align-items-center">
+                <h5 className="h5 m-0 listing">{order.order_status}</h5>
               </div>
             </div>
           </div>
-        ) : null}
+        ))
+      ) : (
+        <div
+          className="card border-0 p-5 d-flex justify-content-center"
+          style={{ height: "90vh" }}
+        >
+          <h2
+            className="text-center mb-2"
+            style={{ fontSize: "4rem", fontWeight: "bold" }}
+          >
+            No Orders
+          </h2>
+          <div className="d-flex justify-content-center align-items-center">
+            <Link to="/" className="btn btn-primary w-25 mt-4">
+              Continue Shopping
+            </Link>
+          </div>
+        </div>
+      )}
     </>
   );
 
@@ -236,7 +282,6 @@ const Orderlist = () => {
   //           </div>
   //         ))}
   //       </div>
-      
 
   //   </>
   // );

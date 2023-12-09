@@ -11,6 +11,14 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import OrderProgress from "../Seller/Seller Dashboard/Orders/OrderProgress";
 import Modal from 'react-modal'
+import { faHandshake } from "@fortawesome/free-regular-svg-icons";
+import { faThumbsDown } from "@fortawesome/free-regular-svg-icons";
+import { faShopSlash } from "@fortawesome/free-solid-svg-icons";
+import { faTimesCircle } from "@fortawesome/free-regular-svg-icons";
+import { faThumbsUp } from "@fortawesome/free-regular-svg-icons";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { faTruckPickup } from "@fortawesome/free-solid-svg-icons";
+import { faTruckFast } from "@fortawesome/free-solid-svg-icons";
 
 const OrderDetails = () => {
   const { orderId } = useParams();
@@ -354,7 +362,7 @@ const OrderDetails = () => {
               </div>
               <div className="card p-3">
                 <button
-                  className={`btn ${
+                  className={` d-flex justify-content-center btn ${
                     order.order_status === "Delivered"
                     ? "btn-danger"
                     : order.order_status === "Cancelled"
@@ -369,13 +377,48 @@ const OrderDetails = () => {
                   }`}
                   disabled={order.order_status === "Cancelled" || order.order_status === "Returned" || order.order_status === "Return Requested" || order.order_status === "Picked Up for Return"}
                   onClick={() => setIsOrderAction(true)}
-                >
+                >                <FontAwesomeIcon
+                  icon={
+                    order.order_status === "Delivered"
+                      ? faArrowLeft
+                      : order.order_status === "Cancelled"
+                      ? faShopSlash
+                      : order.order_status === "Returned"
+                      ? faThumbsDown
+                      : order.order_status === "Rejected"
+                      ? faTimesCircle
+                      : order.order_status === "Placed"
+                      ? faThumbsUp
+                      : order.order_status === "Return Requested"
+                      ? faArrowLeft
+                      : order.order_status === "picked Up for Return"
+                      ? faTruckPickup
+                      : order.order_status === "In Transist"
+                      ? faTruckFast
+                      : null
+                  }
+                  style={{
+                    width: "70",
+                    height: "35px",
+                  }}
+                /><h4 className="text-center h3 m-0 p-0">
                   {order.order_status === "Delivered"
                     ? "Return"
-                    : order.order_status === "Return Requested" || order.order_status === "Picked Up for Return" || order.order_status === "Cancelled"
-                    ? order.order_status
-                    : "Cancel"
+                    : order.order_status === "Return Requested"
+                    ? "Return Requested"
+                    : order.order_status === "Picked Up for Return"
+                    ? "Picked Up For Return" 
+                    : order.order_status === "Cancelled"
+                    ? "Cancelled"
+                    : order.order_status === "In Transist" || order.order_status === "Accepted"
+                    ? "Cancel"
+                    : order.order_status === "Returned"
+                    ? "Returned"
+                    : order.order_status === "Placed"
+                    ? "Cancel"
+                    : null
                     }
+                    </h4>
                 </button>
               </div>
             </div>

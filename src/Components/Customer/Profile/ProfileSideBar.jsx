@@ -1,16 +1,67 @@
-import React from 'react'
+import React, { useState } from "react";
+import "../Profile/profile.css";
+import { useNavigate } from "react-router-dom";
 
 
-const ProfileSideBar = ({options, setOptions}) => {
-    return (
-        <>
-            <div className='card p-3 rounded-0 d-flex'>
-               <a onClick={() => setOptions("orders")} href='#'><p className='h6 m-2 text-center'>My Orders</p></a>
-                <a onClick={() => setOptions("profile")} href="#"><p className='h6 m-3 text-center'>Personal Information</p></a>
-                <a onClick={() => setOptions("address")} href='#'><p className='h6 m-3 text-center'>Manage Addressess</p></a>
-            </div>
-        </>
-    )
-}
+const ProfileSideBar = ({ options, setOptions }) => {
 
-export default ProfileSideBar
+  const navigate = useNavigate();
+
+  const [option, setOption] = useState(options);
+
+  const changeRoute = (endpoint) => {
+      console.log(options)
+      navigate(`/account/${endpoint}`)
+  }
+
+  return (
+    <>
+      <div className="card m-0 rounded-0 d-flex">
+        <a
+          onClick={() => {
+            setOptions("orders");
+            setOption("orders");
+            changeRoute("orders");
+          }}
+          className={` text-center m-2 p-3 option  ${
+            option === "orders" ? "option-active m-3" : null
+          }`}
+        >
+          <span className={`${option === "orders" ? "option-active" : null}`}>
+            My Orders
+          </span>
+        </a>
+        <a
+          onClick={() => {
+            setOptions("profile");
+            setOption("profile");
+            changeRoute("profile");
+          }}
+          className={` text-center m-2 p-3 option  ${
+            option === "profile" ? "option-active m-3" : null
+          }`}
+        >
+          <span className={`${option === "profile" ? "option-active" : null}`}>
+            Personal Information
+          </span>
+        </a>
+        <a
+          onClick={() => {
+            setOptions("address");
+            setOption("address");
+            changeRoute("address");
+          }}
+          className={` text-center m-2 p-3 option  ${
+            option === "address" ? "option-active m-3" : null
+          }`}
+        >
+          <span className={`${option === "address" ? "option-active" : null}`}>
+            My Address
+          </span>
+        </a>
+      </div>
+    </>
+  );
+};
+
+export default ProfileSideBar;

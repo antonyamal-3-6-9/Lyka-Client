@@ -8,7 +8,8 @@ import { useDispatch } from "react-redux";
 import { customerLogin, customerLogout } from "../../redux/customerAuth/actions/authCustomerActions";
 
 
-function Userdropdown(props) {
+
+function Userdropdown({setOption}) {
   const [username, setUsername] = useState("");
 
   const isLoggedIn = useSelector((state) => state.customerAuth.isCustomerLoggedIn)
@@ -83,7 +84,7 @@ function Userdropdown(props) {
         {isLoggedIn && (
           <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
             <li>
-              <Link className="dropdown-item" to="/orders">
+              <Link className="dropdown-item" to="/account/orders" onClick={() => setOption("orders")}>
                 Orders
               </Link>
             </li>
@@ -93,7 +94,7 @@ function Userdropdown(props) {
               </Link>
             </li>
             <li>
-              <Link className="dropdown-item" to="/account/profile">
+              <Link className="dropdown-item" to="/account/profile" onClick={() => setOption("profile")}>
                 Profile
               </Link>
             </li>

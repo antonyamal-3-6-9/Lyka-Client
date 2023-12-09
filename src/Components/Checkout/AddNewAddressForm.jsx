@@ -78,7 +78,7 @@ const AddNewAddressForm = ({
       />
       <h3 className="text-center">Add New Address Here</h3>
       <form className="needs-validation" noValidate onSubmit={handleSubmit}>
-        <div className="row g-3">
+        <div className="row g-3 p-5">
           <div className="col-6">
             <label className="form-label">Full Name</label>
             <input

@@ -12,8 +12,9 @@ import PasswordModal from "./PasswordModal";
 import ProfileSideBar from "./ProfileSideBar";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import OrderListings from "../../Order/OrderListings";
 import { useParams } from "react-router-dom";
+import Orderlist from "../../Order/Orderlist";
+import NewPasswordModal from "./newPasswordModal";
 
 const CustomerProfile = () => {
   const BASE_URL = "http://127.0.0.1:8000/customer/";
@@ -305,12 +306,12 @@ const CustomerProfile = () => {
 
   return (
     <>
-      <div className="container-fluid pt-5 mt-5 w-100">
+      <div className="container-fluid w-100" style={{height: "100vh", position: "fixed", top: "9%"}}>
         <div className="row w-100">
-          <div className="col-lg-3 me-0 pe-0">
-            <div className="card p-3 mb-2 rounded-0">
+          <div className="col-lg-3 ps-3 pe-0 mt-4">
+            <div className="card mb-3 mt-3 p-2 rounded-0">
               <div className="row mb-0">
-                <div className="col-lg-3 mb-0">
+                <div className="col-lg-3 d-flex justify-content-center align-items-center">
                   <FontAwesomeIcon
                     icon={faUser}
                     style={{
@@ -319,26 +320,19 @@ const CustomerProfile = () => {
                       width: "30px",
                       height: "30px",
                     }}
-                    className="m-2"
+                    className="text-center"
                   />
                 </div>
-                <div className="col-lg-9 mb-0">
-                  <div className="row">
-                    <div className="col-lg-12">
-                      <span className="h6">Hy</span>
-                    </div>
-                    <div className="col-lg-12 mb-0">
-                      <span className="text-center h3">{customerData.user.first_name} {customerData.user.last_name}</span>
-                    </div>
-                  </div>
+                <div className="col-lg-9">
+                      <span>Hy</span>
+                      <h5 className="text-start h4">{customerData.user.first_name} {customerData.user.last_name}</h5>
                 </div>
               </div>
             </div>
             <ProfileSideBar options={options} setOptions={setOptions} />
           </div>
-          <div className="col-lg-9">
-            <div className="container-fluid w-100">
-            <div className={`card rounded-0 ${options === "my orders" ? "p-0" : "p-3"}`}>
+          <div className="col-lg-9" style={{overflow: "scroll", height: "100vh"}}>
+            <div className={`card rounded-0 p-3 m-3 ${options === "profile" ? "pt-5 " : null}`}>
                 {options === "profile" ? (
                   <>
                     <OTPModal
@@ -389,6 +383,7 @@ const CustomerProfile = () => {
                         BASE_URL={BASE_URL}
                         isUpdatePassword={isUpdatePassword}
                       />
+                      <NewPasswordModal/>
                     </div>
                   </>
                 ) : options === "address" ? (
@@ -410,10 +405,9 @@ const CustomerProfile = () => {
                     )}
                   </>
                 ) : options === "orders" ? (
-                  <><OrderListings/></>
+                  <><Orderlist/></>
                 ) : null}
-              </div>
-            </div>
+             </div>
           </div>
         </div>
       </div>

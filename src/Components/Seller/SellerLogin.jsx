@@ -92,6 +92,12 @@ const SellerLogin = () => {
   };
 
   const handleSendOtp = async () => {
+    if (sellerLoginData.phone.length >= 0){
+      setAlertData("Enter your phone Number")
+      setAlertEnable(true)
+      setAlertSeverity("warning")
+      return
+    }
     try {
       const otpResponse = await axios.get(
         BASE_URL + "phone-otp-login-create/",
@@ -108,8 +114,9 @@ const SellerLogin = () => {
       }
     } catch (error) {
       setAlertEnable(true);
-      console.log(error)
+      console.log(error.response.data.message)
       setAlertSeverity("error");
+      setAlertData(error.response.data.message)
     }
   };
 

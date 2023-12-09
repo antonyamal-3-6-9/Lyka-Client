@@ -1,0 +1,14 @@
+.option-active{
+    background-color: #092635;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.option{
+    border: 1px solid #092635;
+    color: black;
+}
+
+.option:hover{
+    font-size: 1.2rem;
+}

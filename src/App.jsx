@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
 import Home from "./Components/Home/Home.jsx";
 import AddProduct from "./Components/Seller/Seller Dashboard/Products/AddProducts/AddProduct.jsx";
 import Registration from "./Components/Seller/Seller Registration/Registration.jsx";
@@ -147,15 +146,6 @@ function App() {
               <>
                 <Navbar />
                 <Checkout />
-              </>
-            }
-          />
-          <Route
-            path="account"
-            element={
-              <>
-                <Navbar />
-                <CustomerProfile />
               </>
             }
           />

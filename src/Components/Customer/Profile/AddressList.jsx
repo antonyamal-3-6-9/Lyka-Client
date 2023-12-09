@@ -41,20 +41,20 @@ const AddressList = ({savedAddress, setSavedAddress, isSavedAddress, setIsSavedA
       <div className="row m-0 p-0">
         {isSavedAddress ? (
          <>
-          <div className="container-fluid d-flex justify-content-start">
+          <div className="container-fluid d-flex justify-content-start p-0">
           <button
-              className="btn btn-outline-primary"
+              className="btn btn-primary"
               onClick={() => {
                 setIsAddNewAddress(true);
               }}
             >
-              Add Address
+              Add New Address
             </button>
           </div>
           <div className="row m-0 p-0">
             {savedAddress.map((address) => (
-              <div className="col-lg-6">
-                <div className="card p-3 m-3">
+              <div className="col-lg-6 p-0">
+                <div className="p-3 m-2 rounded-0 lyka-shadow">
                   <h5>{address.name}</h5>
                   <p className="m-0 p-0">
                     {address.street_one} {address.street_two} {address.landmark}
@@ -71,10 +71,10 @@ const AddressList = ({savedAddress, setSavedAddress, isSavedAddress, setIsSavedA
                   <div className="row m-3">
                   
                   <div className="col-lg-6 d-flex justify-content-center">
-                  <button className="btn btn-outline-primary btn-sm">Edit</button>
+                  <button className="btn btn-primary btn-sm">Edit</button>
                   </div>
                   <div className="col-lg-6">
-                  <button className="btn btn-outline-danger btn-sm">Delete</button>
+                  <button className="btn btn-danger btn-sm">Delete</button>
                   </div>
                   
                   </div>

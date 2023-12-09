@@ -12,7 +12,7 @@ function Navbar() {
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+      <nav className="navbar navbar-expand-lg navbar-dark fixed-top" style={{backgroundColor: "#092635"}}>
         <div className="container-fluid nav-links">
           <Link className="navbar-brand brand" to="/">
             LYKA
