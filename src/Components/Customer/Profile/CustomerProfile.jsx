@@ -19,14 +19,13 @@ import { styled } from '@mui/material/styles';
 const CustomerProfile = () => {
   const BASE_URL = "http://127.0.0.1:8000/customer/";
   const token = localStorage.getItem("token");
-  const { option } = useParams()
 
   const [customerData, setCustomerData] = useState({});
   const [isBasicEdit, setIsBasicEdit] = useState(false);
   const [isEmailEdit, setIsEmailEdit] = useState(false);
   const [isPhoneEdit, setIsPhoneEdit] = useState(false);
 
-  const [options, setOptions] = useState(option);
+  const [options, setOptions] = useState("profile");
 
   const [savedAddress, setSavedAddress] = useState([]);
   const [isSavedAddress, setIsSavedAddress] = useState(null);
@@ -313,11 +312,11 @@ const CustomerProfile = () => {
 
   return (
     <>
-      <div className="container-fluid w-100" style={{height: "100vh", position: "fixed", top: "9%", backgroundColor: "#ECF4D6"}}>
+      <div className="container-fluid w-100" style={{backgroundColor: "#ECF4D6", marginTop: "84px"}}>
         <div className="row w-100">
-          <div className="col-lg-3 ps-3 pe-0 mt-4">
+          <div className="col-lg-3">
             <Item>
-            <div className="card mb-3 mt-3 p-2 rounded-0 border border-0 ">
+            <div className="card rounded-0 border border-0 ">
               <div className="row">
                 <div className="col-lg-3 d-flex justify-content-center align-items-start">
                   <AccountCircleIcon />
@@ -331,7 +330,7 @@ const CustomerProfile = () => {
             </Item>
           </div>
           <div className="col-lg-9">
-            <div className={`card rounded-0 p-3 m-3 pt-3 mt-0 border border-0 ${options === "profile" ? "pt-3" : null}`} style={{overflow: "scroll", height: "100vh", backgroundColor: "#ECF4D6"}}>
+            <div className={`card rounded-0b order border-0 `} style={{ height: "100vh", backgroundColor: "#ECF4D6"}}>
                 {options === "profile" ? (
                   <>
                     <Item>

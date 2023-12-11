@@ -28,6 +28,7 @@ import Orderlist from "./Components/Order/Orderlist.jsx";
 import OrderDetails from "./Components/Order/OrderDetails.jsx";
 import CustomerProfile from "./Components/Customer/Profile/CustomerProfile.jsx";
 import OrderListings from "./Components/Order/OrderListings.jsx";
+import ResponsiveAppBar from "./Components/Navbar/MuiNavBar.jsx";
 
 function App() {
   return (
@@ -116,7 +117,7 @@ function App() {
             path="/"
             element={
               <>
-                <Navbar />
+                <ResponsiveAppBar />
                 <Home />
               </>
             }
@@ -126,7 +127,7 @@ function App() {
             path="/product/:product_id"
             element={
               <>
-                <Navbar />
+                <ResponsiveAppBar />
                 <ProductDetail />
               </>
             }
@@ -135,7 +136,7 @@ function App() {
             path="/cart"
             element={
               <>
-                <Navbar />
+                <ResponsiveAppBar />
                 <ShoppingCart />
               </>
             }
@@ -144,7 +145,7 @@ function App() {
             path="/checkout"
             element={
               <>
-                <Navbar />
+                <ResponsiveAppBar />
                 <Checkout />
               </>
             }
@@ -155,16 +156,16 @@ function App() {
             path="order-placed"
             element={
               <>
-                <Navbar />
+                <ResponsiveAppBar />
                 <OrderPlaced />
               </>
             }
           />
           <Route
-            path="account/:option"
+            path="account"
             element={
               <>
-                <Navbar />
+                <ResponsiveAppBar />
                 <CustomerProfile />
               </>
             }
@@ -173,7 +174,7 @@ function App() {
             path="order/:orderId"
             element={
               <>
-                <Navbar />
+                <ResponsiveAppBar />
                 <OrderDetails />
               </>
             }

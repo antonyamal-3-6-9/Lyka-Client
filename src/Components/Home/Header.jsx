@@ -7,7 +7,7 @@ const Header = () => {
   return (
     <>
     <div className="header-container">
-    <div className="row mb-4 mt-4">
+    <div className="row mb-4">
       <FeatureCarousel />
     </div>
     </div>

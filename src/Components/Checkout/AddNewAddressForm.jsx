@@ -3,6 +3,7 @@ import { useState } from "react";
 import StateSelect from "./StateSelect";
 import axios from "axios";
 import FloatingAlert from "../FloatingAlert/FloatingAlert";
+import { Button } from "@mui/material";
 
 const AddNewAddressForm = ({
   setAddressId,
@@ -76,9 +77,9 @@ const AddNewAddressForm = ({
         enable={alertEnable}
         severity={alertSeverity}
       />
-      <h3 className="text-center">Add New Address Here</h3>
+      <h3 className="text-center">Add New Address</h3>
       <form className="needs-validation" noValidate onSubmit={handleSubmit}>
-        <div className="row g-3 p-5">
+        <div className="row p-2">
           <div className="col-6">
             <label className="form-label">Full Name</label>
             <input
@@ -238,19 +239,19 @@ const AddNewAddressForm = ({
         </div>
         <div className="row mt-5">
           <div className="col-lg-6 d-flex justify-content-center">
-            <button type="submit" className="btn btn-success">
+            <Button type="submit" variant="outlined">
               Save
-            </button>
+            </Button>
           </div>
 
           <div className="col-lg-6 d-flex justify-content-center">
-            <button
+            <Button
               type="button"
-              className="btn btn-danger"
+              variant="outlined"
               onClick={handleCancel}
             >
               Cancel
-            </button>
+            </Button>
           </div>
         </div>
       </form>

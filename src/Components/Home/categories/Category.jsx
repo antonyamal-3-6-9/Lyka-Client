@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../home.scss";
+import { Button } from "@mui/material";
 
 const Category = () => {
   const API_BASE_URL = "http://localhost:8000/category/";
@@ -41,7 +42,7 @@ const Category = () => {
                 }}
                 key={item.root_id}
               >
-                <a href="#">{item.name}</a>
+                <Button variant="text">{item.name}</Button>
                 <ul className="subcategories">
                   {mainData.map((mainItem) =>
                     rootid && mainItem.root === rootid ? (
@@ -51,12 +52,12 @@ const Category = () => {
                         }}
                         key={mainItem.main_id}
                       >
-                        <a href="#">{mainItem.name}</a>
+                        <Button variant="text">{mainItem.name}</Button>
                         <ul className="sub-subcategories">
                           {subData.map((subItem) =>
                             mainId && subItem.main === mainId ? (
                               <li key={subItem.sub_id}>
-                                <a href="#">{subItem.name}</a>
+                                <Button variant="text">{subItem.name}</Button>
                               </li>
                             ) : null
                           )}

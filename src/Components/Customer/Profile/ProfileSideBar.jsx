@@ -14,11 +14,6 @@ const ProfileSideBar = ({ options, setOptions }) => {
   const [option, setOption] = useState(options);
   const [isActive, setIsActive] = useState(true)
 
-  const changeRoute = (endpoint) => {
-      console.log(options)
-      navigate(`/account/${endpoint}`)
-  }
-
   return (
     <>
       <div className="card m-0 rounded-0 d-flex border border-0">
@@ -27,7 +22,6 @@ const ProfileSideBar = ({ options, setOptions }) => {
         onClick={() => {
             setOptions("orders");
             setOption("orders");
-            changeRoute("orders");
           }}
           size="large"
           style={{marginBottom : "15px"}}
@@ -40,7 +34,6 @@ const ProfileSideBar = ({ options, setOptions }) => {
         onClick={() => {
             setOptions("profile");
             setOption("profile");
-            changeRoute("profile");
           }}
           size="large"
           style={{marginBottom : "15px"}}
@@ -52,7 +45,6 @@ const ProfileSideBar = ({ options, setOptions }) => {
         onClick={() => {
             setOptions("address");
             setOption("address");
-            changeRoute("address");
           }}
           size="large"
           startIcon={<DirectionsIcon/>}
