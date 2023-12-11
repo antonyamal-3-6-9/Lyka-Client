@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { TextField } from "@mui/material";
+import { Button } from "@mui/material";
+import ModeEdit from "@mui/icons-material/ModeEdit";
 
 const NameForm = ({
   isBasicEdit,
@@ -10,8 +13,7 @@ const NameForm = ({
   setIsBasicChanged,
   handleSubmit,
 }) => {
-
-  const [is_last_name, setIsLastName] = useState(false)
+  const [is_last_name, setIsLastName] = useState(false);
 
   const handleFirstName = (e) => {
     setIsBasicChanged(true);
@@ -29,18 +31,16 @@ const NameForm = ({
     });
   };
 
-
-
   return (
     <>
       <form onSubmit={handleSubmit}>
         <div className="row">
           <div className="col-lg-3">
-            <h6 className="h6">Personal Information</h6>
+            <h5 className="h5">Personal Information</h5>
           </div>
           <div className="col-lg-2">
-            <a
-              href="#"
+            <Button
+              variant="text"
               onClick={() => {
                 if (isBasicEdit) {
                   setIsBasicEdit(false);
@@ -49,14 +49,15 @@ const NameForm = ({
                   setIsBasicEdit(true);
                 }
               }}
+              startIcon={isBasicEdit ? null : <ModeEdit />}
             >
               {isBasicEdit ? "Cancel" : "Edit"}
-            </a>
+            </Button>
           </div>
         </div>
         <div className="row mt-3 mb-5">
           <div className="col-lg-3">
-            <input
+            {/* <input
               className={`form-control rounded-0 border-2 ${isBasicEdit ? 'border-primary' : 'border-temporary'} bg-temporary p-3`}
               type="text"
               value={
@@ -68,10 +69,23 @@ const NameForm = ({
               onChange={handleFirstName}
               readOnly={!isBasicEdit}
               required
+            /> */}
+            <TextField
+              variant="standard"
+              onChange={handleFirstName}
+              value={
+                isBasicChanged
+                  ? basicData.user.first_name
+                  : userData.user.first_name
+              }
+              required
+              name="first_name"
+              disabled={!isBasicEdit}
+              type="text"
             />
           </div>
           <div className="col-lg-3">
-            <input
+            {/* <input
               className={`form-control rounded-0 border-2 ${isBasicEdit ? 'border-primary' : 'border-temporary'} bg-temporary p-3`}
               type="text"
               value={
@@ -83,14 +97,28 @@ const NameForm = ({
               readOnly={!isBasicEdit}
               onChange={handleLastName}
               required
+            /> */}
+            <TextField
+              variant="standard"
+              onChange={handleLastName}
+              value={
+                is_last_name
+                  ? basicData.user.last_name
+                  : userData.user.last_name
+              }
+              required
+              name="last_name"
+              disabled={!isBasicEdit}
+              type="text"
             />
           </div>
-          {isBasicEdit && 
-          <div className="col-lg-2 d-flex justify-content-center pb-5">
-            <button className="btn btn-success btn-md" type="submit">
-              Save
-            </button>
-          </div>}
+          {isBasicEdit && (
+            <div className="col-lg-2 d-flex justify-content-start">
+              <Button variant="text" color="success" type="submit">
+                Save
+              </Button>
+            </div>
+          )}
         </div>
       </form>
     </>

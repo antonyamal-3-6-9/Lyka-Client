@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import "../Profile/profile.css";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
+import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
+import PermIdentityIcon from '@mui/icons-material/PermIdentity';
+import DirectionsIcon from '@mui/icons-material/Directions';
 
 
 const ProfileSideBar = ({ options, setOptions }) => {
@@ -9,6 +12,7 @@ const ProfileSideBar = ({ options, setOptions }) => {
   const navigate = useNavigate();
 
   const [option, setOption] = useState(options);
+  const [isActive, setIsActive] = useState(true)
 
   const changeRoute = (endpoint) => {
       console.log(options)
@@ -17,12 +21,45 @@ const ProfileSideBar = ({ options, setOptions }) => {
 
   return (
     <>
-      <div className="card m-0 rounded-0 d-flex">
+      <div className="card m-0 rounded-0 d-flex border border-0">
       <Button 
-        href={` ${option === "orders" ? "#text-icons" : "}`}
-      />
-
-        <a
+        variant={`${option === "orders" ? "contained" : "outlined"}`}
+        onClick={() => {
+            setOptions("orders");
+            setOption("orders");
+            changeRoute("orders");
+          }}
+          size="large"
+          style={{marginBottom : "15px"}}
+          startIcon={<ShoppingBasketIcon/>}
+          >
+            Orders
+          </Button>
+          <Button 
+        variant={`${option === "profile" ? "contained" : "outlined"}`}
+        onClick={() => {
+            setOptions("profile");
+            setOption("profile");
+            changeRoute("profile");
+          }}
+          size="large"
+          style={{marginBottom : "15px"}}
+          startIcon={<PermIdentityIcon/>}
+          >
+            Profile
+          </Button>      <Button 
+        variant={`${option === "address" ? "contained" : "outlined"}`}
+        onClick={() => {
+            setOptions("address");
+            setOption("address");
+            changeRoute("address");
+          }}
+          size="large"
+          startIcon={<DirectionsIcon/>}
+          >
+            Address
+          </Button>
+        {/* <a
           onClick={() => {
             setOptions("orders");
             setOption("orders");
@@ -63,8 +100,8 @@ const ProfileSideBar = ({ options, setOptions }) => {
           <span className={`${option === "address" ? "option-active" : null}`}>
             My Address
           </span>
-        </a>
-      </div>
+        </a> */}
+      </div> 
     </>
   );
 };

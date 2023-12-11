@@ -1,4 +1,8 @@
 import React from "react";
+import { TextField } from "@mui/material";
+import { Button } from "@mui/material";
+import ModeEdit from "@mui/icons-material/ModeEdit";
+
 
 const NumberForm = ({
   isPhoneEdit,
@@ -22,12 +26,11 @@ const NumberForm = ({
     <>
       <form onSubmit={handleNumberSubmit}>
       <div className="row mt-5 mb-2">
-          <div className="col-lg-3">
-            <h6 className="h6">Phone Information</h6>
+          <div className="col-lg-3 d-flex justify-content-start">
+            <h5 className="h5">Phone Information</h5>
           </div>
           <div className="col-lg-2">
-            <a
-              href="#"
+            <Button
               onClick={() => {
                 if (isPhoneEdit) {
                   setIsPhoneEdit(false);
@@ -36,30 +39,41 @@ const NumberForm = ({
                   setIsPhoneEdit(true);
                 }
               }}
+              variant="text"
+              startIcon={isPhoneEdit ? null : <ModeEdit/>}
             >
               {isPhoneEdit ? "Cancel" : "Edit"}
-            </a>
+            </Button>
           </div>
         </div>
         <div className="row">
-          <div className="col-lg-8">
-            <input
+          <div className="col-lg-3">
+            {/* <input
               className={`form-control rounded-0 border-2 ${isPhoneEdit ? 'border-primary' : 'border-temporary'} bg-temporary p-3`}
               type="number"
               value={isNumberChanged ? numberData.user.phone : userData.user.phone}
               name="phone"
               onChange={handleChange}
               readOnly={!isPhoneEdit}
+            /> */}
+            <TextField
+              variant="standard"
+              type="number"
+              name="phone"
+              onChange={handleChange}
+              disabled={!isPhoneEdit}
+              required 
+              value={isNumberChanged ? numberData.user.phone : userData.user.phone}
             />
           </div>
           {isPhoneEdit && 
-          <div className="col-lg-2 d-flex justify-content-center">
-            <button
-              className="btn btn-success btn-md"
+          <div className="col-lg-2 d-flex justify-content-start">
+            <Button
+              variant="text"
               type="submit"
             >
               Save
-            </button>
+            </Button>
           </div>}
         </div>
       </form>

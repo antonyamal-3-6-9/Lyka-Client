@@ -8,13 +8,13 @@ import { useEffect } from "react";
 import { useState } from "react";
 import OTPModal from "./OTPmodals";
 import axios from "axios";
-import PasswordModal from "./PasswordModal";
 import ProfileSideBar from "./ProfileSideBar";
-import { faUser } from "@fortawesome/free-regular-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useParams } from "react-router-dom";
 import Orderlist from "../../Order/Orderlist";
 import NewPasswordModal from "./newPasswordModal";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Paper from '@mui/material/Paper';
+import { styled } from '@mui/material/styles';
 
 const CustomerProfile = () => {
   const BASE_URL = "http://127.0.0.1:8000/customer/";
@@ -300,41 +300,42 @@ const CustomerProfile = () => {
     }
   };
 
+  const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+    ...theme.typography.body2,
+    padding: theme.spacing(3),
+    color: theme.palette.text.secondary,
+  }));
+
   if (!canBeRendered) {
     return null;
   }
 
   return (
     <>
-      <div className="container-fluid w-100" style={{height: "100vh", position: "fixed", top: "9%"}}>
+      <div className="container-fluid w-100" style={{height: "100vh", position: "fixed", top: "9%", backgroundColor: "#ECF4D6"}}>
         <div className="row w-100">
           <div className="col-lg-3 ps-3 pe-0 mt-4">
-            <div className="card mb-3 mt-3 p-2 rounded-0">
-              <div className="row mb-0">
-                <div className="col-lg-3 d-flex justify-content-center align-items-center">
-                  <FontAwesomeIcon
-                    icon={faUser}
-                    style={{
-                      "--fa-primary-color": "#1f4251",
-                      "--fa-secondary-color": "#1f4251",
-                      width: "30px",
-                      height: "30px",
-                    }}
-                    className="text-center"
-                  />
+            <Item>
+            <div className="card mb-3 mt-3 p-2 rounded-0 border border-0 ">
+              <div className="row">
+                <div className="col-lg-3 d-flex justify-content-center align-items-start">
+                  <AccountCircleIcon />
                 </div>
-                <div className="col-lg-9">
-                      <span>Hy</span>
+                <div className="col-lg-9 d-flex justify-content-start align-items-start">
                       <h5 className="text-start h4">{customerData.user.first_name} {customerData.user.last_name}</h5>
                 </div>
               </div>
             </div>
             <ProfileSideBar options={options} setOptions={setOptions} />
+            </Item>
           </div>
           <div className="col-lg-9">
-            <div className={`card rounded-0 p-3 m-3 pt-3 mt-0 ${options === "profile" ? "pt-3" : null}`} style={{overflow: "scroll", height: "100vh"}}>
+            <div className={`card rounded-0 p-3 m-3 pt-3 mt-0 border border-0 ${options === "profile" ? "pt-3" : null}`} style={{overflow: "scroll", height: "100vh", backgroundColor: "#ECF4D6"}}>
                 {options === "profile" ? (
                   <>
+                    <Item>
+                    <div>
                     <OTPModal
                       setEmailOtp={setEmailOtp}
                       emailOtp={emailOtp}
@@ -390,6 +391,8 @@ const CustomerProfile = () => {
                         isUpdatePassword={isUpdatePassword}
                       />
                     </div>
+                    </div>
+                    </Item>
                   </>
                 ) : options === "address" ? (
                   <>

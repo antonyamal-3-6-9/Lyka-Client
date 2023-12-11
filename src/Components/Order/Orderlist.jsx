@@ -11,12 +11,28 @@ import { faThumbsUp } from "@fortawesome/free-regular-svg-icons";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { faTruckPickup } from "@fortawesome/free-solid-svg-icons";
 import { faTruckFast } from "@fortawesome/free-solid-svg-icons";
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
+import { styled } from '@mui/material/styles';
+
+
 
 const Orderlist = () => {
+
   const [exists, setExists] = useState(null);
   const token = localStorage.getItem("token");
   const BASE_URL = "http://127.0.0.1:8000/order/";
   const [orders, setOrders] = useState([]);
+  
+
+  const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+    ...theme.typography.body2,
+    padding: theme.spacing(1),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+  }));
 
   useEffect(() => {
     const fetchData = async () => {
@@ -91,7 +107,73 @@ const Orderlist = () => {
 
   return (
     <>
-      {exists ? (
+    <Box FullWidthGrid>
+      <Grid container spacing={2}>
+{orders.map((order) => (
+        <Grid item xs={12} md={12}>
+          <Item>
+          <div
+            className="p-3"
+            id={order.order_id}
+            onMouseOver={() => changeFont(order.order_id)}
+            onMouseOut={() => revertFont(order.order_id)}
+          >
+            <div className="row" style={{ height: "5vh" }}>
+              <div className="col-lg-2 d-flex justify-content-center align-items-center">
+                <FontAwesomeIcon
+                  icon={
+                    order.order_status === "Delivered"
+                      ? faHandshake
+                      : order.order_status === "Cancelled"
+                      ? faShopSlash
+                      : order.order_status === "Returned"
+                      ? faThumbsDown
+                      : order.order_status === "Rejected"
+                      ? faTimesCircle
+                      : order.order_status === "Placed"
+                      ? faThumbsUp
+                      : order.order_status === "Return Requested"
+                      ? faArrowLeft
+                      : order.order_status === "picked Up for Return"
+                      ? faTruckPickup
+                      : order.order_status === "In Transist"
+                      ? faTruckFast
+                      : null
+                  }
+                  style={{
+                    width: "100px",
+                    height: "50px",
+                  }}
+                />
+              </div>
+              <div
+                className="col-lg-4 d-flex justify-content-center align-items-center"
+                style={{ height: "100%" }}
+              >
+                <Link to={`/order/${order.order_id}`}>
+                  <h4 className="h5 listing">{`${order.item.product.brand} ${order.item.product.name} ${order.item.product_variant.variation} ${order.item.product_color.color}`}</h4>
+                </Link>
+              </div>
+              <div className="col-lg-2 d-flex justify-content-center align-items-center">
+                <h4 className="h5 listing">
+                  {formatAmountWithRupeeSymbol(order.item.product_price)}
+                </h4>
+              </div>
+              <div className="col-lg-4 d-flex justify-content-center align-items-center">
+                <h5 className="h5 listing">{order.order_status}</h5>
+              </div>
+            </div>
+          </div>
+
+          </Item>
+        </Grid>
+
+    ))}
+    </Grid>
+    </Box>
+
+
+      {/* {exists ? (
         orders.map((order) => (
           <div
             className="m-4 rounded-0 lyka-shadow"
@@ -163,7 +245,7 @@ const Orderlist = () => {
             </Link>
           </div>
         </div>
-      )}
+      )} */}
     </>
   );
 
