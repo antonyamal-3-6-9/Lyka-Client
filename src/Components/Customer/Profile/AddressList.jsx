@@ -1,6 +1,10 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Button from "@mui/material/Button"
+import DeleteIcon from "@mui/icons-material/Delete"
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import AddIcon from '@mui/icons-material/Add';
 
 
 const AddressList = ({savedAddress, setSavedAddress, isSavedAddress, setIsSavedAddress, setIsAddNewAddress}) => {
@@ -42,14 +46,15 @@ const AddressList = ({savedAddress, setSavedAddress, isSavedAddress, setIsSavedA
         {isSavedAddress ? (
          <>
           <div className="container-fluid d-flex justify-content-start p-0">
-          <button
-              className="btn btn-primary"
+          <Button
+              href="#text-buttons"
               onClick={() => {
                 setIsAddNewAddress(true);
               }}
+            startIcon={<AddIcon />}
             >
               Add New Address
-            </button>
+            </Button>
           </div>
           <div className="row m-0 p-0">
             {savedAddress.map((address) => (
@@ -71,10 +76,10 @@ const AddressList = ({savedAddress, setSavedAddress, isSavedAddress, setIsSavedA
                   <div className="row m-3">
                   
                   <div className="col-lg-6 d-flex justify-content-center">
-                  <button className="btn btn-primary btn-sm">Edit</button>
+                  <Button href="#text-buttons" startIcon={<ModeEditIcon />}>Edit</Button>
                   </div>
                   <div className="col-lg-6">
-                  <button className="btn btn-danger btn-sm">Delete</button>
+                  <Button href="#text-buttons" startIcon={<DeleteIcon />}>Delete</Button>
                   </div>
                   
                   </div>

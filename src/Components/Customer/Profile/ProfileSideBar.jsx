@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "../Profile/profile.css";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@mui/material";
 
 
 const ProfileSideBar = ({ options, setOptions }) => {
@@ -17,6 +18,10 @@ const ProfileSideBar = ({ options, setOptions }) => {
   return (
     <>
       <div className="card m-0 rounded-0 d-flex">
+      <Button 
+        href={` ${option === "orders" ? "#text-icons" : "}`}
+      />
+
         <a
           onClick={() => {
             setOptions("orders");

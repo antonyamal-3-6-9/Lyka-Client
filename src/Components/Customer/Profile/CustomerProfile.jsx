@@ -331,8 +331,8 @@ const CustomerProfile = () => {
             </div>
             <ProfileSideBar options={options} setOptions={setOptions} />
           </div>
-          <div className="col-lg-9" style={{overflow: "scroll", height: "100vh"}}>
-            <div className={`card rounded-0 p-3 m-3 ${options === "profile" ? "pt-5 " : null}`}>
+          <div className="col-lg-9">
+            <div className={`card rounded-0 p-3 m-3 pt-3 mt-0 ${options === "profile" ? "pt-3" : null}`} style={{overflow: "scroll", height: "100vh"}}>
                 {options === "profile" ? (
                   <>
                     <OTPModal
@@ -377,13 +377,18 @@ const CustomerProfile = () => {
                       isNumberChanged={isPhoneChanged}
                     />
                     <div className="d-flex justify-content-end mt-5">
-                      <PasswordModal
+                      {/* <PasswordModal
+                        setIsUpdatePassword={setIsUpdatePassword}
+                        hasPassword={hasPassword}
+                        BASE_URL={BASE_URL}
+                        isUpdatePassword={isUpdatePassword}
+                      /> */}
+                      <NewPasswordModal
                         setIsUpdatePassword={setIsUpdatePassword}
                         hasPassword={hasPassword}
                         BASE_URL={BASE_URL}
                         isUpdatePassword={isUpdatePassword}
                       />
-                      <NewPasswordModal/>
                     </div>
                   </>
                 ) : options === "address" ? (
