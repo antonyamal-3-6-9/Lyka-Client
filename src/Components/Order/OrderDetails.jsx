@@ -19,10 +19,9 @@ import { faThumbsUp } from "@fortawesome/free-regular-svg-icons";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { faTruckPickup } from "@fortawesome/free-solid-svg-icons";
 import { faTruckFast } from "@fortawesome/free-solid-svg-icons";
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
-import { styled } from '@mui/material/styles';
+import CheckIcon from '@mui/icons-material/Check';
+import { Button } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 
 const OrderDetails = () => {
   const { orderId } = useParams();
@@ -32,13 +31,6 @@ const OrderDetails = () => {
   const [order, setOrder] = useState();
   const [isOrderAction, setIsOrderAction] = useState(false)
 
-  const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-    ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  }));
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,9 +57,6 @@ const OrderDetails = () => {
     return null;
   }
 
-  function calculateProfit(product_price, original_price) {
-    return parseInt(product_price) - parseInt(original_price);
-  }
 
   const formatAmountWithRupeeSymbol = (amount) => {
     amount = parseInt(amount);
@@ -165,9 +154,9 @@ const OrderDetails = () => {
         </button>
         <button onClick={handleActionCancel}>Cancel</button>
       </Modal>
-      <div className="container-fluid mt-5">
+      <div className="container-fluid" style={{paddingLeft: "50px", paddingRight: "50px", marginTop: "84px"}}>
           {/* Title */}
-          <div className="d-flex justify-content-between align-items-center py-3">
+          <div className="d-flex justify-content-between align-items-center">
             <h2 className="h5 mb-0">
               <a href="#" className="text-muted"></a>Order Id: {order.order_id}
             </h2>
@@ -177,36 +166,16 @@ const OrderDetails = () => {
           <div className="row">
             <div className="col-lg-8">
               {/* Details */}
-              <Item>
+      
+               <div className="card m-3 p-3">
                 <div className="mb-3 d-flex justify-content-between">
                   <div>
                     <span className="me-3">placed on: {order.time}</span>
-                    <span className="badge rounded-pill bg-info">
+                    <span className="badge bg-info">
                       {order.order_status}
                     </span>
                   </div>
-                  <div className="d-flex">
-                    <button className="btn btn-link p-0 me-3 d-none d-lg-block btn-icon-text">
-                      <FontAwesomeIcon icon={faDownload} />{" "}
-                      <span className="text">Invoice</span>
-                    </button>
-                    <div className="dropdown">
-                      <button
-                        className="btn btn-link p-0 text-muted"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                      >
-                        <FontAwesomeIcon icon={faEllipsisVertical} />
-                      </button>
-                      <ul className="dropdown-menu dropdown-menu-end">
-                        <li>
-                          <a className="dropdown-item" href="#">
-                            <FontAwesomeIcon icon={faPrint} /> Print
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
+
                 </div>
                 <table className="table table-borderless">
                   <thead>
@@ -227,18 +196,18 @@ const OrderDetails = () => {
                             />
                           </div>
                           <div className="flex-lg-grow-1 ms-3">
-                            <h6 className="h6">
+                            <h5 className="h5">
                               {`${order.item.product.brand} ${order.item.product.name} ${order.item.product_variant.variation}`}
-                            </h6>
+                            </h5>
                           </div>
                         </div>
                       </td>
                       <td>
-                        <span className="h6">
+                        <span className="h5">
                           {order.item.product_color.color}
                         </span>
                       </td>
-                      <td className="text-start h6">{order.item.quantity}</td>
+                      <td className="text-start h5">{order.item.quantity}</td>
                     </tr>
                   </tbody>
                   <tfoot>
@@ -296,9 +265,10 @@ const OrderDetails = () => {
                     </tr>
                   </tfoot>
                 </table>
-              </Item>
+                </div>
+          
 
-              <div className="card mb-4">
+              <div className="card m-3">
                 <OrderProgress
                   status={order.order_status}
                   tracking_id={order.credentials.tracking_id}
@@ -306,7 +276,7 @@ const OrderDetails = () => {
                 />
               </div>
 
-              <div className="card mb-4 p-3">
+              <div className="card m-3 p-3">
                 <div className="row">
                   <div className="col-lg-8">
                     <div className="row m-2">
@@ -322,14 +292,15 @@ const OrderDetails = () => {
                         <h4 className="h6">Payment Status: </h4>
                       </div>
                       <div className="col-lg-6">
-                        <button
-                          className={`btn "w-100" ${
-                            order.payment_status ? "btn-success" : "btn-danger"
+                        <Button
+                          color={`${
+                            order.payment_status ? "success" : "error"
                           }`}
-                          disabled
+                          variant="text"
+                          startIcon={order.payment_status ? <CheckIcon /> : <CloseIcon />}
                         >
                           {order.payment_status ? "Paid" : "Unpaid"}
-                        </button>
+                        </Button>
                       </div>
                     </div>
                     <div className="row m-2">
@@ -346,7 +317,7 @@ const OrderDetails = () => {
             </div>
 
             <div className="col-lg-4">
-              <div className="card mb-4 p-3">
+              <div className="card m-3 p-3">
                 <h3 className="h6">Shipping Information</h3>
                 {order.credentials.tracking_id !== null && (
                   <span>Tracking code: {order.credentials.tracking_id}</span>
@@ -372,7 +343,7 @@ const OrderDetails = () => {
                   +91 {order.shipping_address.alternate_phone}
                 </address>
               </div>
-              <div className="card p-3">
+              <div className="card p-3 m-3">
                 <button
                   className={` d-flex justify-content-center btn ${
                     order.order_status === "Delivered"
@@ -389,31 +360,7 @@ const OrderDetails = () => {
                   }`}
                   disabled={order.order_status === "Cancelled" || order.order_status === "Returned" || order.order_status === "Return Requested" || order.order_status === "Picked Up for Return"}
                   onClick={() => setIsOrderAction(true)}
-                >                <FontAwesomeIcon
-                  icon={
-                    order.order_status === "Delivered"
-                      ? faArrowLeft
-                      : order.order_status === "Cancelled"
-                      ? faShopSlash
-                      : order.order_status === "Returned"
-                      ? faThumbsDown
-                      : order.order_status === "Rejected"
-                      ? faTimesCircle
-                      : order.order_status === "Placed"
-                      ? faThumbsUp
-                      : order.order_status === "Return Requested"
-                      ? faArrowLeft
-                      : order.order_status === "picked Up for Return"
-                      ? faTruckPickup
-                      : order.order_status === "In Transist"
-                      ? faTruckFast
-                      : null
-                  }
-                  style={{
-                    width: "70",
-                    height: "35px",
-                  }}
-                /><h4 className="text-center h3 m-0 p-0">
+                >   <h4 className="text-center h3 m-0 p-0">
                   {order.order_status === "Delivered"
                     ? "Return"
                     : order.order_status === "Return Requested"

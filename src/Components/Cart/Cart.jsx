@@ -1,17 +1,24 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPlus,
-  faMinus,
-  faTrash,
-  faArrowLeft,
-} from "@fortawesome/free-solid-svg-icons";
+import { Icon } from '@mui/material';
 import { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import FloatingAlert from "../FloatingAlert/FloatingAlert";
 import { useSelector } from "react-redux";
+import AddIcon from "@mui/icons-material/Add";
+import { IconButton } from "@mui/material";
+import { Typography } from "@mui/material";
+import RemoveIcon from "@mui/icons-material/Remove";
+import ClearIcon from "@mui/icons-material/Clear";
+import Paper from "@mui/material/Paper";
+import { styled } from "@mui/material/styles";
+import { Button } from "@mui/material";
+import StoreIcon from "@mui/icons-material/Store";
+import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
+import { useLocation } from "react-router-dom";
+import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
+
 
 const ShoppingCart = () => {
   const BASE_URL = "http://127.0.0.1:8000/cart/";
@@ -21,6 +28,13 @@ const ShoppingCart = () => {
   const [isCartEmpty, setIsCartEmpty] = useState(null);
   const [totalItems, setIsTotalItems] = useState(0);
   const navigate = useNavigate();
+  const location = useLocation()
+  const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+    ...theme.typography.body2,
+    padding: theme.spacing(3),
+    color: theme.palette.text.secondary,
+  }));
 
   const isLoggedIn = useSelector(
     (state) => state.customerAuth.isCustomerLoggedIn
@@ -60,14 +74,14 @@ const ShoppingCart = () => {
           }
         }
       } catch (error) {
-          setIsCartEmpty(true)
+        setIsCartEmpty(true);
       }
     };
     fetchData();
   }, []);
 
-  if(isCartEmpty === null){
-    return null
+  if (isCartEmpty === null) {
+    return null;
   }
 
   const incrementCart = (cart_item_id) => {
@@ -195,17 +209,21 @@ const ShoppingCart = () => {
   };
 
   const OnCheckOut = async () => {
-    try{
-      const orderCreateResponse = await axios.post(`http://127.0.0.1:8000/order/create-multiple-order/`, {}, {
-        headers : {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+    try {
+      const orderCreateResponse = await axios.post(
+        `http://127.0.0.1:8000/order/create-multiple-order/`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
-      })
-      if (orderCreateResponse.status === 201){
-        console.log(orderCreateResponse)
-        sessionStorage.setItem('order_id', orderCreateResponse.data)
-        navigate("/checkout")
+      );
+      if (orderCreateResponse.status === 201) {
+        console.log(orderCreateResponse);
+        sessionStorage.setItem("order_id", orderCreateResponse.data);
+        navigate("/checkout");
       }
     } catch (error) {
       setAlertData(error.response.data.message);
@@ -215,7 +233,7 @@ const ShoppingCart = () => {
   };
 
   return (
-    <div className="container-fluid w-75 mt-5 p-5">
+    <>
       <FloatingAlert
         message={alertData}
         severity={alertSeverity}
@@ -225,111 +243,131 @@ const ShoppingCart = () => {
       {isCartEmpty || !isLoggedIn ? (
         <>
           <div className="container d-flex justify-content-center align-items-center mt-5 pt-5">
-            <div className="row">
-            <div className="card p-5">
-              <h2 className="text-center">
-                {isLoggedIn ? "Cart is empty" : "Login to view your cart"}
-              </h2>
-              <Link
-                to={isLoggedIn ? "/" : "/customer-login"}
-                className="btn btn-outline-primary"
-              >
-                {" "}
-                {isLoggedIn ? "Continue Shopping" : "Login now"}
-              </Link>
+              <Item style={{padding: "50px"}}>
+                  {isLoggedIn ? <CancelPresentationIcon style={{height: "40px", width: "40px", color: "#092635", marginLeft: "65px", marginBottom: "10px"}} /> : null }
+                <h2 className="text-center h2 mb-5">
+                  {isLoggedIn ? "Empty Cart" : "Login Now"}
+                </h2>
+                <Button
+                  to={isLoggedIn ? "/" : "/customer-login"}
+                  onClick={() => {navigate(isLoggedIn ? "/" : "customer-login")}}
+                  variant="contained"
+                >
+                  {" "}
+                  {isLoggedIn ? "Continue Shopping" : "Login now"}
+                </Button>
+                </Item>
             </div>
-          </div>
-          </div>
         </>
       ) : (
-        
-        <div className="card p-5">
-          <h3 className="display-4  text-center ">My Cart</h3>
-          <p className="text-center">
-            <i className="text-info font-weight-bold">{totalItems}</i>{" "}
-            {`${totalItems === 1 ? "item" : "items"} in your cart`}
-          </p>
+        <div
+          className="container-fluid"
+          style={{ width: "83%", marginTop: "84px" }}
+        >
           <div className="row">
-            <div className="col-lg-12">
-              <table className="table table-bordered table-hover">
-                <thead>
-                  <tr>
-                    <th style={{ width: "10%" }}>Thumbnail</th>
-                    <th style={{ width: "30%" }}>Product</th>
-                    <th style={{ width: "12%" }}>Price</th>
-                    <th style={{ width: "10%" }}>Quantity</th>
-                    <th style={{ width: "18%" }}>Remove</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {cartItems.map((item) => (
-                    <tr key={item.id}>
-                      <td>
-                        <img
-                          src={`http://127.0.0.1:8000/${item.unit.product.thumbnail}/`}
-                          alt={item.unit.product.name}
-                          style={{ width: "100px", height: "auto" }}
-                        />
-                      </td>
-                      <td>
-                        <h5>{`${item.unit.product.brand} ${item.unit.product.name} ${item.unit.variant.variation} ${item.unit.color_code.color}`}</h5>
-                      </td>
-                      <td>
-                        <h5>{formatAmountWithRupeeSymbol(item.item_price)}</h5>
-                      </td>
-                      <td className="quantity-cell">
-                        <div className="d-flex justify-content-center align-items-center">
-                          <button
-                            className="btn btn-outline-dark btn-sm mr-2"
-                            onClick={() => handleDecrementCart(item.id)}
-                          >
-                            <FontAwesomeIcon icon={faMinus} />
-                          </button>
-                          <span className="display-6">{item.quantity}</span>
-                          <button
-                            className="btn btn-outline-dark btn-sm ml-2"
-                            onClick={() => handleIncrementCart(item.id)}
-                          >
-                            <FontAwesomeIcon icon={faPlus} />
-                          </button>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="text-right">
-                          <button
-                            className="btn btn-outline-danger"
-                            onClick={() => handleDeleteItem(item.id)}
-                          >
-                            <FontAwesomeIcon icon={faTrash} />
-                          </button>
-                        </div>
-                      </td>
+            <div className="col-lg-9">
+              <Item style={{height: "80vh", overflow:"scroll", padding: "30px"}}>
+                <h3 className="h3 text-center">Items</h3>
+                <table className="table table-hover">
+                  <thead>
+                    <tr>
+                      <th style={{ width: "10%" }}>Thumbnail</th>
+                      <th style={{ width: "30%" }}>Product</th>
+                      <th style={{ width: "12%" }}>Price</th>
+                      <th style={{ width: "10%" }}>Quantity</th>
+                      <th style={{ width: "18%" }}>Remove</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-              <div className="float-right text-right">
-                <h4>Subtotal:</h4>
-                <h1>{formatAmountWithRupeeSymbol(subtotal)}</h1>
-              </div>
+                  </thead>
+
+                  <tbody>
+                    {cartItems.map((item) => (
+                      <tr key={item.id}>
+                        <td>
+                          <img
+                            src={`http://127.0.0.1:8000/${item.unit.product.thumbnail}/`}
+                            alt={item.unit.product.name}
+                            style={{ width: "100px", height: "auto" }}
+                          />
+                        </td>
+                        <td>
+                          <h5  className="h6">{`${item.unit.product.brand} ${item.unit.product.name} ${item.unit.variant.variation} ${item.unit.color_code.color}`}</h5>
+                        </td>
+                        <td>
+                          <h5 className="h6">
+                            {formatAmountWithRupeeSymbol(item.item_price)}
+                          </h5>
+                        </td>
+                        <td className="quantity-cell">
+                          <div className="d-flex justify-content-center align-items-center">
+                            <IconButton
+                              onClick={() => handleDecrementCart(item.id)}
+                            >
+                              <RemoveIcon />
+                            </IconButton>
+                            <Typography
+                              variant="h5"
+                              component="h5"
+                              style={{ fontWeight: "bolder" }}
+                            >
+                              {item.quantity}
+                            </Typography>
+
+                            <IconButton
+                              onClick={() => handleIncrementCart(item.id)}
+                            >
+                              <AddIcon />
+                            </IconButton>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="text-right">
+                            <IconButton
+                              onClick={() => handleDeleteItem(item.id)}
+                            >
+                              <ClearIcon />
+                            </IconButton>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Item>
             </div>
-          </div>
-          <div className="row mt-4">
-            <div className="col-sm-6 order-md-2 text-right">
-              <button className="btn btn-outline-success" onClick={OnCheckOut}>Checkout</button>
-            </div>
-            <div className="col-sm-6 mb-3 mb-m-1 order-md-1 text-md-left">
-              <Link to="/" className="btn btn-outline-primary">
-                <FontAwesomeIcon icon={faArrowLeft} className="mr-2" /> Continue
-                Shopping
-              </Link>
+            <div className="col-lg-3">
+              <Item>
+                <div className="pb-3">
+                  {" "}
+                  <h4>Subtotal</h4>
+                  <h1 className="h1">
+                    {formatAmountWithRupeeSymbol(subtotal)}
+                  </h1>
+                </div>
+                <div>
+                  <Button
+                    variant="contained"
+                    size="large"
+                    startIcon={<CurrencyRupeeIcon />}
+                    onClick={OnCheckOut}
+                    style={{marginBottom: "20px"}}
+            
+                  >
+                    CheckOut
+                  </Button>
+                  <Button
+                    variant="text"
+                    endIcon={<StoreIcon />}
+                    onClick={() => navigate("/")}
+                  >
+                    <Link>Continue Shopping</Link>
+                  </Button>
+                </div>
+              </Item>
             </div>
           </div>
         </div>
-     
       )}
-    </div>
+    </>
   );
 };
 

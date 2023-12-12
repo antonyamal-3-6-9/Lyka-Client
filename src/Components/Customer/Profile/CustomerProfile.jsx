@@ -312,8 +312,8 @@ const CustomerProfile = () => {
 
   return (
     <>
-      <div className="container-fluid w-100" style={{backgroundColor: "#ECF4D6", marginTop: "84px"}}>
-        <div className="row w-100">
+      <div className="container-fluid" style={{backgroundColor: "#ECF4D6", marginTop: "84px", width: "83%"}}>
+        <div className="row">
           <div className="col-lg-3">
             <Item>
             <div className="card rounded-0 border border-0 ">

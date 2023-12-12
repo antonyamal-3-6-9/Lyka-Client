@@ -201,7 +201,7 @@ const Checkout = () => {
 
   return (
     <>
-      <div className="container-fluid p-5 mt-4 w-75">
+      <div className="container-fluid p-5 mt-4" style={{width: "83%"}}>
       <FloatingAlert
         message={alertData}
         severity={alertSeverity}
