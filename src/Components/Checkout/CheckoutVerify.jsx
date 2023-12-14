@@ -1,8 +1,11 @@
 import React, {useState} from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import FloatingAlert from "../FloatingAlert/FloatingAlert";
 import axios from "axios";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+import { Button } from "@mui/material";
+import { ArrowRight } from "@mui/icons-material";
+import { IconButton } from "@mui/material";
 
 const CheckoutVerify = ({ data, setData, isSingle, setIsItemVerified, calculateMultipleSubTotal, calculateSingleSubTotal, subtotal, setAddressAdded, BASE_URL, itemConfirmation }) => {
 
@@ -151,31 +154,24 @@ const CheckoutVerify = ({ data, setData, isSingle, setIsItemVerified, calculateM
                     />
                   </td>
                   <td>
-                    <h5>{`${item.item.product.brand} ${item.item.product.name} ${item.item.product_variant.variation} ${item.item.product_color.color}`}</h5>
+                    <h5 className="h5">{`${item.item.product.brand} ${item.item.product.name} ${item.item.product_variant.variation} ${item.item.product_color.color}`}</h5>
                   </td>
                   <td>
-                    <h5>{formatAmountWithRupeeSymbol(item.item.product_price)}</h5>
+                    <h5 className="h5">{formatAmountWithRupeeSymbol(item.item.product_price)}</h5>
                   </td>
                   <td className="quantity-cell">
                     <div className="d-flex justify-content-center align-items-center">
-                      <button
-                        className="btn btn-outline-dark btn-sm mr-2"
+                      <IconButton
                         onClick={() => handleItemDecrement(item.order_id)}
                       >
-                        <FontAwesomeIcon icon={faMinus} />
-                      </button>
-                      <input
-                        className="form-control"
-                        readOnly
-                        name="subtotal"
-                        value={item.item.quantity}
-                      />
-                      <button
-                        className="btn btn-outline-dark btn-sm ml-2"
+                        <RemoveIcon />
+                      </IconButton>
+                        <h5 className="h5">{item.item.quantity}</h5>
+                      <IconButton
                         onClick={() => handleItemIncrement(item.order_id)}
                       >
-                        <FontAwesomeIcon icon={faPlus} />
-                      </button>
+                        <AddIcon />
+                      </IconButton>
                     </div>
                   </td>
                 </tr>
@@ -190,31 +186,24 @@ const CheckoutVerify = ({ data, setData, isSingle, setIsItemVerified, calculateM
                   />
                 </td>
                 <td>
-                  <h5>{`${data.item.product.brand} ${data.item.product.name} ${data.item.product_variant.variation} ${data.item.product_color.color}`}</h5>
+                  <h5 className="h5" >{`${data.item.product.brand} ${data.item.product.name} ${data.item.product_variant.variation} ${data.item.product_color.color}`}</h5>
                 </td>
                 <td>
-                  <h5>{formatAmountWithRupeeSymbol(data.item.product_price)}</h5>
+                  <h5 className="h5" >{formatAmountWithRupeeSymbol(data.item.product_price)}</h5>
                 </td>
                 <td className="quantity-cell">
                   <div className="d-flex justify-content-center align-items-center">
-                    <button
-                      className="btn btn-outline-dark btn-sm mr-2"
+                    <IconButton
                       onClick={() => handleItemDecrement(data.order_id)}
                     >
-                      <FontAwesomeIcon icon={faMinus} />
-                    </button>
-                    <input
-                      className="form-control"
-                      readOnly
-                      name="subtotal"
-                      value={data.item.quantity}
-                    />
-                    <button
-                      className="btn btn-outline-dark btn-sm ml-2"
+                      <AddIcon/>
+                    </IconButton>
+                      <h5 className="h5">{data.item.quantity}</h5>
+                    <IconButton
                       onClick={() => handleItemIncrement(data.order_id)}
                     >
-                      <FontAwesomeIcon icon={faPlus} />
-                    </button>
+                      <RemoveIcon />
+                    </IconButton>
                   </div>
                 </td>
               </tr>
@@ -228,11 +217,11 @@ const CheckoutVerify = ({ data, setData, isSingle, setIsItemVerified, calculateM
       </div>
       <div className="row w-100 h-25">
         <div className="col-lg-6">
-          <h4>Subtotal:</h4>
-          <h1>{formatAmountWithRupeeSymbol(subtotal)}</h1>
+          <h4 className="h6">Subtotal:</h4>
+          <h1 className="h1">{formatAmountWithRupeeSymbol(subtotal)}</h1>
         </div>
         <div className="col-lg-6 d-flex align-items-center justify-content-end">
-          <button className="btn btn-warning" onClick={handleOnContinue}>Continue</button>
+          <Button  onClick={handleOnContinue} variant="contained" endIcon={<ArrowRight />} style={{ backgroundColor: "#16213E"}}>Continue</Button>
         </div>
       </div>
     </>

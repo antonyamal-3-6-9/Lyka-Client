@@ -113,7 +113,7 @@ export default function NewPasswordModal({
         severity={alertSeverity}
         setEnable={setAlertEnable}
       />
-      <Button onClick={handleOpen}>Change Password</Button>
+      <Button onClick={handleOpen} style={{color:"#16213E"}}>Change Password</Button>
       <Modal
         open={open}
         onClose={handleClose}

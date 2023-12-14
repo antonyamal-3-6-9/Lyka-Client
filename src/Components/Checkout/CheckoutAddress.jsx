@@ -4,10 +4,23 @@ import AddNewAddressForm from "./AddNewAddressForm";
 import { useState } from "react";
 import { useEffect } from "react";
 import FloatingAlert from "../FloatingAlert/FloatingAlert";
+import Paper from "@mui/material/Paper";
+import { styled } from "@mui/material/styles";
+import { Button } from "@mui/material";
+import { ClearIcon } from "@mui/icons-material/Clear"
+import { Add, ArrowRight } from "@mui/icons-material";
+import AddIcon from "@mui/icons-material/Add";
 
 const CheckoutAddress = (props) => {
   const token = localStorage.getItem("token");
   const BASE_URL = "http://127.0.0.1:8000/address/";
+
+  const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+    ...theme.typography.body2,
+    padding: theme.spacing(3),
+    color: theme.palette.text.secondary,
+  }));
 
   const [savedAddress, setSavedAddress] = useState();
   const [isSavedAddress, setIsSavedAddress] = useState(false);
@@ -65,19 +78,18 @@ const CheckoutAddress = (props) => {
 
   return (
     <>
-      <div className="container-fluid m-0 p-0">
       <FloatingAlert 
         message={alertData}
         setEnable={setAlertEnable}
         enable={alertEnable}
         severity={alertSeverity}
       />
-        <div className="row m-0 p-0">
-          {isSavedAddress ? (
+          {isSavedAddress && !isAddNewAddress ? (
             <div className="row m-0 p-0">
               {savedAddress.map((address) => (
-                <div className="col-lg-6">
-                <div className="card p-3 m-3">
+                <div className="col-lg-6 m-0 p-0">
+                <Item style={{margin: "10px"}}>
+                <div className="p-3" style={{border: "1px dotted #0F3460", borderRadius: "5px"}}>
                 <input
                   type="radio"
                   className="form-check-input"
@@ -87,22 +99,25 @@ const CheckoutAddress = (props) => {
                   checked={parseInt(props.addressId) === address.id}
                   
                 />
-                  <h5>{address.name}</h5>
-                  <p className="m-0 p-0">{address.street_one} {address.street_two} {address.landmark}</p>
-                  <p className="m-0 p-0">
+                  <h6 className="h6 mt-3 mb-1">{address.name}</h6>
+                  <p className="m-0 p-0" style={{fontSize: "1rem"}}>{address.street_one} {address.street_two} {address.landmark}</p>
+                  <p className="m-0 p-0" style={{fontSize: "1rem"}}>
                     {address.phone}, {address.alternate_phone}
                   </p>
-                  <p className="m-0 p-0">
+                  <p className="m-0 p-0" style={{fontSize: "1rem"}}>
                     {address.city}, {address.state}
                   </p>
-                  <p className="m-0 p-0">
+                  <p className="m-0 p-0" style={{fontSize: "1rem"}}>
                     {address.country}, {address.zip_code}
                   </p>
+                  </div>
+                  </Item>
                 </div>
-                </div>
+          
+                
               ))}
             </div>
-          ) : (
+          ) : !isSavedAddress && !isAddNewAddress ?  (
             <div className="row">
               <h4>No Saved Addressess</h4>
               <button
@@ -114,11 +129,9 @@ const CheckoutAddress = (props) => {
                 Add Address
               </button>
             </div>
-          )}
-        </div>
-      </div>
-      {isAddNewAddress && (
-        <div className="container-fluid">
+          ) : null}
+      {isAddNewAddress &&(
+        <div className="container-fluid" id="add-new-address-container">
           <AddNewAddressForm
             setSavedAddress={setSavedAddress}
             savedAddress={savedAddress}
@@ -127,23 +140,23 @@ const CheckoutAddress = (props) => {
           />
         </div>
       )}
-      {!isAddNewAddress && 
+      {!isAddNewAddress && savedAddress &&
       <>
-      <div className="row d-flex justify-content-center">
-        <button className="btn btn-success w-25" onClick={onContinue}>
+      <div className="d-flex justify-content-end">
+        <Button variant="contained" endIcon={<ArrowRight />} onClick={onContinue} style={{backgroundColor: "#16213E", margin: "20px"}}>
           Continue
-        </button>
-      </div>
-      <div className="row d-flex justify-content-center">
-        <button
-          className="btn btn-primary w-25"
+        </Button>
+        <Button
+          variant="contained"
           onClick={() => {
             setIsAddNewAddress(true);
           }}
+          startIcon={<AddIcon />}
+          style={{backgroundColor: "#0F3460", margin: "20px"}}
         >
-          Add new address
-        </button>
-      </div>
+          Add new
+        </Button>
+        </div>
       </>}
     </>
   );

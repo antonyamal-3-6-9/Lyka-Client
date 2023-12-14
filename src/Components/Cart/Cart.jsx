@@ -19,6 +19,12 @@ import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import { useLocation } from "react-router-dom";
 import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
 
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(3),
+  color: theme.palette.text.secondary,
+}));
 
 const ShoppingCart = () => {
   const BASE_URL = "http://127.0.0.1:8000/cart/";
@@ -29,12 +35,7 @@ const ShoppingCart = () => {
   const [totalItems, setIsTotalItems] = useState(0);
   const navigate = useNavigate();
   const location = useLocation()
-  const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-    ...theme.typography.body2,
-    padding: theme.spacing(3),
-    color: theme.palette.text.secondary,
-  }));
+
 
   const isLoggedIn = useSelector(
     (state) => state.customerAuth.isCustomerLoggedIn
@@ -349,17 +350,17 @@ const ShoppingCart = () => {
                     size="large"
                     startIcon={<CurrencyRupeeIcon />}
                     onClick={OnCheckOut}
-                    style={{marginBottom: "20px"}}
-            
+                    style={{marginBottom: "20px", backgroundColor: "#16213E"}}
                   >
                     CheckOut
                   </Button>
                   <Button
-                    variant="text"
+                    variant="outlined"
                     endIcon={<StoreIcon />}
                     onClick={() => navigate("/")}
+                    style={{marginBottom: "20px", borderColor: "#16213E", color: "#16213E"}}
                   >
-                    <Link>Continue Shopping</Link>
+                    <Link style={{color: "#16213E"}}>Continue Shopping</Link>
                   </Button>
                 </div>
               </Item>

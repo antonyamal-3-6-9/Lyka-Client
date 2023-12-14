@@ -16,6 +16,13 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(3),
+  color: theme.palette.text.secondary,
+}));
+
 const CustomerProfile = () => {
   const BASE_URL = "http://127.0.0.1:8000/customer/";
   const token = localStorage.getItem("token");
@@ -299,12 +306,7 @@ const CustomerProfile = () => {
     }
   };
 
-  const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-    ...theme.typography.body2,
-    padding: theme.spacing(3),
-    color: theme.palette.text.secondary,
-  }));
+
 
   if (!canBeRendered) {
     return null;
@@ -312,7 +314,7 @@ const CustomerProfile = () => {
 
   return (
     <>
-      <div className="container-fluid" style={{backgroundColor: "#ECF4D6", marginTop: "84px", width: "83%"}}>
+      <div className="container-fluid" style={{backgroundColor: "#FCFFE7", marginTop: "84px", width: "83%"}}>
         <div className="row">
           <div className="col-lg-3">
             <Item>
@@ -330,7 +332,7 @@ const CustomerProfile = () => {
             </Item>
           </div>
           <div className="col-lg-9">
-            <div className={`card rounded-0b order border-0 `} style={{ height: "100vh", backgroundColor: "#ECF4D6"}}>
+            <div className={`card rounded-0b order border-0 `} style={{ height: "100vh", backgroundColor: "#FCFFE7"}}>
                 {options === "profile" ? (
                   <>
                     <Item>

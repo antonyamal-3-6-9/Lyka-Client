@@ -50,6 +50,7 @@ const NameForm = ({
                 }
               }}
               startIcon={isBasicEdit ? null : <ModeEdit />}
+              style={{color:"#16213E"}}
             >
               {isBasicEdit ? "Cancel" : "Edit"}
             </Button>
@@ -58,17 +59,15 @@ const NameForm = ({
         <div className="row mt-3 mb-5">
           <div className="col-lg-3">
             {/* <input
+              key="first-name"
               className={`form-control rounded-0 border-2 ${isBasicEdit ? 'border-primary' : 'border-temporary'} bg-temporary p-3`}
               type="text"
               value={
-                isBasicChanged
-                  ? basicData.user.first_name
-                  : userData.user.first_name
+             basicData.user.first_name
               }
               name="first_name"
-              onChange={handleFirstName}
-              readOnly={!isBasicEdit}
               required
+              onChange={handleFirstName}
             /> */}
             <TextField
               variant="standard"
@@ -82,10 +81,12 @@ const NameForm = ({
               name="first_name"
               disabled={!isBasicEdit}
               type="text"
+              key="first"
             />
           </div>
           <div className="col-lg-3">
             {/* <input
+              key="last-name"
               className={`form-control rounded-0 border-2 ${isBasicEdit ? 'border-primary' : 'border-temporary'} bg-temporary p-3`}
               type="text"
               value={
@@ -110,11 +111,12 @@ const NameForm = ({
               name="last_name"
               disabled={!isBasicEdit}
               type="text"
+              key="last"
             />
           </div>
           {isBasicEdit && (
             <div className="col-lg-2 d-flex justify-content-start">
-              <Button variant="text" color="success" type="submit">
+              <Button variant="text" style={{color:"#16213E"}} type="submit">
                 Save
               </Button>
             </div>

@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import axios from "axios";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -173,9 +174,11 @@ export default function ResponsiveAppBar({setOption}) {
     navigate(option);
   };
 
+
+
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="fixed" style={{ backgroundColor: "#092635" }}>
+      <AppBar position="fixed" style={{ backgroundColor: "#16213E" }}>
         <Toolbar>
           <Typography
             variant="h6"
@@ -226,7 +229,7 @@ export default function ResponsiveAppBar({setOption}) {
                 size="large"
                 color="inherit"
               >
-                <ShoppingCartCheckoutIcon />
+                <ShoppingCartIcon />
               </IconButton>
               <Typography>
                 <a>Cart</a>

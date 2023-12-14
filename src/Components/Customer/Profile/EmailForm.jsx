@@ -45,6 +45,7 @@ const EmailForm = ({
                 }
               }}
               startIcon={isEmailEdit ? null : <ModeEdit />}
+              style={{color:"#16213E"}}
             >
               {isEmailEdit ? "Cancel" : "Edit"}
             </Button>
@@ -76,7 +77,7 @@ const EmailForm = ({
           </div>
           {isEmailEdit && (
             <div className="col-lg-3 d-flex justify-content-start">
-              <Button type="submit" variant="text" color="success">
+              <Button type="submit" variant="text" style={{color:"#16213E"}}>
                 Save
               </Button>
             </div>

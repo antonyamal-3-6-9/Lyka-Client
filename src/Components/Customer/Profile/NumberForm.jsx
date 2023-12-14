@@ -41,6 +41,7 @@ const NumberForm = ({
               }}
               variant="text"
               startIcon={isPhoneEdit ? null : <ModeEdit/>}
+              style={{color:"#16213E"}}
             >
               {isPhoneEdit ? "Cancel" : "Edit"}
             </Button>
@@ -71,6 +72,7 @@ const NumberForm = ({
             <Button
               variant="text"
               type="submit"
+              style={{color:"#16213E"}}
             >
               Save
             </Button>

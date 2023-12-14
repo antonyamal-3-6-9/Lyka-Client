@@ -1,9 +1,18 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import StateSelect from "./StateSelect";
 import axios from "axios";
 import FloatingAlert from "../FloatingAlert/FloatingAlert";
 import { Button } from "@mui/material";
+import Paper from "@mui/material/Paper";
+import { styled } from "@mui/material/styles";
+
+const Container = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(3),
+  color: theme.palette.text.secondary,
+}));
 
 const AddNewAddressForm = ({
   setAddressId,
@@ -35,6 +44,9 @@ const AddNewAddressForm = ({
     setNewAddress({ ...newAddress, [e.target.name]: e.target.value });
   };
 
+
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
@@ -65,6 +77,7 @@ const AddNewAddressForm = ({
     }
   };
 
+
   const handleCancel = () => {
     setIsAddNewAddress(false);
   };
@@ -77,7 +90,7 @@ const AddNewAddressForm = ({
         enable={alertEnable}
         severity={alertSeverity}
       />
-      <h3 className="text-center">Add New Address</h3>
+      <Container>
       <form className="needs-validation" noValidate onSubmit={handleSubmit}>
         <div className="row p-2">
           <div className="col-6">
@@ -239,7 +252,7 @@ const AddNewAddressForm = ({
         </div>
         <div className="row mt-5">
           <div className="col-lg-6 d-flex justify-content-center">
-            <Button type="submit" variant="outlined">
+            <Button type="submit" variant="contained" style={{backgroundColor: "#16213E"}}>
               Save
             </Button>
           </div>
@@ -247,15 +260,16 @@ const AddNewAddressForm = ({
           <div className="col-lg-6 d-flex justify-content-center">
             <Button
               type="button"
-              variant="outlined"
+              variant="contained"
               onClick={handleCancel}
+              style={{backgroundColor: "#0F3460"}}
             >
               Cancel
             </Button>
           </div>
         </div>
       </form>
-      ;
+      </Container>
     </>
   );
 };

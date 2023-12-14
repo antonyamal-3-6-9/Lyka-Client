@@ -3,6 +3,16 @@ import MakePayment from "./MakePayment";
 import axios from "axios";
 import FloatingAlert from "../FloatingAlert/FloatingAlert";
 
+import Paper from "@mui/material/Paper";
+import { styled } from "@mui/material/styles";
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(3),
+  color: theme.palette.text.secondary,
+}));
+
 const CheckoutPayment = ({ data, setData }) => {
 
   const BASE_URL = "http://127.0.0.1:8000/payments/";
@@ -94,130 +104,103 @@ const CheckoutPayment = ({ data, setData }) => {
       />
         <div className="row">
           <div className="col-lg-6 m-0 p-0">
+          <Item>
             {data.type === "multiple" ? (
+              
               <>
-                <div
-                  className="card ps-3 m-3"
-                  style={{ height: "80px" }}
-                >
                   <div className="row h-100 d-flex align-items-center">
                     <div className="col-lg-7">
-                      <h5>Selling Price: </h5>
+                      <h6>Selling Price: </h6>
                     </div>
                     <div className="col-lg-5">
-                      <h4>
-                        <strong>
+                      <h6 className="h6">
+                       
                           {formatAmountWithRupeeSymbol(
                             data.price_details.total_selling_price
                           )}
-                        </strong>
-                      </h4>
+                        
+                      </h6>
                     </div>
                   </div>
-                </div>
-                <div
-                  className="card ps-3 m-3"
-                  style={{ height: "80px" }}
-                >
+
                   <div className="row h-100 d-flex align-items-center">
                     <div className="col-lg-7">
-                      <h5>Discount: </h5>
+                      <h6>Discount: </h6>
                     </div>
                     <div className="col-lg-5">
-                      <h4>
-                        <strong>
+                      <h6 className="h6">
+                        
                           {formatAmountWithRupeeSymbol(
                             data.price_details.discount
                           )}
-                        </strong>
-                      </h4>
+                      
+                      </h6>
                     </div>
                   </div>
-                </div>
+                  
                 {data.price_details.coupon_discount !== 0 &&  
-                <div
-                  className="card ps-3 m-3"
-                  style={{ height: "80px" }}
-                >
+
                   <div className="row h-100 d-flex align-items-center">
                     <div className="col-lg-7">
-                      <h5>Coupon Discount </h5>
+                      <h6>Coupon Discount </h6>
                     </div>
                     <div className="col-lg-5">
-                      <h4>
-                        <strong>
+                      <h6 className="h6">
+                      
                           {formatAmountWithRupeeSymbol(
                             data.price_details.coupon_discount
                           )}
-                        </strong>
-                      </h4>
+                 
+                      </h6>
                     </div>
-                  </div>
                 </div>}
-                <div
-                  className="card ps-3 m-3"
-                  style={{ height: "80px" }}
-                >
                   <div className="row h-100 d-flex align-items-center">
                     <div className="col-lg-7">
-                      <h5>Taxes and charges: </h5>
+                      <h6>Taxes and charges: </h6>
                     </div>
                     <div className="col-lg-5">
-                      <h4>
-                        <strong>
+                      <h6 className="h6">
+                        
                           {formatAmountWithRupeeSymbol(
                             data.price_details.additional_charges
                           )}
-                        </strong>
-                      </h4>
+                        
+                      </h6>
                     </div>
                   </div>
-                </div>
-                <div
-                  className="card ps-3 m-3"
-                  style={{ height: "80px" }}
-                >
                   <div className="row h-100 d-flex align-items-center">
-                    <div className="col-lg-4">
-                      <h4>Total: </h4>
+                    <div className="col-lg-7">
+                      <h6>Shipping Charge: </h6>
                     </div>
-                    <div className="col-lg-8">
-                      <h2>
-                        <strong>
-                          {formatAmountWithRupeeSymbol(
-                            data.price_details.total_price
-                          )}
-                        </strong>
-                      </h2>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  className="card ps-3 m-3"
-                  style={{ height: "80px" }}
-                >
-                  <div className="row h-100 d-flex align-items-center">
-                    <div className="col-lg-4">
-                      <h4>Shipping Charge: </h4>
-                    </div>
-                    <div className="col-lg-8">
-                      <h2>
-                        <strong>
+                    <div className="col-lg-5">
+                      <h6 className="h6">
+                        
                           {formatAmountWithRupeeSymbol(
                             data.price_details.total_shipping_charge
                           )}
-                        </strong>
-                      </h2>
+                   
+                      </h6>
                     </div>
                   </div>
-                </div>
-              </>
+                  <div className="row h-100 d-flex align-items-center">
+                    <div className="col-lg-7">
+                      <h5>Total: </h5>
+                    </div>
+                    <div className="col-lg-5">
+                      <h5 className="h5">
+                        
+                          {formatAmountWithRupeeSymbol(
+                            data.price_details.total_price
+                          )}
+                        
+                      </h5>
+                    </div>
+                  </div>
+                  </>
+              
             ) : (
               <>
-                <div
-                  className="card ps-3 m-3"
-                  style={{ height: "80px" }}
-                >
+
                   <div className="row h-100 d-flex align-items-center">
                     <div className="col-lg-7">
                       <h5>Selling Price: </h5>
@@ -232,11 +215,8 @@ const CheckoutPayment = ({ data, setData }) => {
                       </h4>
                     </div>
                   </div>
-                </div>
-                <div
-                  className="card ps-3 m-3"
-                  style={{ height: "80px" }}
-                >
+   
+
                   <div className="row h-100 d-flex align-items-center">
                     <div className="col-lg-7">
                       <h5>Discount: </h5>
@@ -251,12 +231,9 @@ const CheckoutPayment = ({ data, setData }) => {
                       </h4>
                     </div>
                   </div>
-                </div>
+   
                 {data.coupon_discount !== "0" &&  
-                <div
-                  className="card ps-3 m-3"
-                  style={{ height: "80px" }}
-                >
+
                   <div className="row h-100 d-flex align-items-center">
                     <div className="col-lg-7">
                       <h5>Coupon Discount: </h5>
@@ -271,11 +248,8 @@ const CheckoutPayment = ({ data, setData }) => {
                       </h4>
                     </div>
                   </div>
-                </div>}
-                <div
-                  className="card ps-3 m-3"
-                  style={{ height: "80px" }}
-                >
+                }
+
                   <div className="row h-100 d-flex align-items-center">
                     <div className="col-lg-7">
                       <h5>Taxes and charges: </h5>
@@ -290,11 +264,7 @@ const CheckoutPayment = ({ data, setData }) => {
                       </h4>
                     </div>
                   </div>
-                </div>
-                <div
-                  className="card ps-3 m-3"
-                  style={{ height: "80px" }}
-                >
+
                   <div className="row h-100 d-flex align-items-center">
                     <div className="col-lg-4">
                       <h4>Shipping Charge: </h4>
@@ -309,11 +279,8 @@ const CheckoutPayment = ({ data, setData }) => {
                       </h2>
                     </div>
                   </div>
-                </div>
-                <div
-                  className="card ps-3 m-3"
-                  style={{ height: "80px" }}
-                >
+
+
                   <div className="row h-100 d-flex align-items-center">
                     <div className="col-lg-4">
                       <h4>Total: </h4>
@@ -328,23 +295,22 @@ const CheckoutPayment = ({ data, setData }) => {
                       </h2>
                     </div>
                   </div>
-                </div>
+      
               </>
             )}
             {coupons.map((coupon) => (
-              <div
-                className="card ps-3 m-3"
-              >
-                <div className="row h-100 d-flex align-items-center justify-content-center">
+
+              <div className="text-center">
                     <h5>{coupon.code}</h5>
                       <strong>{coupon.description}</strong>
                       <p>minimum Purchase: <strong>{coupon.minimum_purchase_amount}</strong></p>
                       <button className="btn btn-warning m-0 w-50" onClick={() => handleApplyCoupon(coupon.code)} disabled={isCouponApplied}>
                         Apply
                       </button>
-                </div>
-              </div>
+      
+            </div>
             ))}
+            </Item>
           </div>
           <div className="col-lg-6 m-0 p-0">
             <MakePayment />
