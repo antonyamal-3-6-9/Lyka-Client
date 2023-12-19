@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import MakePayment from "./MakePayment";
 import axios from "axios";
 import FloatingAlert from "../FloatingAlert/FloatingAlert";
+import { Button } from "@mui/material";
 
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
@@ -103,7 +104,7 @@ const CheckoutPayment = ({ data, setData }) => {
         severity={alertSeverity}
       />
         <div className="row">
-          <div className="col-lg-6 m-0 p-0">
+          <div className="col-lg-6">
           <Item>
             {data.type === "multiple" ? (
               
@@ -201,98 +202,92 @@ const CheckoutPayment = ({ data, setData }) => {
             ) : (
               <>
 
-                  <div className="row h-100 d-flex align-items-center">
+              <div className="row h-100 d-flex align-items-center">
                     <div className="col-lg-7">
-                      <h5>Selling Price: </h5>
+                      <h6>Selling Price: </h6>
                     </div>
                     <div className="col-lg-5">
-                      <h4>
-                        <strong>
+                      <h6 className="h6">
+                       
                           {formatAmountWithRupeeSymbol(
-                            data.price_details.item.selling_price
+                            data.price_details.item.total_selling_price
                           )}
-                        </strong>
-                      </h4>
+                        
+                      </h6>
                     </div>
                   </div>
-   
 
                   <div className="row h-100 d-flex align-items-center">
                     <div className="col-lg-7">
-                      <h5>Discount: </h5>
+                      <h6>Discount: </h6>
                     </div>
                     <div className="col-lg-5">
-                      <h4>
-                        <strong>
+                      <h6 className="h6">
+                        
                           {formatAmountWithRupeeSymbol(
                             data.price_details.item.discount
                           )}
-                        </strong>
-                      </h4>
+                      
+                      </h6>
                     </div>
                   </div>
-   
-                {data.coupon_discount !== "0" &&  
+                  
+                {data.price_details.coupon_discount !== 0 &&  
 
                   <div className="row h-100 d-flex align-items-center">
                     <div className="col-lg-7">
-                      <h5>Coupon Discount: </h5>
+                      <h6>Coupon Discount </h6>
                     </div>
                     <div className="col-lg-5">
-                      <h4>
-                        <strong>
+                      <h6 className="h6">
+                      
                           {formatAmountWithRupeeSymbol(
                             data.price_details.item.coupon_discount
                           )}
-                        </strong>
-                      </h4>
+                 
+                      </h6>
                     </div>
-                  </div>
-                }
-
+                </div>}
                   <div className="row h-100 d-flex align-items-center">
                     <div className="col-lg-7">
-                      <h5>Taxes and charges: </h5>
+                      <h6>Taxes and charges: </h6>
                     </div>
                     <div className="col-lg-5">
-                      <h4>
-                        <strong>
+                      <h6 className="h6">
+                        
                           {formatAmountWithRupeeSymbol(
                             data.price_details.item.additional_charges
                           )}
-                        </strong>
-                      </h4>
+                        
+                      </h6>
                     </div>
                   </div>
-
                   <div className="row h-100 d-flex align-items-center">
-                    <div className="col-lg-4">
-                      <h4>Shipping Charge: </h4>
+                    <div className="col-lg-7">
+                      <h6>Shipping Charge: </h6>
                     </div>
-                    <div className="col-lg-8">
-                      <h2>
-                        <strong>
+                    <div className="col-lg-5">
+                      <h6 className="h6">
+                        
                           {formatAmountWithRupeeSymbol(
-                            data.price_details.shipping_charge
+                            data.price_details.item.total_shipping_charge
                           )}
-                        </strong>
-                      </h2>
+                   
+                      </h6>
                     </div>
                   </div>
-
-
                   <div className="row h-100 d-flex align-items-center">
-                    <div className="col-lg-4">
-                      <h4>Total: </h4>
+                    <div className="col-lg-7">
+                      <h5>Total: </h5>
                     </div>
-                    <div className="col-lg-8">
-                      <h2>
-                        <strong>
+                    <div className="col-lg-5">
+                      <h5 className="h5">
+                        
                           {formatAmountWithRupeeSymbol(
-                            data.price_details.item.product_price
+                            data.price_details.item.total_price
                           )}
-                        </strong>
-                      </h2>
+                        
+                      </h5>
                     </div>
                   </div>
       
@@ -300,20 +295,22 @@ const CheckoutPayment = ({ data, setData }) => {
             )}
             {coupons.map((coupon) => (
 
-              <div className="text-center">
+              <div className="text-center p-2 m-3" style={{border: "1px dotted #0F3460", borderRadius: "5px"}}>
                     <h5>{coupon.code}</h5>
                       <strong>{coupon.description}</strong>
                       <p>minimum Purchase: <strong>{coupon.minimum_purchase_amount}</strong></p>
-                      <button className="btn btn-warning m-0 w-50" onClick={() => handleApplyCoupon(coupon.code)} disabled={isCouponApplied}>
+                      <Button variant="contained" onClick={() => handleApplyCoupon(coupon.code)} disabled={isCouponApplied} style={{backgroundColor: "#16213E"}}>
                         Apply
-                      </button>
+                      </Button>
       
             </div>
             ))}
             </Item>
           </div>
-          <div className="col-lg-6 m-0 p-0">
+          <div className="col-lg-6">
+          <Item>
             <MakePayment />
+            </Item>
           </div>
         </div>
       </div>

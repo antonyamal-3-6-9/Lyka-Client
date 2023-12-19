@@ -15,7 +15,7 @@ function Home() {
     <Category/>
     <ResponsiveAppBar/>
       <Header/>
-      <Contents />
+      {/* <Contents /> */}
       <ProductByCategory/>
     </>
   );

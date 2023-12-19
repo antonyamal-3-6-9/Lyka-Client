@@ -4,23 +4,74 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import FloatingAlert from "../FloatingAlert/FloatingAlert";
 import { useSelector } from "react-redux/es/hooks/useSelector";
+import Paper from "@mui/material/Paper";
+import { styled } from "@mui/material/styles";
+import { Button } from "@mui/material";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
+
+const Container = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(2),
+  color: theme.palette.text.secondary,
+}));
 
 const ProductCard = (props) => {
-
-
   const BASE_URL = "http://127.0.0.1:8000/cart/";
+
+  const sm = window.matchMedia("(max-width: 767px)");
+  const md = window.matchMedia("(max-width: 992px)");
+  const lg = window.matchMedia("(max-width: 1400px");
+
+  const isLoggedIn = useSelector(
+    (state) => state.customerAuth.isCustomerLoggedIn
+  );
+
+  const navigate = useNavigate();
+
+  const [smallMedia, setSmallMedia] = useState(null);
+  const [mediumMedia, setMediumMedia] = useState(null);
+  const [largeMedia, setLargeMedia] = useState(null);
+
   const [alertData, setAlertData] = useState("");
   const [alertSeverity, setAlertSeverity] = useState("");
   const [alertEnable, setAlertEnable] = useState(false);
-  const navigate = useNavigate()
-  const isLoggedIn = useSelector((state) => state.customerAuth.isCustomerLoggedIn)
+
+  const checkMedia = () => {
+    if (sm.matches) {
+      setSmallMedia(true);
+    } else {
+      setSmallMedia(false);
+    }
+
+    if (md.matches) {
+      setMediumMedia(true);
+    } else {
+      setMediumMedia(false);
+    }
+
+    if (lg.matches) {
+      setLargeMedia(true);
+    } else {
+      setLargeMedia(false);
+    }
+  };
+
+  useEffect(() => {
+    checkMedia();
+    console.log(smallMedia, mediumMedia, largeMedia);
+  });
+
+  window.addEventListener("resize", () => {
+    checkMedia();
+  });
 
   const handleLinkClick = () => {
     localStorage.setItem("item_id", props.unit_id);
   };
 
   const handleAddToCart = async () => {
-
     if (!isLoggedIn) {
       setAlertData("Login FIrst");
       setAlertEnable(true);
@@ -29,9 +80,25 @@ const ProductCard = (props) => {
     }
 
     const token = localStorage.getItem("token");
+    try {
+      const inCartResponse = await axios.get(
+        `${BASE_URL}item-in-cart/${props.unit_id}/`,
+        {
+          headers: {
+            "content-Type": "Application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (inCartResponse.status === 200) {
         try {
-          const inCartResponse = await axios.get(
-            `${BASE_URL}item-in-cart/${props.unit_id}/`,
+          const addToCartResponse = await axios.post(
+            `${BASE_URL}add-to-cart/`,
+            {
+              product_id: props.key,
+              quantity: 1,
+              unit_id: props.unit_id,
+            },
             {
               headers: {
                 "content-Type": "Application/json",
@@ -39,94 +106,100 @@ const ProductCard = (props) => {
               },
             }
           );
-
-          if (inCartResponse.status === 200) {
-            try {
-              const addToCartResponse = await axios.post(
-                `${BASE_URL}add-to-cart/`,
-                {
-                  product_id: props.key,
-                  quantity: 1,
-                  unit_id: props.unit_id,
-                },
-                {
-                  headers: {
-                    "content-Type": "Application/json",
-                    Authorization: `Bearer ${token}`,
-                  },
-                }
-              );
-              if (addToCartResponse.status === 201) {
-                setAlertData("Item Added to the cart");
-                setAlertEnable(true);
-                setAlertSeverity("success");
-              }
-            } catch (error) {
-              setAlertData(error.response.data.message);
-              setAlertEnable(true);
-              setAlertSeverity("error");
-            }
+          if (addToCartResponse.status === 201) {
+            setAlertData("Item Added to the cart");
+            setAlertEnable(true);
+            setAlertSeverity("success");
           }
         } catch (error) {
           setAlertData(error.response.data.message);
           setAlertEnable(true);
-          setAlertSeverity("info");
+          setAlertSeverity("error");
         }
+      }
+    } catch (error) {
+      setAlertData(error.response.data.message);
+      setAlertEnable(true);
+      setAlertSeverity("info");
+    }
   };
 
   const formatAmountWithRupeeSymbol = (amount) => {
-    if (typeof amount !== 'number' || isNaN(amount)) {
-      return 'Invalid Amount';
+    if (typeof amount !== "number" || isNaN(amount)) {
+      return "Invalid Amount";
     }
-    const formattedAmount = amount.toLocaleString('en-IN', {
+    const formattedAmount = amount.toLocaleString("en-IN", {
       maximumFractionDigits: 2,
-      style: 'currency',
-      currency: 'INR',
+      style: "currency",
+      currency: "INR",
     });
-  
+
     return formattedAmount;
   };
 
-    const handleBuyNow = async () => {
-      if (!isLoggedIn) {
-        setAlertData("Login FIrst");
-        setAlertEnable(true);
-        setAlertSeverity("error");
-        return;
-      }
-  
-      if (props.stock <= 0){
-        setAlertData("Item out of stock");
-        setAlertEnable(true);
-        setAlertSeverity("error");
-        return;
-      }
-      const token = localStorage.getItem('token')
-      try {
-        const orderCreateResponse = await axios.post(
-          `http://127.0.0.1:8000/order/create-single-order/`,
-          {
-            unit_id: props.unit_id,
-            quantity: 1,
+  const handleBuyNow = async () => {
+    if (!isLoggedIn) {
+      setAlertData("Login FIrst");
+      setAlertEnable(true);
+      setAlertSeverity("error");
+      return;
+    }
+
+    if (props.stock <= 0) {
+      setAlertData("Item out of stock");
+      setAlertEnable(true);
+      setAlertSeverity("error");
+      return;
+    }
+    const token = localStorage.getItem("token");
+    try {
+      const orderCreateResponse = await axios.post(
+        `http://127.0.0.1:8000/order/create-single-order/`,
+        {
+          unit_id: props.unit_id,
+          quantity: 1,
+        },
+        {
+          headers: {
+            "content-Type": "Application/json",
+            Authorization: `Bearer ${token}`,
           },
-          {
-            headers: {
-              "content-Type": "Application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (orderCreateResponse.status === 201){
-          console.log(orderCreateResponse)
-          sessionStorage.setItem("order_id", orderCreateResponse.data.order_id)
-          navigate("/checkout")
         }
-      } catch (error) {
-        setAlertData(error.response.data.message);
-        setAlertEnable(true);
-        setAlertSeverity("error");
+      );
+      if (orderCreateResponse.status === 201) {
+        console.log(orderCreateResponse);
+        sessionStorage.setItem("order_id", orderCreateResponse.data.order_id);
+        navigate("/checkout");
       }
-    };
+    } catch (error) {
+      setAlertData(error.response.data.message);
+      setAlertEnable(true);
+      setAlertSeverity("error");
+    }
+  };
+
+  if (smallMedia === null && largeMedia === null && mediumMedia === null) {
+    return null;
+  }
+
+  const laptopImage = () => {
+    const laptopImages = document.getElementsByClassName("Laptops");
+    laptopImages.forEach(element => {
+      if (sm.matches) {
+        // Code to execute when the screen is smaller than or equal to 767px
+        element.style.width = "160px";
+      } else if (md.matches) {
+        // Code to execute when the screen is smaller than or equal to 992px
+        element.style.width = "200px";
+      } else if (lg.matches) {
+        // Code to execute when the screen is smaller than or equal to 1200px
+        element.style.width = "240px";
+      } else {
+        // Code to execute for larger screens
+        element.style.width = "300px";
+      }
+    })
+  }
 
   return (
     <div className="container py-5">
@@ -136,82 +209,94 @@ const ProductCard = (props) => {
         enable={alertEnable}
         setEnable={setAlertEnable}
       />
-      <div className="row">
-        <div className="col-lg-12 m-0 p-0">
-        <div className="card">
-          <ul className="list-group shadow">
-            <li className="list-group-item">
-              <div className="media align-items-lg-center flex-column flex-lg-row">
-                <div className="container-fluid">
-                  <div className="row">
-                    <div className="col-lg-6">
-                      <img
-                        src={`${props.thumbnail}`}
-                        alt="Generic placeholder image"
-                        // style={
-                        //   props.mainCategory === "Laptops"
-                        //     ? { width: "400px", height: "300px" }
-                        //     : { width: "200px", height: "300px" }
-                        // }
-                        className="order-1 order-lg-1"
-                      />
-                    </div>
-                    <div className="col-lg-6 d-flex align">
-                      <div className="row">
-                        <div className="col-lg-12">
-                          <p>{props.description}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="media-body order-2 order-lg-2 ml-lg-5">
-                  <Link
-                    to={`/product/${props.slug}/`}
-                    onClick={handleLinkClick}
-                  >
-                    {" "}
-                    <h2 className="mt-0 mb-1 text-dark">
-                      {`${props.name} ${props.variant} ${props.color}`}
-                    </h2>
-                  </Link>
-
-                  <h5>
-                    <span className="text-decoration-line-through">
-                      {formatAmountWithRupeeSymbol(props.sellingPrice)}
-                    </span>{" "}
-                    <span className="product_price price-new">
-                      {formatAmountWithRupeeSymbol(props.offerPrice)}{" "}
-                    </span>
-                  </h5>
-
-                  <hr className="mb-2 mt-1 seperator" />
-                  <div className="d-flex align-items-center justify-content-between mt-1">
-                    <ul className="list-inline small w-50">
-                      <div className="row">
-                        <div className="col-lg-6">
-                          <button
-                            className="btn btn-outline-warning"
-                            onClick={handleAddToCart}
-                          >
-                            Add To Cart
-                          </button>
-                        </div>
-                        <div className="col-lg-6">
-                          <button className="btn btn-outline-info" onClick={handleBuyNow}>
-                            Buy Now
-                          </button>
-                        </div>
-                      </div>
-                    </ul>
+      <Container>
+        <div className="media align-items-lg-center flex-column flex-lg-row">
+          <div className="container-fluid">
+            <div className="row mb-3">
+              <div
+                className={`col-lg-6 col-md-6 col-sm-6 col-xs-12 ${
+                  smallMedia &&
+                  "mb-3 d-flex justify-content-center align-items-center"
+                }`}
+              >
+                <img
+                  src={`${props.thumbnail}`}
+                  alt="Generic placeholder image"
+                  style={
+                    props.mainCategory === "Laptops" && smallMedia
+                      ? { width: "160x", height: "122px" }
+                      : props.mainCategory === "Laptops" && mediumMedia
+                      ? { width: "192", height: "144" }
+                      : props.mainCategory === "Laptops" && largeMedia
+                      ? { width: "224", height: "168" }
+                      : { width: "224", height: "168" }
+                  }
+                  className={`${props.MainCategory}`}
+                />
+              </div>
+              <div
+                className={`col-lg-6 col-md-6 col-sm-6 col-xs-6 ${
+                  smallMedia && "d-none"
+                }`}
+              >
+                <div className="row">
+                  <div className="col-lg-12">
+                    <h6 className="h6">{props.description}</h6>
                   </div>
                 </div>
               </div>
-            </li>
-          </ul>
+            </div>
+          </div>
+          <div className="media-body order-2 order-lg-2 ml-lg-5 ml-md-5">
+            <Link to={`/product/${props.slug}/`} onClick={handleLinkClick}>
+              {" "}
+              <h4 className="text-dark h4 mb-0">
+                {`${props.name} ${props.variant} ${props.color}`}
+              </h4>
+            </Link>
+            <h5>
+              <span className="text-decoration-line-through h5 text-dark">
+                {formatAmountWithRupeeSymbol(props.sellingPrice)}
+              </span>{" "}
+              <span className="product_price price-new h5 text-dark">
+                {formatAmountWithRupeeSymbol(props.offerPrice)}{" "}
+              </span>
+            </h5>
+
+            <hr className="seperator" />
+            <div
+              className={`justify-content-start d-flex ${
+                smallMedia ? "d-flex justify-content-around" : ""
+              }`}
+            >
+              <Button
+                variant="contained"
+                onClick={handleAddToCart}
+                endIcon={<ShoppingCartIcon />}
+                style={
+                  smallMedia
+                    ? { marginBottom: "20px", backgroundColor: "#16213E" }
+                    : { backgroundColor: "#16213E", marginRight: "50px" }
+                }
+              >
+                Add To Cart
+              </Button>
+              <Button
+                variant="contained"
+                style={
+                  smallMedia
+                    ? { marginBottom: "20px", backgroundColor: "#16213E" }
+                    : { backgroundColor: "#16213E" }
+                }
+                endIcon={<ShoppingBagIcon />}
+                onClick={handleBuyNow}
+              >
+                Buy Now
+              </Button>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </Container>
     </div>
   );
 };
