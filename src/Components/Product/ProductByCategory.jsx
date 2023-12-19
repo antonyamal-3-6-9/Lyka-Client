@@ -36,9 +36,9 @@ const ProductByCategory = () => {
       <div id="product-by-category-container">
         <div className="container-fluid">
           <ProductNav />
-          <div className="row">
+          <div className="container">
             {products.map((item) => (
-                <div className="col-lg-12">
+                <div className="row m-4">
                   <ProductCard 
                     unit_id={item.unit_id}
                     key={item.product.productId}

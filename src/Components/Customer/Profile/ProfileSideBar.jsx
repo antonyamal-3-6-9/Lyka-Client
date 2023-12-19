@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../Profile/profile.css";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
@@ -8,15 +8,38 @@ import DirectionsIcon from "@mui/icons-material/Directions";
 
 const ProfileSideBar = ({ options, setOptions }) => {
   const navigate = useNavigate();
-
+  const sm = window.matchMedia("(max-width: 767px)");
+  const [smMedia, setSmMedia] = useState(null);
   const [option, setOption] = useState(options);
-  const [isActive, setIsActive] = useState(true);
+
+  const changeMedia = () => {
+    if (sm.matches) {
+      setSmMedia(true);
+    } else {
+      setSmMedia(false);
+    }
+  };
+
+  window.addEventListener("resize", () => {
+    changeMedia();
+  });
+
+  useEffect(() => {
+    changeMedia();
+  }, []);
 
   return (
     <>
-      <div className="card m-0 rounded-0 d-flex border border-0">
+      <div
+        className={`m-0 rounded-0 d-flex border border-0 ${
+          smMedia ? "justify-content-between" : "card"
+        }`}
+      >
         <Button
-          variant={`${option === "orders" ? "contained" : "outlined"}`}
+          variant={
+            option === "orders"
+              ? "contained" : "outlined"
+          }
           onClick={() => {
             setOptions("orders");
             setOption("orders");
@@ -25,15 +48,18 @@ const ProfileSideBar = ({ options, setOptions }) => {
           startIcon={<ShoppingBasketIcon />}
           style={{
             borderColor: "#16213E",
+            marginBottom: !smMedia ? "15px" : null,
             color: option === "orders" ? "#FFFFFF" : "#16213E",
-            marginBottom: "15px",
             backgroundColor: option === "orders" ? "#16213E" : null,
+            margin: smMedia ? "10px" : null,
           }}
         >
           Orders
         </Button>
         <Button
-          variant={`${option === "profile" ? "contained" : "outlined"}`}
+          variant={`${
+            option === "profile" && smMedia === false ? "contained" : "outlined"
+          } ${smMedia && "text"}`}
           onClick={() => {
             setOptions("profile");
             setOption("profile");
@@ -42,15 +68,18 @@ const ProfileSideBar = ({ options, setOptions }) => {
           style={{
             borderColor: "#16213E",
             color: option === "profile" ? "#FFFFFF" : "#16213E",
-            marginBottom: "15px",
+            marginBottom: !smMedia ? "15px" : null,
             backgroundColor: option === "profile" ? "#16213E" : null,
+            margin: smMedia ? "10px" : null,
           }}
           startIcon={<PermIdentityIcon />}
         >
           Profile
         </Button>{" "}
         <Button
-          variant={`${option === "address" ? "contained" : "outlined"}`}
+          variant={`${
+            option === "address" && smMedia === false ? "contained" : "outlined"
+          } ${smMedia && "text"}`}
           onClick={() => {
             setOptions("address");
             setOption("address");
@@ -60,8 +89,9 @@ const ProfileSideBar = ({ options, setOptions }) => {
           style={{
             borderColor: "#16213E",
             color: option === "address" ? "#FFFFFF" : "#16213E",
-            marginBottom: "15px",
+            marginBottom: !smMedia ? "15px" : null,
             backgroundColor: option === "address" ? "#16213E" : null,
+            margin: smMedia ? "10px" : null,
           }}
         >
           Address

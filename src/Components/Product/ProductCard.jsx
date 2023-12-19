@@ -58,13 +58,56 @@ const ProductCard = (props) => {
     }
   };
 
+  const ResponsiveImage = () => {
+    const laptopImages = document.getElementsByClassName("Laptops");
+    const PhoneImages = document.getElementsByClassName("Mobiles");
+    const CameraImages = document.getElementsByClassName("Cameras");
+
+    for (let element of laptopImages) {
+      if (sm.matches) {
+        element.style.width = "160px";
+      } else if (md.matches) {
+        element.style.width = "200px";
+      } else if (lg.matches) {
+        element.style.width = "240px";
+      } else {
+        element.style.width = "300px";
+      }
+    }
+
+    for (let element of PhoneImages) {
+      if (sm.matches) {
+        element.style.width = "160px";
+      } else if (md.matches) {
+        element.style.width = "200px";
+      } else if (lg.matches) {
+        element.style.width = "240px";
+      } else {
+        element.style.width = "300px";
+      }
+    }
+
+    for (let element of CameraImages) {
+      if (sm.matches) {
+        element.style.width = "160px";
+      } else if (md.matches) {
+        element.style.width = "200px";
+      } else if (lg.matches) {
+        element.style.width = "240px";
+      } else {
+        element.style.width = "300px";
+      }
+    }
+  };
+
   useEffect(() => {
     checkMedia();
-    console.log(smallMedia, mediumMedia, largeMedia);
+    ResponsiveImage();
   });
 
   window.addEventListener("resize", () => {
     checkMedia();
+    ResponsiveImage();
   });
 
   const handleLinkClick = () => {
@@ -182,27 +225,8 @@ const ProductCard = (props) => {
     return null;
   }
 
-  const laptopImage = () => {
-    const laptopImages = document.getElementsByClassName("Laptops");
-    laptopImages.forEach(element => {
-      if (sm.matches) {
-        // Code to execute when the screen is smaller than or equal to 767px
-        element.style.width = "160px";
-      } else if (md.matches) {
-        // Code to execute when the screen is smaller than or equal to 992px
-        element.style.width = "200px";
-      } else if (lg.matches) {
-        // Code to execute when the screen is smaller than or equal to 1200px
-        element.style.width = "240px";
-      } else {
-        // Code to execute for larger screens
-        element.style.width = "300px";
-      }
-    })
-  }
-
   return (
-    <div className="container py-5">
+    <>
       <FloatingAlert
         message={alertData}
         severity={alertSeverity}
@@ -222,16 +246,16 @@ const ProductCard = (props) => {
                 <img
                   src={`${props.thumbnail}`}
                   alt="Generic placeholder image"
-                  style={
-                    props.mainCategory === "Laptops" && smallMedia
-                      ? { width: "160x", height: "122px" }
-                      : props.mainCategory === "Laptops" && mediumMedia
-                      ? { width: "192", height: "144" }
-                      : props.mainCategory === "Laptops" && largeMedia
-                      ? { width: "224", height: "168" }
-                      : { width: "224", height: "168" }
-                  }
-                  className={`${props.MainCategory}`}
+                  // style={
+                  //   props.mainCategory === "Laptops" && smallMedia
+                  //     ? { width: "160x", height: "122px" }
+                  //     : props.mainCategory === "Laptops" && mediumMedia
+                  //     ? { width: "192", height: "144" }
+                  //     : props.mainCategory === "Laptops" && largeMedia
+                  //     ? { width: "224", height: "168" }
+                  //     : { width: "224", height: "168" }
+                  // }
+                  className={props.mainCategory}
                 />
               </div>
               <div
@@ -297,7 +321,7 @@ const ProductCard = (props) => {
           </div>
         </div>
       </Container>
-    </div>
+    </>
   );
 };
 
