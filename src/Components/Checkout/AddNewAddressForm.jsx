@@ -251,13 +251,13 @@ const AddNewAddressForm = ({
           </div>
         </div>
         <div className="row mt-5">
-          <div className="col-lg-6 d-flex justify-content-center">
+          <div className="col-lg-6 col-md-5 col-sm-4 col-xs-3 d-flex justify-content-center">
             <Button type="submit" variant="contained" style={{backgroundColor: "#16213E"}}>
               Save
             </Button>
           </div>
 
-          <div className="col-lg-6 d-flex justify-content-center">
+          <div className="col-lg-6 col-md-5 col-sm-4 col-xs-3 d-flex justify-content-center">
             <Button
               type="button"
               variant="contained"

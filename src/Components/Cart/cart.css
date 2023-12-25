@@ -1,0 +1,15 @@
+@media (max-width: 1200px) {
+    #cart-container{
+        width: 100%;
+    }
+}
+
+@media (min-width: 1200px) {
+    #cart-container{
+        width: 83%;
+    }
+}
+
+#cart-container{
+    margin-top: 84px;
+}

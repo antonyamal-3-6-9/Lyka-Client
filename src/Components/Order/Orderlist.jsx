@@ -91,19 +91,6 @@ const Orderlist = () => {
     return null;
   }
 
-  const changeFont = (elementId) => {
-    const element = document.getElementById(elementId);
-    Array.from(element.getElementsByClassName("listing")).forEach((e) => {
-      e.classList.add("lyka-font");
-    });
-  };
-
-  const revertFont = (elementId) => {
-    const element = document.getElementById(elementId);
-    Array.from(element.getElementsByClassName("listing")).forEach((e) => {
-      e.classList.remove("lyka-font");
-    });
-  };
 
   return (
     <>
@@ -115,35 +102,12 @@ const Orderlist = () => {
           <div
             className="p-3"
             id={order.order_id}
-            onMouseOver={() => changeFont(order.order_id)}
-            onMouseOut={() => revertFont(order.order_id)}
           >
-            <div className="row" style={{ height: "5vh" }}>
+            <div className="row">
               <div className="col-lg-2 d-flex justify-content-center align-items-center">
-                <FontAwesomeIcon
-                  icon={
-                    order.order_status === "Delivered"
-                      ? faHandshake
-                      : order.order_status === "Cancelled"
-                      ? faShopSlash
-                      : order.order_status === "Returned"
-                      ? faThumbsDown
-                      : order.order_status === "Rejected"
-                      ? faTimesCircle
-                      : order.order_status === "Placed"
-                      ? faThumbsUp
-                      : order.order_status === "Return Requested"
-                      ? faArrowLeft
-                      : order.order_status === "picked Up for Return"
-                      ? faTruckPickup
-                      : order.order_status === "In Transist"
-                      ? faTruckFast
-                      : null
-                  }
-                  style={{
-                    width: "100px",
-                    height: "50px",
-                  }}
+                <img
+                  src={`http://127.0.0.1:8000/${order.item.product.thumbnail}`}
+                  style={{width: "50px"}}
                 />
               </div>
               <div
@@ -151,16 +115,16 @@ const Orderlist = () => {
                 style={{ height: "100%" }}
               >
                 <Link to={`/order/${order.order_id}`}>
-                  <h4 className="h5 listing">{`${order.item.product.brand} ${order.item.product.name} ${order.item.product_variant.variation} ${order.item.product_color.color}`}</h4>
+                  <h4 className="h5 listing text-dark">{`${order.item.product.brand} ${order.item.product.name} ${order.item.product_variant.variation} ${order.item.product_color.color}`}</h4>
                 </Link>
               </div>
               <div className="col-lg-2 d-flex justify-content-center align-items-center">
-                <h4 className="h5 listing">
+                <h4 className="h5 listing text-dark">
                   {formatAmountWithRupeeSymbol(order.item.product_price)}
                 </h4>
               </div>
               <div className="col-lg-4 d-flex justify-content-center align-items-center">
-                <h5 className="h5 listing">{order.order_status}</h5>
+                <h5 className="h5 listing text-dark">{order.order_status}</h5>
               </div>
             </div>
           </div>

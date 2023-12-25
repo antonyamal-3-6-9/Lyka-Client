@@ -20,6 +20,7 @@ const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
   padding: theme.spacing(3),
+  marginBottom: theme.spacing(3),
   color: theme.palette.text.secondary,
 }));
 
@@ -314,7 +315,7 @@ const CustomerProfile = () => {
 
   return (
     <>
-      <div className="container-fluid" style={{backgroundColor: "#FCFFE7", marginTop: "84px", width: "83%"}}>
+      <div className="container-fluid" id="profile-base" style={{backgroundColor: "#FCFFE7", marginTop: "84px"}}>
         <div className="row">
           <div className="col-lg-3">
             <Item>
@@ -323,7 +324,7 @@ const CustomerProfile = () => {
                 <div className="col-lg-3 d-flex justify-content-center align-items-start">
                   <AccountCircleIcon />
                 </div>
-                <div className="col-lg-9 d-flex justify-content-start align-items-start">
+                <div className="col-lg-9 d-flex justify-content-center align-items-start">
                       <h5 className="text-start h4">{customerData.user.first_name} {customerData.user.last_name}</h5>
                 </div>
               </div>

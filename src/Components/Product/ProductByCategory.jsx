@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
 import ProductNav from "./ProductNav";
 import axios from "axios";
+import "./product.scss";
 
 const ProductByCategory = () => {
   const BASE_URL = "http://127.0.0.1:8000/product/";
@@ -33,12 +34,10 @@ const ProductByCategory = () => {
 
   return (
     <>
-      <div id="product-by-category-container">
-        <div className="container-fluid">
           <ProductNav />
-          <div className="container">
+          <div className="container-fluid" id="product-container">
             {products.map((item) => (
-                <div className="row m-4">
+                <div className="row m-3">
                   <ProductCard 
                     unit_id={item.unit_id}
                     key={item.product.productId}
@@ -58,8 +57,6 @@ const ProductByCategory = () => {
                 </div>
             ))}
           </div>
-        </div>
-      </div>
     </>
   );
 };

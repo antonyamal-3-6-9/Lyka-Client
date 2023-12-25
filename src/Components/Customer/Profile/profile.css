@@ -12,3 +12,15 @@
 .option:hover{
     font-size: 1.2rem;
 }
+
+@media (min-width: 964px) {
+    #profile-base {
+      width: 83%;
+    }
+  }
+
+@media (max-width: 964px) {
+    #profile-base{
+        width: 100%
+    }
+}

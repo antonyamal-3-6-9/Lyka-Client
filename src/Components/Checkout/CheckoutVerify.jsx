@@ -133,7 +133,7 @@ const CheckoutVerify = ({ data, setData, isSingle, setIsItemVerified, calculateM
       severity={alertSeverity}
     />
       <div className="row w-100 checkout-verify-container">
-        <table className="table table-hover ">
+        <table className="table table-hover table-responsive">
           <thead>
             <tr>
               <th style={{ width: "20%" }}>Thumbnail</th>

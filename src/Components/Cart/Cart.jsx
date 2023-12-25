@@ -1,5 +1,4 @@
 import React from "react";
-import { Icon } from '@mui/material';
 import { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
@@ -17,7 +16,8 @@ import { Button } from "@mui/material";
 import StoreIcon from "@mui/icons-material/Store";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import { useLocation } from "react-router-dom";
-import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
+import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+import "../Cart/cart.css"
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -34,8 +34,7 @@ const ShoppingCart = () => {
   const [isCartEmpty, setIsCartEmpty] = useState(null);
   const [totalItems, setIsTotalItems] = useState(0);
   const navigate = useNavigate();
-  const location = useLocation()
-
+  const location = useLocation();
 
   const isLoggedIn = useSelector(
     (state) => state.customerAuth.isCustomerLoggedIn
@@ -233,6 +232,10 @@ const ShoppingCart = () => {
     }
   };
 
+  const slicedString = (sentence) => {
+    String(sentence).slice(0, 25).replace();
+  };
+
   return (
     <>
       <FloatingAlert
@@ -244,98 +247,96 @@ const ShoppingCart = () => {
       {isCartEmpty || !isLoggedIn ? (
         <>
           <div className="container d-flex justify-content-center align-items-center mt-5 pt-5">
-              <Item style={{padding: "50px"}}>
-                  {isLoggedIn ? <CancelPresentationIcon style={{height: "40px", width: "40px", color: "#092635", marginLeft: "65px", marginBottom: "10px"}} /> : null }
-                <h2 className="text-center h2 mb-5">
-                  {isLoggedIn ? "Empty Cart" : "Login Now"}
-                </h2>
-                <Button
-                  to={isLoggedIn ? "/" : "/customer-login"}
-                  onClick={() => {navigate(isLoggedIn ? "/" : "customer-login")}}
-                  variant="contained"
-                >
-                  {" "}
-                  {isLoggedIn ? "Continue Shopping" : "Login now"}
-                </Button>
-                </Item>
-            </div>
+            <Item style={{ padding: "50px" }}>
+              {isLoggedIn ? (
+                <CancelPresentationIcon
+                  style={{
+                    height: "40px",
+                    width: "40px",
+                    color: "#092635",
+                    marginLeft: "65px",
+                    marginBottom: "10px",
+                  }}
+                />
+              ) : null}
+              <h2 className="text-center h2 mb-5">
+                {isLoggedIn ? "Empty Cart" : "Login Now"}
+              </h2>
+              <Button
+                to={isLoggedIn ? "/" : "/customer-login"}
+                onClick={() => {
+                  navigate(isLoggedIn ? "/" : "customer-login");
+                }}
+                variant="contained"
+              >
+                {" "}
+                {isLoggedIn ? "Continue Shopping" : "Login now"}
+              </Button>
+            </Item>
+          </div>
         </>
       ) : (
         <div
           className="container-fluid"
-          style={{ width: "83%", marginTop: "84px" }}
+          id="cart-container"
         >
           <div className="row">
-            <div className="col-lg-9">
-              <Item style={{height: "80vh", overflow:"scroll", padding: "30px"}}>
-                <h3 className="h3 text-center">Items</h3>
-                <table className="table table-hover">
-                  <thead>
-                    <tr>
-                      <th style={{ width: "10%" }}>Thumbnail</th>
-                      <th style={{ width: "30%" }}>Product</th>
-                      <th style={{ width: "12%" }}>Price</th>
-                      <th style={{ width: "10%" }}>Quantity</th>
-                      <th style={{ width: "18%" }}>Remove</th>
-                    </tr>
-                  </thead>
+            <div className="col-lg-9 mb-3 col-md-12">
+              <Item>
+                <div className="container-fluid">
+                  <h3 className="h3 text-dark text-center">Cart</h3>
+                  {cartItems.map((item) => (
+                    <><hr></hr>
+                    <div className="row m-3">
+                      <div className="col-sm-3">
+                        <img
+                          src={`http://127.0.0.1:8000/${item.unit.product.thumbnail}/`}
+                          alt={item.unit.product.name}
+                          width="100px"
+                        />
+                      </div>
+                      <div className="col-sm-5">
+                        <h6 className="h6">{`${item.unit.product.brand} ${item.unit.product.name} ${item.unit.variant.variation} ${item.unit.color_code.color}`}</h6>
+                        <h6 className="h6">
+                          {formatAmountWithRupeeSymbol(item.item_price)}
+                        </h6>
+                      </div>
+                      <div className="col-sm-2">
+                        <div className="d-flex justify-content-center align-items-center" id="add-container">
+                          <IconButton
+                            onClick={() => handleDecrementCart(item.id)}
+                          >
+                            <RemoveIcon />
+                          </IconButton>
+                          <Typography
+                            variant="h5"
+                            component="h5"
+                            style={{ fontWeight: "bolder" }}
+                          >
+                            {item.quantity}
+                          </Typography>
 
-                  <tbody>
-                    {cartItems.map((item) => (
-                      <tr key={item.id}>
-                        <td>
-                          <img
-                            src={`http://127.0.0.1:8000/${item.unit.product.thumbnail}/`}
-                            alt={item.unit.product.name}
-                            style={{ width: "100px", height: "auto" }}
-                          />
-                        </td>
-                        <td>
-                          <h5  className="h6">{`${item.unit.product.brand} ${item.unit.product.name} ${item.unit.variant.variation} ${item.unit.color_code.color}`}</h5>
-                        </td>
-                        <td>
-                          <h5 className="h6">
-                            {formatAmountWithRupeeSymbol(item.item_price)}
-                          </h5>
-                        </td>
-                        <td className="quantity-cell">
-                          <div className="d-flex justify-content-center align-items-center">
-                            <IconButton
-                              onClick={() => handleDecrementCart(item.id)}
-                            >
-                              <RemoveIcon />
-                            </IconButton>
-                            <Typography
-                              variant="h5"
-                              component="h5"
-                              style={{ fontWeight: "bolder" }}
-                            >
-                              {item.quantity}
-                            </Typography>
-
-                            <IconButton
-                              onClick={() => handleIncrementCart(item.id)}
-                            >
-                              <AddIcon />
-                            </IconButton>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="text-right">
-                            <IconButton
-                              onClick={() => handleDeleteItem(item.id)}
-                            >
-                              <ClearIcon />
-                            </IconButton>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                          <IconButton
+                            onClick={() => handleIncrementCart(item.id)}
+                          >
+                            <AddIcon />
+                          </IconButton>
+                        </div>
+                      </div>
+                      <div className="col-sm-2">
+                      <IconButton onClick={() => handleDeleteItem(item.id)}>
+                            <ClearIcon />
+                          </IconButton>
+                      </div>
+                    </div>
+                    <hr></hr>
+                    </>
+                  ))}
+                </div>
+                
               </Item>
             </div>
-            <div className="col-lg-3">
+            <div className="col-lg-3 col-md-12">
               <Item>
                 <div className="pb-3">
                   {" "}
@@ -350,17 +351,21 @@ const ShoppingCart = () => {
                     size="large"
                     startIcon={<CurrencyRupeeIcon />}
                     onClick={OnCheckOut}
-                    style={{marginBottom: "20px", backgroundColor: "#16213E"}}
+                    style={{ marginBottom: "20px", backgroundColor: "#16213E", marginRight: "10px" }}
                   >
-                    CheckOut
+                    Place Order
                   </Button>
                   <Button
                     variant="outlined"
                     endIcon={<StoreIcon />}
                     onClick={() => navigate("/")}
-                    style={{marginBottom: "20px", borderColor: "#16213E", color: "#16213E"}}
+                    style={{
+                      marginBottom: "20px",
+                      borderColor: "#16213E",
+                      color: "#16213E",
+                    }}
                   >
-                    <Link style={{color: "#16213E"}}>Continue Shopping</Link>
+                    <Link style={{ color: "#16213E" }}>Return</Link>
                   </Button>
                 </div>
               </Item>
