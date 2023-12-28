@@ -284,7 +284,7 @@ const ShoppingCart = () => {
             <div className="col-lg-9 mb-3 col-md-12">
               <Item>
                 <div className="container-fluid">
-                  <h3 className="h3 text-dark text-center">Cart</h3>
+                  <p>/cart</p>
                   {cartItems.map((item) => (
                     <><hr></hr>
                     <div className="row m-3">
@@ -296,8 +296,8 @@ const ShoppingCart = () => {
                         />
                       </div>
                       <div className="col-sm-5">
-                        <h6 className="h6">{`${item.unit.product.brand} ${item.unit.product.name} ${item.unit.variant.variation} ${item.unit.color_code.color}`}</h6>
-                        <h6 className="h6">
+                        <p className="text-dark">{`${item.unit.product.brand} ${item.unit.product.name} ${item.unit.variant.variation} ${item.unit.color_code.color}`}</p>
+                        <h6 className="h6 text-dark">
                           {formatAmountWithRupeeSymbol(item.item_price)}
                         </h6>
                       </div>
@@ -308,13 +308,11 @@ const ShoppingCart = () => {
                           >
                             <RemoveIcon />
                           </IconButton>
-                          <Typography
-                            variant="h5"
-                            component="h5"
-                            style={{ fontWeight: "bolder" }}
+                          <h6
+                            className="h6 text-dark"
                           >
                             {item.quantity}
-                          </Typography>
+                          </h6>
 
                           <IconButton
                             onClick={() => handleIncrementCart(item.id)}
@@ -340,15 +338,14 @@ const ShoppingCart = () => {
               <Item>
                 <div className="pb-3">
                   {" "}
-                  <h4>Subtotal</h4>
-                  <h1 className="h1">
+                  <h6>Subtotal</h6>
+                  <h5 className="h5 text-dark">
                     {formatAmountWithRupeeSymbol(subtotal)}
-                  </h1>
+                  </h5>
                 </div>
                 <div>
                   <Button
                     variant="contained"
-                    size="large"
                     startIcon={<CurrencyRupeeIcon />}
                     onClick={OnCheckOut}
                     style={{ marginBottom: "20px", backgroundColor: "#16213E", marginRight: "10px" }}

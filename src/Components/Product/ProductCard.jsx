@@ -265,7 +265,7 @@ const ProductCard = (props) => {
               >
                 <div className="row">
                   <div className="col-lg-12">
-                    <h6 className="h6">{props.description}</h6>
+                    <p className="text-dark" >{props.description}</p>
                   </div>
                 </div>
               </div>
@@ -274,15 +274,15 @@ const ProductCard = (props) => {
           <div className="media-body order-2 order-lg-2 ml-lg-5 ml-md-5">
             <Link to={`/product/${props.slug}/`} onClick={handleLinkClick}>
               {" "}
-              <h4 className="text-dark h4 mb-0">
+              <h5 className="text-dark h5 mb-3">
                 {`${props.name} ${props.variant} ${props.color}`}
-              </h4>
+              </h5>
             </Link>
             <h5>
               <span className="text-decoration-line-through h5 text-dark">
                 {formatAmountWithRupeeSymbol(props.sellingPrice)}
               </span>{" "}
-              <span className="product_price price-new h5 text-dark">
+              <span className="product_price price-new h4 text-dark">
                 {formatAmountWithRupeeSymbol(props.offerPrice)}{" "}
               </span>
             </h5>

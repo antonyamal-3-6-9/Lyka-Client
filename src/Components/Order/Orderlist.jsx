@@ -11,26 +11,22 @@ import { faThumbsUp } from "@fortawesome/free-regular-svg-icons";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { faTruckPickup } from "@fortawesome/free-solid-svg-icons";
 import { faTruckFast } from "@fortawesome/free-solid-svg-icons";
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
-import { styled } from '@mui/material/styles';
-
-
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid";
+import { styled } from "@mui/material/styles";
 
 const Orderlist = () => {
-
   const [exists, setExists] = useState(null);
   const token = localStorage.getItem("token");
   const BASE_URL = "http://127.0.0.1:8000/order/";
   const [orders, setOrders] = useState([]);
-  
 
   const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
     ...theme.typography.body2,
     padding: theme.spacing(1),
-    textAlign: 'center',
+    textAlign: "center",
     color: theme.palette.text.secondary,
   }));
 
@@ -91,52 +87,39 @@ const Orderlist = () => {
     return null;
   }
 
-
   return (
     <>
-    <Box FullWidthGrid>
-      <Grid container spacing={2}>
-{orders.map((order) => (
-        <Grid item xs={12} md={12}>
-          <Item>
-          <div
-            className="p-3"
-            id={order.order_id}
-          >
+      <Item>
+        {orders.map((order) => (
+          <>
+          <hr></hr>
+          <div className="p-3" id={order.order_id}>
             <div className="row">
               <div className="col-lg-2 d-flex justify-content-center align-items-center">
                 <img
                   src={`http://127.0.0.1:8000/${order.item.product.thumbnail}`}
-                  style={{width: "50px"}}
+                  style={{ width: "75px" }}
                 />
               </div>
-              <div
-                className="col-lg-4 d-flex justify-content-center align-items-center"
-                style={{ height: "100%" }}
-              >
+              <div className="col-lg-4 d-flex justify-content-center align-items-center">
                 <Link to={`/order/${order.order_id}`}>
-                  <h4 className="h5 listing text-dark">{`${order.item.product.brand} ${order.item.product.name} ${order.item.product_variant.variation} ${order.item.product_color.color}`}</h4>
+                  <h6 className=" h6 listing text-dark">{`${order.item.product.brand} ${order.item.product.name} ${order.item.product_variant.variation} ${order.item.product_color.color}`}</h6>
                 </Link>
               </div>
               <div className="col-lg-2 d-flex justify-content-center align-items-center">
-                <h4 className="h5 listing text-dark">
+                <p className="listing text-dark" style={{fontSize: "0.95rem"}}>
                   {formatAmountWithRupeeSymbol(order.item.product_price)}
-                </h4>
+                </p>
               </div>
               <div className="col-lg-4 d-flex justify-content-center align-items-center">
-                <h5 className="h5 listing text-dark">{order.order_status}</h5>
+                <p className="listing text-dark">{order.order_status}</p>
               </div>
             </div>
           </div>
-
-          </Item>
-        </Grid>
-
-    ))}
-    </Grid>
-    </Box>
-
-
+          <hr></hr>
+          </>
+        ))}
+      </Item>
       {/* {exists ? (
         orders.map((order) => (
           <div

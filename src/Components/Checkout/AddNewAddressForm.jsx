@@ -30,6 +30,7 @@ const AddNewAddressForm = ({
     state: "",
     country: "India",
     phone: "",
+    district: "",
     alternate_phone: "",
     landmark: "",
     zip_code: "",
@@ -43,8 +44,6 @@ const AddNewAddressForm = ({
   const handleChange = (e) => {
     setNewAddress({ ...newAddress, [e.target.name]: e.target.value });
   };
-
-
 
 
   const handleSubmit = async (e) => {
@@ -81,6 +80,28 @@ const AddNewAddressForm = ({
   const handleCancel = () => {
     setIsAddNewAddress(false);
   };
+
+  const handlePinUpdate = async (zipcode) => {
+    if (zipcode.length !== 6){
+      alert("Enter a Valid zipcode")
+      return
+    }
+    try {
+      const zipcodeResponse = await axios.get(
+        `https://api.postalpincode.in/pincode/${zipcode}`
+      );
+      setNewAddress({
+        ...newAddress,
+        ["state"]: zipcodeResponse[0]["PostOffice"][0]["Circle"],
+        ["district"]: zipcodeResponse[0]["PostOffice"][0]["District"],
+        ["city"]: zipcodeResponse[0]["PostOffice"][0]["Name"],
+      });
+    } catch (error) {
+      setAlertData("Error fetching address");
+      setAlertEnable(true);
+      setAlertSeverity("Warning");
+    }
+  }
 
   return (
     <>
@@ -171,18 +192,7 @@ const AddNewAddressForm = ({
             </div>
           </div>
 
-          <div className="col-6">
-            <label className="form-label">City</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder=""
-              name="city"
-              value={newAddress.city}
-              onChange={handleChange}
-            />
-          </div>
-
+          
           <div className="col-6">
             <label className="form-label">Landmark</label>
             <input
@@ -192,6 +202,53 @@ const AddNewAddressForm = ({
               name="landmark"
               value={newAddress.landmark}
               onChange={handleChange}
+            />
+          </div>
+
+          <div className="col-4">
+            <label className="form-label">Zip</label>
+            <input
+              type="text"
+              className="form-control"
+              id="zip"
+              placeholder=""
+              name="zip_code"
+              value={newAddress.zip_code}
+              onChange={handleChange}
+              required
+            />
+            <div className="invalid-feedback">Zip code required.</div>
+          </div>
+
+          <div className="col-3">
+            <Button variant="text" onClick={() => handlePinUpdate(newAddress.zip_code)}>
+              Update
+            </Button>
+          </div>
+
+          <div className="col-6">
+            <label className="form-label">District</label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder=""
+              name="district"
+              value={newAddress.district}
+              onChange={handleChange}
+              readOnly
+            />
+          </div>
+
+          <div className="col-6">
+            <label className="form-label">Locality</label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder=""
+              name="city"
+              value={newAddress.city}
+              onChange={handleChange}
+              readOnly
             />
           </div>
 
@@ -214,26 +271,22 @@ const AddNewAddressForm = ({
 
           <div className="col-4">
             <label className="form-label">State</label>
-            <StateSelect value={newAddress.state} onChange={handleChange} />
+            <input
+              type="text"
+              className="form-control"
+              id="state"
+              name="state"
+              required
+              readOnly
+              value={newAddress.state}
+              onChange={handleChange}
+            />
             <div className="invalid-feedback">
               Please provide a valid state.
             </div>
           </div>
 
-          <div className="col-4">
-            <label className="form-label">Zip</label>
-            <input
-              type="text"
-              className="form-control"
-              id="zip"
-              placeholder=""
-              name="zip_code"
-              value={newAddress.zip_code}
-              onChange={handleChange}
-              required
-            />
-            <div className="invalid-feedback">Zip code required.</div>
-          </div>
+
           <div className="col-4">
             <label className="form-label">Address Type</label>
             <select
@@ -249,6 +302,7 @@ const AddNewAddressForm = ({
             </select>
             <div className="invalid-feedback">Zip code required.</div>
           </div>
+
         </div>
         <div className="row mt-5">
           <div className="col-lg-6 col-md-5 col-sm-4 col-xs-3 d-flex justify-content-center">

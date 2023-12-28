@@ -325,7 +325,7 @@ const CustomerProfile = () => {
                   <AccountCircleIcon />
                 </div>
                 <div className="col-lg-9 d-flex justify-content-center align-items-start">
-                      <h5 className="text-start h4">{customerData.user.first_name} {customerData.user.last_name}</h5>
+                      <h5 className="text-start h5 text-dark">{customerData.user.first_name} {customerData.user.last_name}</h5>
                 </div>
               </div>
             </div>

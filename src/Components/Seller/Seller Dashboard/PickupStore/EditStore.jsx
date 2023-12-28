@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import AddPickupNav from "./AddPickUpNav";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { Alert, AlertTitle } from "@mui/material";
+import { Alert, AlertTitle, Button } from "@mui/material";
 
 const EditStore = () => {
   const BASE_URL = "http://127.0.0.1:8000/address/";
@@ -62,7 +62,7 @@ const EditStore = () => {
     e.preventDefault();
     const token = localStorage.getItem("token");
     try {
-      const addresUpdateResponse = await axios.patch(
+      const addressUpdateResponse = await axios.patch(
         `${BASE_URL}put-address/${address_id}/`,
         newAddress,
         {
@@ -72,13 +72,35 @@ const EditStore = () => {
           },
         }
       );
-      if(addresUpdateResponse.status === 200){
+      if(addressUpdateResponse.status === 200){
         navigate("/seller/store")
       }
     } catch (error) {
       setAlertData("Error updating Address, Try again")
       setAlertEnable(true)
       setAlertSeverity("error")
+    }
+  };
+
+  const handleUpdateZipcode = async (zipCode) => {
+    if (zipCode.length !== 6) {
+      alert("Invalid Zip");
+    }
+
+    try {
+      const zipcodeResponse = await axios.get(
+        `https://api.postalpincode.in/pincode/${zipCode}`
+      );
+      setAddressData({
+        ...newAddress,
+        ["state"]: zipcodeResponse[0]["PostOffice"][0]["Circle"],
+        ["district"]: zipcodeResponse[0]["PostOffice"][0]["District"],
+        ["city"]: zipcodeResponse[0]["PostOffice"][0]["Name"],
+      });
+    } catch (error) {
+      setAlertData("Error fetching address");
+      setAlertEnable(true);
+      setAlertSeverity("Warning");
     }
   };
 
@@ -248,21 +270,6 @@ const EditStore = () => {
                 </div>
 
                 <div className="col-6">
-                  <label className="form-label">City</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder=""
-                    name="city"
-                    value={isChanged ? newAddress.city : addressData.city}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setIsChanged(true);
-                    }}
-                  />
-                </div>
-
-                <div className="col-6">
                   <label className="form-label">Landmark</label>
                   <input
                     type="text"
@@ -272,6 +279,82 @@ const EditStore = () => {
                     value={
                       isChanged ? newAddress.landmark : addressData.landmark
                     }
+                    onChange={(e) => {
+                      handleChange(e);
+                      setIsChanged(true);
+                    }}
+                  />
+                </div>
+
+                <div className="col-md-4">
+                  <label className="form-label">State</label>
+                  <input
+                    className="form-select"
+                    id="state"
+                    name="state"
+                    required
+                    readOnly
+                    value={isChanged ? newAddress.state : addressData.state}
+                    onChange={(e) => {
+                      handleChange(e);
+                      setIsChanged(true);
+                    }}
+                  />
+                  <div className="invalid-feedback">
+                    Please provide a valid state.
+                  </div>
+                </div>
+
+                <div className="col-md-3">
+                  <label className="form-label">Zip</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="zip"
+                    placeholder=""
+                    name="zip_code"
+                    value={
+                      isChanged ? newAddress.zip_code : addressData.zip_code
+                    }
+                    onChange={(e) => {
+                      handleChange(e);
+                      setIsChanged(true);
+                    }}
+                    required
+                  />
+                  <div className="invalid-feedback">Zip code required.</div>
+                </div>
+
+                <div className="col-lg-3">
+                    <Button variant="text" onClick={() => {handleUpdateZipcode(newAddress.zip_code)}}>
+                      Update
+                    </Button>
+                </div>
+
+                
+                <div className="col-6">
+                  <label className="form-label">District</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder=""
+                    name="district"
+                    value={isChanged ? newAddress.district : addressData.district}
+                    onChange={(e) => {
+                      handleChange(e);
+                      setIsChanged(true);
+                    }}
+                  />
+                </div>
+
+                <div className="col-6">
+                  <label className="form-label">City</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder=""
+                    name="city"
+                    value={isChanged ? newAddress.city : addressData.city}
                     onChange={(e) => {
                       handleChange(e);
                       setIsChanged(true);
@@ -301,47 +384,6 @@ const EditStore = () => {
                   </div>
                 </div>
 
-                <div className="col-md-4">
-                  <label className="form-label">State</label>
-                  <select
-                    className="form-select"
-                    id="state"
-                    name="state"
-                    required
-                    onChange={(e) => {
-                      handleChange(e);
-                      setIsChanged(true);
-                    }}
-                  >
-                    <option value={addressData.state}>
-                      {addressData.state}
-                    </option>
-                    <option value="California">California</option>
-                  </select>
-                  <div className="invalid-feedback">
-                    Please provide a valid state.
-                  </div>
-                </div>
-
-                <div className="col-md-3">
-                  <label className="form-label">Zip</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="zip"
-                    placeholder=""
-                    name="zip_code"
-                    value={
-                      isChanged ? newAddress.zip_code : addressData.zip_code
-                    }
-                    onChange={(e) => {
-                      handleChange(e);
-                      setIsChanged(true);
-                    }}
-                    required
-                  />
-                  <div className="invalid-feedback">Zip code required.</div>
-                </div>
               </div>
               <div className="col-lg-12 mt-3 mb-3 d-flex align-items-center justify-content-center">
                 <button type="submit" className="btn btn-success">

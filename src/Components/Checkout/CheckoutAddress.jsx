@@ -7,7 +7,7 @@ import FloatingAlert from "../FloatingAlert/FloatingAlert";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 import { Button } from "@mui/material";
-import { ClearIcon } from "@mui/icons-material/Clear"
+import { ClearIcon } from "@mui/icons-material/Clear";
 import { Add, ArrowRight } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 
@@ -27,20 +27,20 @@ const CheckoutAddress = (props) => {
   const [isAddNewAddress, setIsAddNewAddress] = useState(false);
   const [isSelected, setIsSelected] = useState(false);
 
-  const [alertData, setAlertData] = useState('')
-  const [alertEnable, setAlertEnable] = useState(false)
-  const [alertSeverity, setAlertSeverity] = useState("")
+  const [alertData, setAlertData] = useState("");
+  const [alertEnable, setAlertEnable] = useState(false);
+  const [alertSeverity, setAlertSeverity] = useState("");
 
   const onContinue = async () => {
-    if (props.addessId !== 0){
-      if(await props.addressAdding()){
-        props.setAddressAdded(false)
-        props.setIsPayment(true)
+    if (props.addessId !== 0) {
+      if (await props.addressAdding()) {
+        props.setAddressAdded(false);
+        props.setIsPayment(true);
       }
     } else {
-      setAlertData("Select an address before proceeding")
-      setAlertEnable(true)
-      setAlertSeverity("info")
+      setAlertData("Select an address before proceeding");
+      setAlertEnable(true);
+      setAlertSeverity("info");
     }
   };
 
@@ -58,8 +58,8 @@ const CheckoutAddress = (props) => {
         );
         if (addressResponse.status === 200) {
           setSavedAddress(addressResponse.data);
-          const id = addressResponse.data[0].id
-          props.setAddressId(id)
+          const id = addressResponse.data[0].id;
+          props.setAddressId(id);
           setIsSavedAddress(true);
         }
       } catch (error) {
@@ -68,69 +68,73 @@ const CheckoutAddress = (props) => {
     };
     fetchData();
   }, [token]);
- 
+
   const handleRadioChange = (e) => {
-    console.log(e.target.value, props.addressId)
-    props.setAddressId(e.target.value)
-    setIsSelected(true)
-    
-  }
+    console.log(e.target.value, props.addressId);
+    props.setAddressId(e.target.value);
+    setIsSelected(true);
+  };
 
   return (
     <>
-      <FloatingAlert 
+      <FloatingAlert
         message={alertData}
         setEnable={setAlertEnable}
         enable={alertEnable}
         severity={alertSeverity}
       />
-          {isSavedAddress && !isAddNewAddress ? (
-            <div className="row m-0 p-0">
-              {savedAddress.map((address) => (
-                <div className="col-lg-6 m-0 p-0">
-                <Item style={{margin: "10px"}}>
-                <div className="p-3" style={{border: "1px dotted #0F3460", borderRadius: "5px"}}>
-                <input
-                  type="radio"
-                  className="form-check-input"
-                  name={`address-radio-${address.id}`}
-                  value={address.id}
-                  onChange={handleRadioChange}
-                  checked={parseInt(props.addressId) === address.id}
-                  
-                />
-                  <h6 className="h6 mt-3 mb-1">{address.name}</h6>
-                  <p className="m-0 p-0" style={{fontSize: "1rem"}}>{address.street_one} {address.street_two} {address.landmark}</p>
-                  <p className="m-0 p-0" style={{fontSize: "1rem"}}>
-                    {address.phone}, {address.alternate_phone}
-                  </p>
-                  <p className="m-0 p-0" style={{fontSize: "1rem"}}>
-                    {address.city}, {address.state}
-                  </p>
-                  <p className="m-0 p-0" style={{fontSize: "1rem"}}>
-                    {address.country}, {address.zip_code}
-                  </p>
+      {isSavedAddress && !isAddNewAddress ? (
+        <Item style={{ margin: "10px" }}>
+          <div className="row m-0 p-0">
+            {savedAddress.map((address) => (
+              <>
+                <hr></hr>
+
+                <div className="col-lg-12 m-0 p-0">
+                  <div className="p-3">
+                    <input
+                      type="radio"
+                      className="form-check-input"
+                      name={`address-radio-${address.id}`}
+                      value={address.id}
+                      onChange={handleRadioChange}
+                      checked={parseInt(props.addressId) === address.id}
+                    />
+                    <h6 className="h6 mt-3 mb-1 text-dark">{address.name}</h6>
+                    <p className="m-0 p-0 text-dark">
+                      {address.street_one} {address.street_two}{" "}
+                      {address.landmark}
+                    </p>
+                    <p className="m-0 p-0 text-dark">
+                      {address.phone}, {address.alternate_phone}
+                    </p>
+                    <p className="m-0 p-0 text-dark">
+                      {address.city}, {address.state}
+                    </p>
+                    <p className="m-0 p-0 text-dark">
+                      {address.country}, {address.zip_code}
+                    </p>
                   </div>
-                  </Item>
                 </div>
-          
-                
-              ))}
-            </div>
-          ) : !isSavedAddress && !isAddNewAddress ?  (
-            <div className="row">
-              <h4>No Saved Addressess</h4>
-              <button
-                className="btn btn-outline-primary"
-                onClick={() => {
-                  setIsAddNewAddress(true);
-                }}
-              >
-                Add Address
-              </button>
-            </div>
-          ) : null}
-      {isAddNewAddress &&(
+                <hr></hr>
+              </>
+            ))}
+          </div>
+        </Item>
+      ) : !isSavedAddress && !isAddNewAddress ? (
+        <div className="row">
+          <h4>No Saved Addressess</h4>
+          <button
+            className="btn btn-outline-primary"
+            onClick={() => {
+              setIsAddNewAddress(true);
+            }}
+          >
+            Add Address
+          </button>
+        </div>
+      ) : null}
+      {isAddNewAddress && (
         <div className="container-fluid" id="add-new-address-container">
           <AddNewAddressForm
             setSavedAddress={setSavedAddress}
@@ -140,24 +144,30 @@ const CheckoutAddress = (props) => {
           />
         </div>
       )}
-      {!isAddNewAddress && savedAddress &&
-      <>
-      <div className="d-flex justify-content-end">
-        <Button variant="contained" endIcon={<ArrowRight />} onClick={onContinue} style={{backgroundColor: "#16213E", margin: "20px"}}>
-          Continue
-        </Button>
-        <Button
-          variant="contained"
-          onClick={() => {
-            setIsAddNewAddress(true);
-          }}
-          startIcon={<AddIcon />}
-          style={{backgroundColor: "#0F3460", margin: "20px"}}
-        >
-          Add new
-        </Button>
-        </div>
-      </>}
+      {!isAddNewAddress && savedAddress && (
+        <>
+          <div className="d-flex justify-content-end">
+            <Button
+              variant="contained"
+              endIcon={<ArrowRight />}
+              onClick={onContinue}
+              style={{ backgroundColor: "#16213E", margin: "20px" }}
+            >
+              Continue
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                setIsAddNewAddress(true);
+              }}
+              startIcon={<AddIcon />}
+              style={{ backgroundColor: "#0F3460", margin: "20px" }}
+            >
+              Add new
+            </Button>
+          </div>
+        </>
+      )}
     </>
   );
 };

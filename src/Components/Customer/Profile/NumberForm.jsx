@@ -27,7 +27,7 @@ const NumberForm = ({
       <form onSubmit={handleNumberSubmit}>
       <div className="row mt-5 mb-2">
           <div className="col-lg-3 d-flex justify-content-start">
-            <h5 className="h5">Phone Information</h5>
+            <h6 className="h6 text-dark">Phone Information</h6>
           </div>
           <div className="col-lg-2">
             <Button

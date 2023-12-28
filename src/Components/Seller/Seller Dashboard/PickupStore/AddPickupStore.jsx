@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import AddPickupNav from "./AddPickUpNav";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Alert, AlertTitle } from "@mui/material";
+import { Alert, AlertTitle, Button } from "@mui/material";
 
 const AddPickupStore = () => {
   const BASE_URL = "http://127.0.0.1:8000/seller/";
@@ -15,9 +15,10 @@ const AddPickupStore = () => {
     streetTwo: "",
     phone: "",
     alternatePhone: "",
+    district: "",
     city: "",
     landmark: "",
-    country: "",
+    country: "India",
     state: "",
     zip: "",
     image: null,
@@ -49,6 +50,7 @@ const AddPickupStore = () => {
     formData.append("street_two", addressData.streetTwo);
     formData.append("phone", addressData.phone);
     formData.append("alternate_phone", addressData.alternatePhone);
+    formData.append("district", addressData.district)
     formData.append("city", addressData.city);
     formData.append("landmark", addressData.landmark);
     formData.append("country", addressData.country);
@@ -90,6 +92,27 @@ const AddPickupStore = () => {
     }
   }, []);
 
+  const handleUpdateZipcode = async (zipCode) => {
+    if (zipCode.length !== 6) {
+      alert("Invalid Zip");
+    }
+    try {
+      const zipcodeResponse = await axios.get(
+        `https://api.postalpincode.in/pincode/${zipCode}`
+      );
+      setAddressData({
+        ...addressData,
+        ["state"]: zipcodeResponse[0]["PostOffice"][0]["Circle"],
+        ["district"]: zipcodeResponse[0]["PostOffice"][0]["District"],
+        ["city"]: zipcodeResponse[0]["PostOffice"][0]["Name"],
+      });
+    } catch (error) {
+      setAlertData("Error fetching address");
+      setAlertEnable(true);
+      setAlertSeverity("Warning");
+    }
+  };
+
   return (
     <>
       {" "}
@@ -102,189 +125,210 @@ const AddPickupStore = () => {
           </Alert>
         )}
         <div className="card p-3 mt-5">
-        <div className="row">
-          <div className="col-lg-12">
-            <h4 className="text-center">Add New Pickup Store</h4>
-            <form
-              className="needs-validation"
-              onSubmit={handleSubmit}
-              noValidate
-            >
-              <div className="row g-3">
-                <div className="col-sm-6">
-                  <label className="form-label">Store Name</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder=""
-                    name="storeName"
-                    value={addressData.storeName}
-                    onChange={handleChange}
-                    required
-                  />
-                  <div className="invalid-feedback">
-                    Valid Store Name is required.
-                  </div>
-                </div>
-
-                <div className="col-sm-6">
-                  <label className="form-label">Street One</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder=""
-                    name="streetOne"
-                    value={addressData.streetOne}
-                    onChange={handleChange}
-                    required
-                  />
-                  <div className="invalid-feedback">
-                    Valid Street One is required.
-                  </div>
-                </div>
-
-                <div className="col-6">
-                  <label className="form-label">Street Two</label>
-                  <div className="input-group has-validation">
+          <div className="row">
+            <div className="col-lg-12">
+              <h4 className="text-center">Add New Pickup Store</h4>
+              <form
+                className="needs-validation"
+                onSubmit={handleSubmit}
+                noValidate
+              >
+                <div className="row g-3">
+                  <div className="col-sm-6">
+                    <label className="form-label">Store Name</label>
                     <input
                       type="text"
                       className="form-control"
                       placeholder=""
-                      name="streetTwo"
-                      value={addressData.streetTwo}
+                      name="storeName"
+                      value={addressData.storeName}
                       onChange={handleChange}
                       required
                     />
                     <div className="invalid-feedback">
-                      Your Street Two is required.
+                      Valid Store Name is required.
                     </div>
                   </div>
-                </div>
-                <div className="col-6">
-                  <label className="form-label">ThumbNail</label>
-                  <div className="input-group has-validation">
+
+                  <div className="col-sm-6">
+                    <label className="form-label">Street One</label>
                     <input
-                      type="file"
+                      type="text"
                       className="form-control"
-                      name="image"
+                      placeholder=""
+                      name="streetOne"
+                      value={addressData.streetOne}
                       onChange={handleChange}
                       required
                     />
-                    <div className="invalid-feedback">Image is required</div>
+                    <div className="invalid-feedback">
+                      Valid Street One is required.
+                    </div>
+                  </div>
+
+                  <div className="col-6">
+                    <label className="form-label">Street Two</label>
+                    <div className="input-group has-validation">
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder=""
+                        name="streetTwo"
+                        value={addressData.streetTwo}
+                        onChange={handleChange}
+                        required
+                      />
+                      <div className="invalid-feedback">
+                        Your Street Two is required.
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-6">
+                    <label className="form-label">ThumbNail</label>
+                    <div className="input-group has-validation">
+                      <input
+                        type="file"
+                        className="form-control"
+                        name="image"
+                        onChange={handleChange}
+                        required
+                      />
+                      <div className="invalid-feedback">Image is required</div>
+                    </div>
+                  </div>
+                  <div className="col-6">
+                    <label className="form-label">Phone</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      placeholder=""
+                      name="phone"
+                      value={addressData.phone}
+                      onChange={handleChange}
+                      maxLength="10"
+                      minLength="10"
+                    />
+                    <div className="invalid-feedback">
+                      Please enter a valid phone.
+                    </div>
+                  </div>
+
+                  <div className="col-6">
+                    <label className="form-label">Alternate Phone</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      placeholder=""
+                      name="alternatePhone"
+                      value={addressData.alternatePhone}
+                      onChange={handleChange}
+                      required
+                      maxLength="10"
+                      minLength="10"
+                    />
+                    <div className="invalid-feedback">
+                      Please enter a valid alternate phone.
+                    </div>
+                  </div>
+
+                  <div className="col-6">
+                    <label className="form-label">Landmark</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder=""
+                      name="landmark"
+                      value={addressData.landmark}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                  <div className="col-md-3">
+                    <label className="form-label">Zip</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="zip"
+                      placeholder=""
+                      name="zip"
+                      maxLength="6"
+                      minLength="6"
+                      value={addressData.zip}
+                      onChange={handleChange}
+                      required
+                    />
+                    <div className="invalid-feedback">Zip code required.</div>
+                  </div>
+
+                  <div className="col-lg-3">
+                    <Button variant="text" onClick={() => handleUpdateZipcode(addressData.zip)}>update</Button>
+                  </div>
+
+                  <div className="col-6">
+                    <label className="form-label">Locality</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder=""
+                      name="city"
+                      value={addressData.city}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                  <div className="col-6">
+                    <label className="form-label">District</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder=""
+                      name="district"
+                      readOnly
+                      value={addressData.district}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                  <div className="col-md-5">
+                    <label className="form-label">Country</label>
+                    <input
+                      className="form-select"
+                      id="country"
+                      name="country"
+                      required
+                      readOnly
+                      value={addressData.country}
+                      onChange={handleChange}
+                    />
+                    <div className="invalid-feedback">
+                      Please select a valid country.
+                    </div>
+                  </div>
+
+                  <div className="col-md-4">
+                    <label className="form-label">State</label>
+                    <input
+                      className="form-select"
+                      id="state"
+                      name="state"
+                      required
+                      onChange={handleChange}
+                      value={addressData.state}
+                      readOnly
+                    />
+                    <div className="invalid-feedback">
+                      Please provide a valid state.
+                    </div>
                   </div>
                 </div>
-                <div className="col-6">
-                  <label className="form-label">Phone</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    placeholder=""
-                    name="phone"
-                    value={addressData.phone}
-                    onChange={handleChange}
-                  />
-                  <div className="invalid-feedback">
-                    Please enter a valid phone.
-                  </div>
+                <div className="col-lg-12 mt-3 mb-3 d-flex align-items-center justify-content-center">
+                  <button type="submit" className="btn btn-success">
+                    Submit
+                  </button>
                 </div>
-
-                <div className="col-6">
-                  <label className="form-label">Alternate Phone</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    placeholder=""
-                    name="alternatePhone"
-                    value={addressData.alternatePhone}
-                    onChange={handleChange}
-                    required
-                  />
-                  <div className="invalid-feedback">
-                    Please enter a valid alternate phone.
-                  </div>
-                </div>
-
-                <div className="col-6">
-                  <label className="form-label">City</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder=""
-                    name="city"
-                    value={addressData.city}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div className="col-6">
-                  <label className="form-label">Landmark</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder=""
-                    name="landmark"
-                    value={addressData.landmark}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div className="col-md-5">
-                  <label className="form-label">Country</label>
-                  <select
-                    className="form-select"
-                    id="country"
-                    name="country"
-                    required
-                    onChange={handleChange}
-                  >
-                    <option value="">Choose...</option>
-                    <option value="United States">United States</option>
-                  </select>
-                  <div className="invalid-feedback">
-                    Please select a valid country.
-                  </div>
-                </div>
-
-                <div className="col-md-4">
-                  <label className="form-label">State</label>
-                  <select
-                    className="form-select"
-                    id="state"
-                    name="state"
-                    required
-                    onChange={handleChange}
-                  >
-                    <option value="">Choose...</option>
-                    <option value="California">California</option>
-                  </select>
-                  <div className="invalid-feedback">
-                    Please provide a valid state.
-                  </div>
-                </div>
-
-                <div className="col-md-3">
-                  <label className="form-label">Zip</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="zip"
-                    placeholder=""
-                    name="zip"
-                    value={addressData.zip}
-                    onChange={handleChange}
-                    required
-                  />
-                  <div className="invalid-feedback">Zip code required.</div>
-                </div>
-              </div>
-              <div className="col-lg-12 mt-3 mb-3 d-flex align-items-center justify-content-center">
-                <button type="submit" className="btn btn-success">
-                  Submit
-                </button>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
-        </div>
         </div>
       </div>
     </>

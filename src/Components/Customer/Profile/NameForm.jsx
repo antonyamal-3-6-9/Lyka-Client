@@ -36,7 +36,7 @@ const NameForm = ({
       <form onSubmit={handleSubmit}>
         <div className="row">
           <div className="col-lg-3">
-            <h5 className="h5">Personal Information</h5>
+            <h6 className="h6 text-dark">Personal Information</h6>
           </div>
           <div className="col-lg-2">
             <Button

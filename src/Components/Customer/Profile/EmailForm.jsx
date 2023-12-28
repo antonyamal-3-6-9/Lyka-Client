@@ -31,7 +31,7 @@ const EmailForm = ({
       <form onSubmit={handleSubmit}>
         <div className="row mt-5">
           <div className="col-lg-3 d-flex justify-content-start">
-            <h5 className="h5">Email</h5>
+            <h6 className="h6 text-dark">Email</h6>
           </div>
           <div className="col-lg-2">
             <Button
