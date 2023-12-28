@@ -1,23 +1,30 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faHeart,
-  faShoppingCart,
-  faWarning,
-} from "@fortawesome/free-solid-svg-icons";
 import "../Product/product.scss";
 import { useEffect } from "react";
 import { useState } from "react";
-import axios from "axios";
+import axios, { AxiosHeaders } from "axios";
 import ImageGallery from "./ProductImage";
 import { Link, useNavigate } from "react-router-dom";
 import FloatingAlert from "../FloatingAlert/FloatingAlert";
 import { useSelector } from "react-redux";
+import Paper from "@mui/material/Paper";
+import { styled } from "@mui/material/styles";
+import { Button } from "@mui/material";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
+
+const Container = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(2),
+  color: theme.palette.text.secondary,
+}));
 
 const ProductDetail = () => {
   const [unit, setUnit] = useState({});
   const [color, setColor] = useState();
   const [variation, setVariation] = useState();
+  const [similar, setSimilar] = useState();
   const navigate = useNavigate();
 
   const BASE_URL = "http://127.0.0.1:8000/product/";
@@ -30,6 +37,19 @@ const ProductDetail = () => {
     (state) => state.customerAuth.isCustomerLoggedIn
   );
 
+  const similarProducts = async (mainId) => {
+    try {
+      const similarResponse = await axios.get(
+        `${BASE_URL}get-items/main/${mainId}/`
+      );
+      if (similarResponse.status === 200) {
+        setSimilar(similarResponse.data);
+      }
+    } catch (error) {
+      alert("Error fetching products");
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const item_id = localStorage.getItem("item_id");
@@ -41,6 +61,7 @@ const ProductDetail = () => {
           setUnit(productResponse.data);
           setColor(productResponse.data.color_code.id);
           setVariation(productResponse.data.variant.id);
+          similarProducts(productResponse.data.product.main_category.main_id);
         }
       } catch (error) {
         console.log(error);
@@ -159,7 +180,7 @@ const ProductDetail = () => {
   };
 
   const handleBuyNow = async () => {
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem("token");
     if (!isLoggedIn) {
       setAlertData("Login FIrst");
       setAlertEnable(true);
@@ -188,10 +209,9 @@ const ProductDetail = () => {
           },
         }
       );
-      if (orderCreateResponse.status === 201){
-        console.log(orderCreateResponse)
-        sessionStorage.setItem("order_id", orderCreateResponse.data.order_id)
-        navigate("/checkout")
+      if (orderCreateResponse.status === 201) {
+        sessionStorage.setItem("order_id", orderCreateResponse.data.order_id);
+        navigate("/checkout");
       }
     } catch (error) {
       setAlertData(error.response.data.message);
@@ -200,216 +220,210 @@ const ProductDetail = () => {
     }
   };
 
-  if (!unit.product) {
+  if (!unit.product || !similar) {
     return null;
   }
 
   return (
     <>
-      <div className="container-fluid pt-5 mt-5">
+      <div className="container-fluid" style={{ marginTop: "84px" }}>
         <FloatingAlert
           message={alertData}
           severity={alertSeverity}
           enable={alertEnable}
           setEnable={setAlertEnable}
         />
-        <div className="row w-100">
-          <div className="col-md-5">
-            <div className="main-img">
-              <ImageGallery images={unit.product.images} />
-            </div>
-          </div>
-          <div className="col-md-7">
-            <div id="details-section">
-              <div className="main-description px-2">
-                <div className="category text-bold">{`${unit.product.root_category.name}/${unit.product.main_category.name}/${unit.product.sub_category.name}`}</div>
-                <div className="product-title text-bold my-3">
-                  {`${unit.product.brand} ${unit.product.name} ${unit.variant.variation} ${unit.color_code.color}`}
-                </div>
-                <div className="price-area my-4">
-                  <p className={`${unit.stock <= 0 ? "text-danger" : null}`}>
-                    {unit.stock <= 0
-                      ? "Out of stock"
-                      : `Only ${unit.stock} left`}
-                  </p>
-                  <p className="old-price mb-1">
-                    <del>{formatAmountWithRupeeSymbol(unit.selling_price)}</del>
-                  </p>
-                  <p className="new-price text-bold mb-1">
-                    {formatAmountWithRupeeSymbol(unit.offer_price)}
-                  </p>
-                  <p className="text-secondary mb-1">
-                    (Additional tax may apply on checkout)
-                  </p>
-                </div>
-                <div className="buttons d-flex my-5">
-                  <div className="block">
-                    <Link
-                      className="btn btn-outline-info"
-                      onClick={handleBuyNow}
-                    >
-                      Buy Now
-                    </Link>
-                  </div>
-                  <div className="block">
-                    <button
-                      className="btn btn-outline-warning"
-                      onClick={() => handleAddToCart(unit.unit_id)}
-                    >
-                      <FontAwesomeIcon icon={faShoppingCart} /> Add to cart
-                    </button>
-                  </div>
-                </div>
+        <Container>
+          <div className="row w-100">
+            <div className="col-md-5">
+              <div className="main-img">
+                <ImageGallery images={unit.product.images} />
               </div>
-              <div>
-                <div className="row">
-                  <div className="container-fluid">
-                    <div className="col-lg-12">
-                      <div className="row ms-2 mb-3">
-                        {unit.product.colors.map((color) => (
-                          <div className="col-lg-2">
-                            <a
-                              href="#"
-                              onClick={() => handleColorClick(color.id)}
-                              className={`disabled-link ${
-                                unit.color_code.id === color.id
-                                  ? "disabled"
-                                  : ""
-                              }`}
-                            >
-                              <div
-                                className={`card rounded-0 p-1 ${
+            </div>
+            <div className="col-md-7">
+              <div id="details-section">
+                <div className="main-description px-2">
+                  <p className="category text-dark">{`${unit.product.root_category.name}/${unit.product.main_category.name}/${unit.product.sub_category.name}`}</p>
+                  <h6 className="text-dark h6">
+                    {`${unit.product.brand} ${unit.product.name} ${unit.variant.variation} ${unit.color_code.color}`}
+                  </h6>
+                  <div className="price-area my-4">
+                    <p
+                      className={`text-dark ${
+                        unit.stock <= 0 ? "text-danger" : null
+                      }`}
+                    >
+                      {unit.stock <= 0
+                        ? "Out of stock"
+                        : `Only ${unit.stock} left`}
+                    </p>
+                    <h6 className="h6 text-dark mb-1">
+                      <del>
+                        {formatAmountWithRupeeSymbol(unit.selling_price)}
+                      </del>
+                    </h6>
+                    <h5 className="h5 text-dark mb-1">
+                      {formatAmountWithRupeeSymbol(unit.offer_price)}
+                    </h5>
+                    <p className="text-dark mb-1 mt-2">
+                      (Additional tax may apply on checkout)
+                    </p>
+                  </div>
+                  <div className="buttons d-flex mb-3">
+                    <div className="block">
+                      <Button
+                        variant="contained"
+                        startIcon={<ShoppingBagIcon />}
+                        onClick={handleBuyNow}
+                        style={{
+                          marginRight: "10px",
+                          backgroundColor: "#16213E",
+                        }}
+                      >
+                        Buy Now
+                      </Button>
+                    </div>
+                    <div className="block">
+                      <Button
+                        variant="contained"
+                        startIcon={<ShoppingCartIcon />}
+                        onClick={() => handleAddToCart(unit.unit_id)}
+                        style={{
+                          marginRight: "10px",
+                          backgroundColor: "#16213E",
+                        }}
+                      >
+                        Add to cart
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div className="row">
+                    <div className="container-fluid">
+                      <div className="col-lg-12">
+                        <div className="row ms-2 mb-3">
+                          {unit.product.colors.map((color) => (
+                            <div className="col-lg-2">
+                              <a
+                                href="#"
+                                onClick={() => handleColorClick(color.id)}
+                                className={`disabled-link ${
                                   unit.color_code.id === color.id
-                                    ? "border-3 border-primary"
-                                    : "border-0"
+                                    ? "disabled"
+                                    : ""
                                 }`}
                               >
                                 <div
-                                  style={{
-                                    backgroundColor: color.color,
-                                    width: "84px",
-                                    height: "20px",
-                                  }}
-                                ></div>
-                              </div>
-                            </a>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="row ms-2">
-                        {unit.product.variations.map((variation) => (
-                          <div className="col-lg-2">
-                            <a
-                              href="#"
-                              onClick={() => handleVariantClick(variation.id)}
-                              className={`disabled-link ${
-                                unit.variant.id === variation.id
-                                  ? "disabled"
-                                  : ""
-                              }`}
-                            >
-                              <div
-                                className={`card rounded-0 d-flex justify-content-center align-items-center ${
-                                  variation.id === unit.variant.id
-                                    ? "border-3 border-primary"
-                                    : "border-0"
+                                  className={`card rounded-0 p-1 ${
+                                    unit.color_code.id === color.id
+                                      ? "border-3 border-primary"
+                                      : "border-0"
+                                  }`}
+                                >
+                                  <div
+                                    style={{
+                                      backgroundColor: color.color,
+                                      width: "84px",
+                                      height: "20px",
+                                    }}
+                                  ></div>
+                                </div>
+                              </a>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="row ms-2">
+                          {unit.product.variations.map((variation) => (
+                            <div className="col-lg-2">
+                              <a
+                                href="#"
+                                onClick={() => handleVariantClick(variation.id)}
+                                className={`disabled-link ${
+                                  unit.variant.id === variation.id
+                                    ? "disabled"
+                                    : ""
                                 }`}
                               >
-                                <p>{variation.variation}</p>
-                              </div>
-                            </a>
-                          </div>
-                        ))}
+                                <div
+                                  className={`card rounded-0 d-flex justify-content-center align-items-center ${
+                                    variation.id === unit.variant.id
+                                      ? "border-3 border-primary"
+                                      : "border-0"
+                                  }`}
+                                >
+                                  <p>{variation.variation}</p>
+                                </div>
+                              </a>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="col-lg-12">
-                    <h2 className="text-center m-5">Key Features</h2>
-                    {Object.keys(unit.product.details.key_features).map(
-                      (key) => (
-                        <div className="row">
-                          <div className="col-lg-5">
-                            <p>{key}</p>
+                    <div className="col-lg-12">
+                      <h2 className="text-center m-5">Key Features</h2>
+                      {Object.keys(unit.product.details.key_features).map(
+                        (key) => (
+                          <div className="row">
+                            <div className="col-lg-5">
+                              <p>{key}</p>
+                            </div>
+                            <div className="col-lg-7">
+                              <p className="text-dark">
+                                {unit.product.details.key_features[key]}
+                              </p>
+                            </div>
                           </div>
-                          <div className="col-lg-7">
-                            <p>{unit.product.details.key_features[key]}</p>
+                        )
+                      )}
+                    </div>
+                    <div className="col-lg-12">
+                      <h2 className="text-center m-5">All Details</h2>
+                      {Object.keys(unit.product.details.all_details).map(
+                        (key) => (
+                          <div className="row">
+                            <div className="col-lg-5">
+                              <p>{key}</p>
+                            </div>
+                            <div className="col-lg-7">
+                              <p className="text-dark">
+                                {unit.product.details.all_details[key]}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      )
-                    )}
-                  </div>
-                  <div className="col-lg-12">
-                    <h2 className="text-center m-5">All Details</h2>
-                    {Object.keys(unit.product.details.all_details).map(
-                      (key) => (
-                        <div className="row">
-                          <div className="col-lg-5">
-                            <p>{key}</p>
-                          </div>
-                          <div className="col-lg-7">
-                            <p>{unit.product.details.all_details[key]}</p>
-                          </div>
-                        </div>
-                      )
-                    )}
+                        )
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div className="container similar-products my-4">
-        <hr />
-        <p className="display-5">Similar Products</p>
-
-        <div className="row">
-          <div className="col-md-3">
-            <div className="similar-product">
-              <img
-                className="w-100"
-                src="https://source.unsplash.com/gsKdPcIyeGg"
-                alt="Preview"
-              />
-              <p className="title">Lovely black dress</p>
-              <p className="price">$100</p>
+          <div className="row">
+          <h4 className="h5 text-dark text-center mt-3">Similar Products</h4>
+          {similar.map((item, index) => (
+            <div className="col-sm-6 col-lg-3 mt-4 d-flex justify-content-center align-items-center" key={index}>
+              <div className="card" style={{ width: "18rem" }}>
+                <img className="card-img-top" src={`http://127.0.0.1:8000/${item.product.thumbnail}`} />
+                <div className="card-body">
+                  <h5 className="card-title">{item.product.brand} {item.product.name}</h5>
+                  <p className="card-text">
+                    {item.variant.variation} {item.color_code.color}
+                  </p>
+                  <Button variant="contained" style={{backgroundColor: "#16213E"}} onClick={() => {
+                    localStorage.setItem("item_id", item.unit_id)
+                    navigate(`/product/${item.slug}/`)
+                    window.location.reload()
+                  }}>
+                    View
+                  </Button>
+                </div>
+              </div>
             </div>
+          ))}
           </div>
-          <div className="col-md-3">
-            <div className="similar-product">
-              <img
-                className="w-100"
-                src="https://source.unsplash.com/sg_gRhbYXhc"
-                alt="Preview"
-              />
-              <p className="title">Lovely Dress with patterns</p>
-              <p className="price">$85</p>
-            </div>
-          </div>
-          <div className="col-md-3">
-            <div className="similar-product">
-              <img
-                className="w-100"
-                src="https://source.unsplash.com/gJZQcirK8aw"
-                alt="Preview"
-              />
-              <p className="title">Lovely fashion dress</p>
-              <p className="price">$200</p>
-            </div>
-          </div>
-          <div className="col-md-3">
-            <div className="similar-product">
-              <img
-                className="w-100"
-                src="https://source.unsplash.com/qbB_Z2pXLEU"
-                alt="Preview"
-              />
-              <p className="title">Lovely red dress</p>
-              <p className="price">$120</p>
-            </div>
-          </div>
-        </div>
+        </Container>
       </div>
     </>
   );

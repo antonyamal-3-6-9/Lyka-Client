@@ -29,6 +29,8 @@ import OrderDetails from "./Components/Order/OrderDetails.jsx";
 import CustomerProfile from "./Components/Customer/Profile/CustomerProfile.jsx";
 import OrderListings from "./Components/Order/OrderListings.jsx";
 import ResponsiveAppBar from "./Components/Navbar/MuiNavBar.jsx";
+import ProductByCategory from "./Components/Product/ProductByCategory.jsx";
+import Category from "./Components/Home/categories/Category.jsx";
 
 function App() {
   return (
@@ -122,6 +124,14 @@ function App() {
               </>
             }
           />
+
+          <Route path="/product/:type/:name" element={
+            <>
+              <ResponsiveAppBar/>
+              <Category/>
+              <ProductByCategory/>
+            </>
+          }/>
 
           <Route
             path="/product/:product_id"

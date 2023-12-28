@@ -245,7 +245,7 @@ const ProductCard = (props) => {
               >
                 <img
                   src={`${props.thumbnail}`}
-                  alt="Generic placeholder image"
+                  alt={`${props.thumbnail}`}
                   // style={
                   //   props.mainCategory === "Laptops" && smallMedia
                   //     ? { width: "160x", height: "122px" }

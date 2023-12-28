@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../home.scss";
 import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const Category = () => {
   const API_BASE_URL = "http://localhost:8000/category/";
+  const navigate = useNavigate();
 
   const [data, setData] = useState([]);
   const [mainData, setMain] = useState([]);
@@ -31,7 +33,7 @@ const Category = () => {
   }, []);
 
   return (
-    <div id="root-container">
+    <div id="root-container" style={{ marginTop: "68px" }}>
       <div className="row">
         <div className="top-bar">
           <ul className="categories">
@@ -42,7 +44,16 @@ const Category = () => {
                 }}
                 key={item.root_id}
               >
-                <Button variant="text">{item.name}</Button>
+                <Button
+                  variant="text"
+                  onClick={() => {
+                    navigate(`/product/root/${item.name}`);
+                    localStorage.setItem("cat_id", item.root_id);
+                    window.location.reload()
+                  }}
+                >
+                  {item.name}
+                </Button>
                 <ul className="subcategories">
                   {mainData.map((mainItem) =>
                     rootid && mainItem.root === rootid ? (
@@ -52,12 +63,33 @@ const Category = () => {
                         }}
                         key={mainItem.main_id}
                       >
-                        <Button variant="text">{mainItem.name}</Button>
+                        <Button
+                          variant="text"
+                          onClick={() => {
+                            navigate(`/product/main/${mainItem.name}`);
+                            localStorage.setItem("cat_id", mainItem.main_id);
+                            window.location.reload()
+                          }}
+                        >
+                          {mainItem.name}
+                        </Button>
                         <ul className="sub-subcategories">
                           {subData.map((subItem) =>
                             mainId && subItem.main === mainId ? (
                               <li key={subItem.sub_id}>
-                                <Button variant="text">{subItem.name}</Button>
+                                <Button
+                                  variant="text"
+                                  onClick={() => {
+                                    navigate(`/product/sub/${subItem.name}`);
+                                    localStorage.setItem(
+                                      "cat_id",
+                                      subItem.sub_id
+                                    );
+                                    window.location.reload()
+                                  }}
+                                >
+                                  {subItem.name}
+                                </Button>
                               </li>
                             ) : null
                           )}

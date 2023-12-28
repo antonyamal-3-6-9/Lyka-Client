@@ -59,6 +59,24 @@ const AddressList = ({
     return null;
   }
 
+  const handleDelete =  async (address_id, addressIndex) => {
+    try{
+      const deleteResponse = await axios.delete(`${BASE_URL}delete-address/${address_id}/`, {
+        headers: {
+          "content-Type": "Application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      if (deleteResponse.status === 200){
+        const updatedAddress = [...savedAddress]
+        updatedAddress.splice(addressIndex, 1)
+        setSavedAddress(updatedAddress)
+      }
+    } catch (error){
+      alert("deletion failed")
+    }
+  }
+
   return (
     <>
       <div className="container-fluid">
@@ -86,7 +104,7 @@ const AddressList = ({
             <div className="row">
               {savedAddress.map((address, index) => (
                 <>
-                  <hr></hr>
+                  <hr className="lyka-color"></hr>
                   <div className="col-lg-12">
                     <h6 className="h6 text-dark">{address.name}</h6>
                     <p className="m-0 p-0 text-dark">
@@ -113,16 +131,16 @@ const AddressList = ({
                       </div>
                       <div className="col-lg-6">
                         <Button
-                          href="#text-buttons"
                           style={{ color: "#16213E" }}
                           startIcon={<DeleteIcon />}
+                          onClick={() => handleDelete(address.id, index)}
                         >
                           Delete
                         </Button>
                       </div>
                     </div>
                   </div>
-                  <hr></hr>
+                  <hr className="lyka-color"></hr>
                 </>
               ))}
             </div>
