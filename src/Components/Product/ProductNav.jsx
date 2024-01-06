@@ -1,7 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Button } from "@mui/material";
 
-const ProductNav = () => {
+const ProductNav = ({name}) => {
   return (
     <>
       <div>
@@ -22,15 +22,17 @@ const ProductNav = () => {
               <ul className="navbar-nav mr-auto">
                 <li className="nav-item">
                   <div className="dropdown">
-                    <button
-                      className="btn btn-outline-primary dropdown-toggle"
+                    <Button
+                      className="dropdown-toggle"
                       type="button"
                       id="sortDropdown"
                       data-bs-toggle="dropdown"
                       aria-expanded="false"
+                      variant="contained"
+                      style={{backgroundColor: "#16213E" }}
                     >
                       Sort
-                    </button>
+                    </Button>
                     <ul
                       className="dropdown-menu"
                       aria-labelledby="sortDropdown"
@@ -56,6 +58,11 @@ const ProductNav = () => {
                         </button>
                       </li>
                     </ul>
+                  </div>
+                </li>
+                <li className="nav-item" style={{marginLeft: "50px"}}>
+                  <div className="navbar-brand">
+                    <h3 className="text-dark h3"></h3>
                   </div>
                 </li>
               </ul>

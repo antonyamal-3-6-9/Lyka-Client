@@ -100,7 +100,9 @@ const ProductByCategory = () => {
 
   return (
     <>
-      <ProductNav />
+      <ProductNav 
+        name={name}
+      />
       <div className="container-fluid" id="product-container">
         {products.map((item) => (
           <div className="row m-3">

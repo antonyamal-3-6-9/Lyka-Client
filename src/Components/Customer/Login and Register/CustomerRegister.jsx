@@ -1,159 +1,174 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import React from "react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Alert, AlertTitle } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { customerLogin} from "../../../redux/customerAuth/actions/authCustomerActions";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import {createTheme, ThemeProvider } from "@mui/material/styles";
+import Avatar from "@mui/material/Avatar";
+import Paper from "@mui/material/Paper";
+import { styled } from "@mui/material/styles";
 
+const Page = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(3),
+  marginBottom: theme.spacing(3),
+  color: theme.palette.text.secondary,
+}));
+
+function Copyright(props) {
+  return (
+    <Typography
+      variant="body2"
+      color="text.secondary"
+      align="center"
+      {...props}
+    >
+      {"Copyright © "}
+      <Link color="inherit" href="https://mui.com/">
+        Your Website
+      </Link>{" "}
+      {new Date().getFullYear()}
+      {"."}
+    </Typography>
+  );
+}
 
 const RegisterForm = () => {
-  const navigate = useNavigate()
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [otp, setOtp] = useState("");
-  const [isVerified, setIsVerified] = useState(false);
 
-  const dispatch = useDispatch()
-
-  const [alertData, setAlertData] = useState("")
-  const [alertSeverity, setAlertSeverity] = useState("")
-  const [alertEnable, setAlertEnable] = useState(false)
-
-  const [isRegistered, setIsRegistered] = useState(false);
+  const navigate = useNavigate();
+  const [alertData, setAlertData] = useState("");
+  const [alertSeverity, setAlertSeverity] = useState("");
+  const [alertEnable, setAlertEnable] = useState(false);
   const BASE_URL = "http://127.0.0.1:8000/customer/";
 
-  const handleRegisterSubmit = async (e) => {
-    e.preventDefault();
+  const [regData, setRegData] = useState({
+    email : ""
+  });
+  const [isSend, setIsSend] = useState("");
+  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  const handleChange = (e) => {
+    setRegData({...regData, [e.target.name] : e.target.value})
+  }
+
+  const onEmailSubmit = async () => {
+    console.log(regData.email)
+    if (regData.length === 0) {
+      setAlertData("Enter a valid e-mail address");
+      setAlertEnable(true);
+      setAlertSeverity("error");
+      return;
+    }
+
+    if (emailRegex.test(regData)) {
+      setAlertData("Invalid Email");
+      setAlertEnable(true);
+      setAlertSeverity("error");
+      return;
+    }
+
     try {
-      const existResponse = await axios.get(
-        `${BASE_URL}customer-exists-or-not/${phoneNumber}/`
-      );
-
-      if (existResponse.status === 200) {
-        try {
-          const registerResponse = await axios.post(`${BASE_URL}register/`, {
-            user: {
-              phone: phoneNumber,
-            },
-          });
-
-          if (registerResponse.status === 201) {
-            setAlertData("You has been registered successfully")
-            setAlertEnable(true)
-            setAlertSeverity("success")
-            setIsRegistered(true);
-            try {
-              const otpResponse = await axios.get(
-                `${BASE_URL}otp-login-create/${phoneNumber}/`
-              );
-              if (otpResponse.status === 200) {
-                setAlertEnable(true)
-                setAlertData("Otp has been successfully send")
-                setAlertSeverity("success")
-              }
-            } catch (error) {
-              setAlertData("Otp failed")
-              setAlertEnable(true)
-              setAlertSeverity("error")
-            }
-          }
-        } catch (error) {
-          setAlertData("Registration Failed")
-          setAlertEnable(true)
-          setAlertSeverity("error")
-        }
+      const emailResponse = await axios.get(`${BASE_URL}auth/${regData.email}/`);
+      if (emailResponse.status === 200) {
+        setIsSend(true)
       }
     } catch (error) {
-      setAlertData("Customer Already Exists")
-      setAlertEnable(true)
-      setAlertSeverity("error")
+      setAlertData(error.response.data.message);
+      setAlertEnable(true);
+      setAlertSeverity("error");
     }
-  };
-
-  const handleOtpSubmit = async (e) => {
-    e.preventDefault();
-    console.log(otp)
-    try {
-      const otpVerifyResponse = await axios.post(`${BASE_URL}otp-login-verify/`, {
-        user_typed_code: otp,
-        phone: phoneNumber,
-      });
-      if (otpVerifyResponse.status === 200) {
-        localStorage.setItem('token', otpVerifyResponse.data.token)
-        dispatch(customerLogin())
-        navigate("/")
-      }
-    } catch (error) {
-      setAlertData(error.data.message)
-      setAlertEnable(true)
-      setAlertSeverity("error")
-    }
-  };
-
-  const handlePhoneChange = (e) => {
-    setPhoneNumber(e.target.value);
-  };
-
-  const handleOtpChange = (e) => {
-    setOtp(e.target.value);
   };
 
   const handleAlertClose = () => {
     setAlertEnable(false)
   }
 
-  useEffect(() => {
-    if(alertEnable){
-      setTimeout(() => {
-        setAlertEnable(false)
-      }, 5000);
-    }
-  }, [])
+  const defaultTheme = createTheme();
 
-  return (<>
-    {alertEnable && (
-      <Alert severity={alertSeverity} onClose={handleAlertClose} className="custom-alert">
-        <AlertTitle>Error</AlertTitle>
-        {alertData}
-      </Alert>
-    )}
-    <div className="container-fluid d-flex justify-content-center align-items-center vh-100">
-      <div className="w-50">
-        <h2 className="text-center mb-5">Customer Registration</h2>
-        <div id="pills-register" role="tabpanel" aria-labelledby="tab-register">
-          <form
-            onSubmit={(e) => {
-              isRegistered ? handleOtpSubmit(e) : handleRegisterSubmit(e);
-            }}
+  return (
+    <>
+      <div className="container-fluid login-container">
+      {alertEnable && (
+          <Alert
+            severity={alertSeverity}
+            onClose={handleAlertClose}
+            className="custom-alert"
           >
-            <div className="form-outline mb-4">
-              <input
-                type="number"
-                id="register-number"
-                className="form-control"
-                value={isRegistered ? otp : phoneNumber}
-                onChange={(e) => {
-                  isRegistered ? handleOtpChange(e) : handlePhoneChange(e);
-                }}
-              />
-              <label className="form-label" htmlFor="register-number">
-                {isRegistered ? "Enter OTP" : "Enter Your Number"}
-              </label>
+            <AlertTitle>{alertSeverity}</AlertTitle>
+            {alertData}
+          </Alert>
+        )}
+        {isSend ? (
+          <Page>
+            <div className="container-fluid">
+              <h5>Check your mail</h5>
+              <p>
+                A verification link has been send to your email. Follow the link
+                to continue signing up
+              </p>
             </div>
-
-            <button
-              type="submit"
-              className="btn btn-primary btn-block mb-3 w-100"
-              onSubmit={(e) => {
-                isRegistered ? handleOtpSubmit(e) : handleRegisterSubmit(e);
-              }}
-            >
-              Register
-            </button>
-          </form>
-        </div>
+          </Page>
+        ) : (
+          <Page>
+            <ThemeProvider theme={defaultTheme}>
+              <Container component="main" maxWidth="xs">
+                <CssBaseline />
+                <Box
+                  sx={{
+                    marginTop: 8,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                  }}
+                >
+                  <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+                    <LockOutlinedIcon />
+                  </Avatar>
+                  <Typography component="h1" variant="h5">
+                    Sign UP
+                  </Typography>
+                  <Box component="form" noValidate sx={{ mt: 1 }}>
+                      <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        label="Email Address"
+                        name="email"
+                        autoComplete="email"
+                        value={regData.email}
+                        onChange={handleChange}
+                      />
+                      <Button
+                       variant="contained"
+                       fullWidth
+                       onClick={onEmailSubmit}
+                      >
+                        Continue
+                      </Button>
+                    <Grid container>
+                      <Grid item>
+                        <Link href="#" variant="body2" oncliCk={() => navigate("customer-login")}>
+                          {"Already have an account! Sign In"}
+                        </Link>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </Box>
+                <Copyright sx={{ mt: 8, mb: 4 }} />
+              </Container>
+            </ThemeProvider>
+          </Page>
+        )}
       </div>
-    </div>
     </>
   );
 };

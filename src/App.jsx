@@ -13,7 +13,6 @@ import SellerOrder from "./Components/Seller/Seller Dashboard/Orders/SellerOrder
 import EditStore from "./Components/Seller/Seller Dashboard/PickupStore/EditStore.jsx";
 import Verification from "./Components/Seller/Seller Dashboard/Verification/Verification.jsx";
 import SellerProfile from "./Components/Seller/Seller Dashboard/Profile/SellerProfile.jsx";
-import Navbar from "./Components/Navbar/Navbar.jsx";
 import ProductDetail from "./Components/Product/ProductDetail.jsx";
 import ShoppingCart from "./Components/Cart/Cart.jsx";
 import LoginForm from "./Components/Customer/Login and Register/CustomerLogin.jsx";
@@ -161,7 +160,11 @@ function App() {
             }
           />
           <Route path="customer-login" element={<LoginForm />} />
+
           <Route path="customer-register" element={<RegisterForm />} />
+
+          <Route path="customer/auth/verify/:email/:token/" element={<LoginForm />} />
+
           <Route
             path="order-placed"
             element={

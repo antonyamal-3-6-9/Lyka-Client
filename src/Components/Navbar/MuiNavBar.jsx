@@ -23,7 +23,8 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import axios from "axios";
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -65,7 +66,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function ResponsiveAppBar({setOption}) {
+export default function ResponsiveAppBar({ setOption }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -77,11 +78,12 @@ export default function ResponsiveAppBar({setOption}) {
     setAnchorEl(event.currentTarget);
   };
 
-
   const [username, setUsername] = useState("");
 
-  const isLoggedIn = useSelector((state) => state.customerAuth.isCustomerLoggedIn)
-  const dispatch = useDispatch()
+  const isLoggedIn = useSelector(
+    (state) => state.customerAuth.isCustomerLoggedIn
+  );
+  const dispatch = useDispatch();
 
   const BASE_URL = "http://127.0.0.1:8000/customer/";
   const token = localStorage.getItem("token");
@@ -92,21 +94,40 @@ export default function ResponsiveAppBar({setOption}) {
         const loggedInResponse = await axios.get(`${BASE_URL}is-loggedin/`, {
           headers: {
             "content-Type": "Application/json",
-            Authorization : `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         if (loggedInResponse.status === 200) {
           console.log(loggedInResponse);
           setUsername(loggedInResponse.data.name);
-          dispatch(customerLogin())
+          dispatch(customerLogin());
         }
       } catch (error) {
         console.log(error);
-        dispatch(customerLogout())
+        dispatch(customerLogout());
       }
     };
     fetchData();
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      const logoutResponse = await axios.post(
+        `${BASE_URL}logout/`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+    localStorage.clear("token");
+    dispatch(customerLogout());
+  };
 
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
@@ -117,8 +138,8 @@ export default function ResponsiveAppBar({setOption}) {
   };
 
   const menuId = "primary-search-account-menu";
-
   const mobileMenuId = "primary-search-account-menu-mobile";
+
   const renderMobileMenu = (
     <Menu
       anchorEl={mobileMoreAnchorEl}
@@ -136,12 +157,19 @@ export default function ResponsiveAppBar({setOption}) {
       onClose={handleMobileMenuClose}
     >
       <MenuItem>
-        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+        <IconButton
+          size="large"
+          aria-label="show 4 new mails"
+          color="inherit"
+          onClick={() => {
+            navigateLink("/cart");
+          }}
+        >
           <Badge badgeContent={4} color="error">
             <ShoppingBagIcon />
           </Badge>
         </IconButton>
-        <p>Messages</p>
+        <p>Cart</p>
       </MenuItem>
       <MenuItem>
         <IconButton
@@ -153,28 +181,35 @@ export default function ResponsiveAppBar({setOption}) {
             <ShoppingCartCheckoutIcon />
           </Badge>
         </IconButton>
-        <p>Notifications</p>
+        <p>{isLoggedIn ? username : "Login"}</p>
       </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          size="large"
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
-        <p>Profile</p>
-      </MenuItem>
+      {isLoggedIn ? (
+        <MenuItem>
+          <IconButton
+            size="large"
+            aria-label="account of current user"
+            aria-controls="primary-search-account-menu"
+            aria-haspopup="true"
+            color="inherit"
+            onClick={() => {
+              if (isLoggedIn) {
+                navigateLink("/account");
+              } else {
+                navigateLink("customer-login");
+              }
+            }}
+          >
+            <ArrowOutwardIcon />
+          </IconButton>
+          <p>Logout</p>
+        </MenuItem>
+      ) : null}
     </Menu>
   );
 
   const navigateLink = (option) => {
     navigate(option);
   };
-
-
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -187,9 +222,10 @@ export default function ResponsiveAppBar({setOption}) {
             sx={{ display: { xs: "none", sm: "block" } }}
             style={{ paddingLeft: "100px" }}
             onClick={() => {
-              navigateLink("/")
+              navigateLink("/");
             }}
-          ><a>LYKA</a>
+          >
+            <a>LYKA</a>
           </Typography>
           <Search>
             <SearchIconWrapper>
@@ -201,7 +237,7 @@ export default function ResponsiveAppBar({setOption}) {
               style={{ width: "400px" }}
             />
           </Search>
-          <Box sx={{ flexGrow: 1 }}/>
+          <Box sx={{ flexGrow: 1 }} />
           <Box
             sx={{
               display: {
@@ -211,24 +247,22 @@ export default function ResponsiveAppBar({setOption}) {
                 flexGrow: 0.2,
               },
             }}
-            style={{paddingRight: "100px"}} 
+            style={{ paddingRight: "100px" }}
           >
             <Box
               onClick={() => {
                 navigateLink("/cart");
               }}
-              sx={{display: {
-                xs: "none",
-                md: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center"
-              }}}
+              sx={{
+                display: {
+                  xs: "none",
+                  md: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+              }}
             >
-              <IconButton
-              edge="end"
-                size="large"
-                color="inherit"
-              >
+              <IconButton edge="end" size="large" color="inherit">
                 <ShoppingCartIcon />
               </IconButton>
               <Typography>
@@ -237,30 +271,50 @@ export default function ResponsiveAppBar({setOption}) {
             </Box>
             <Box
               onClick={() => {
-                if (isLoggedIn){
-                navigateLink("/account");
+                if (isLoggedIn) {
+                  navigateLink("/account");
                 } else {
-                  navigateLink("customer-login")
+                  navigateLink("customer-login");
                 }
               }}
-              sx={{display: {
-                xs: "none",
-                md: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center"
-              }}}
+              sx={{
+                display: {
+                  xs: "none",
+                  md: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+              }}
             >
-              <IconButton
-                size="large"
-                edge="end"
-                color="inherit"
-              >
+              <IconButton size="large" edge="end" color="inherit">
                 <AccountCircle />
               </IconButton>
               <Typography>
-                <a>{isLoggedIn ? "My Account" : "Login"}</a>
+                <a>{isLoggedIn ? username : "Login"}</a>
               </Typography>
             </Box>
+            {isLoggedIn ? (
+              <Box
+                onClick={() => {
+                  handleLogout();
+                }}
+                sx={{
+                  display: {
+                    xs: "none",
+                    md: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  },
+                }}
+              >
+                <IconButton size="large" edge="end" color="inherit">
+                  <AccountCircle />
+                </IconButton>
+                <Typography>
+                  <a>Logout</a>
+                </Typography>
+              </Box>
+            ) : null}
           </Box>
           <Box sx={{ display: { xs: "flex", md: "none" } }}>
             <IconButton
