@@ -11,6 +11,7 @@ const ProductByCategory = () => {
   const [products, setProducts] = useState([]);
   const { type, name } = useParams();
   const cat_id = localStorage.getItem("cat_id");
+  const [option, setOption] = useState(type)
 
   const checkThumbnail = (response) => {
     for (let i = 0; i < response.length; i++) {
@@ -42,6 +43,7 @@ const ProductByCategory = () => {
       if (productsResponse.status === 200) {
         if (checkThumbnail(productsResponse.data)) {
           setProducts(productsResponse.data);
+          console.log(productsResponse)
         }
         setProducts(productsResponse.data);
       }
@@ -103,7 +105,8 @@ const ProductByCategory = () => {
       <ProductNav 
         name={name}
       />
-      <div className="container-fluid" id="product-container">
+      <div className="container-fluid mt-2" id="product-container">
+      <p>{`/${name}`}</p>
         {products.map((item) => (
           <div className="row m-3">
             <ProductCard

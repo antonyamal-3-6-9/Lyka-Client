@@ -91,7 +91,7 @@ export default function ResponsiveAppBar({ setOption }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const loggedInResponse = await axios.get(`${BASE_URL}is-loggedin/`, {
+        const loggedInResponse = await axios.get(`${BASE_URL}is-logged-in/`, {
           headers: {
             "content-Type": "Application/json",
             Authorization: `Bearer ${token}`,
@@ -274,7 +274,7 @@ export default function ResponsiveAppBar({ setOption }) {
                 if (isLoggedIn) {
                   navigateLink("/account");
                 } else {
-                  navigateLink("customer-login");
+                  navigateLink("/customer-login");
                 }
               }}
               sx={{
@@ -290,7 +290,7 @@ export default function ResponsiveAppBar({ setOption }) {
                 <AccountCircle />
               </IconButton>
               <Typography>
-                <a>{isLoggedIn ? username : "Login"}</a>
+                <a>{isLoggedIn ? "Account" : "Login"}</a>
               </Typography>
             </Box>
             {isLoggedIn ? (

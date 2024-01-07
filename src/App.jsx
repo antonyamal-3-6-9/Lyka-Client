@@ -23,13 +23,12 @@ import Checkout from "./Components/Checkout/Checkout.jsx";
 import OrderPlaced from "./Components/Order/OrderPlaced.jsx";
 import SellerOrderDetails from "./Components/Seller/Seller Dashboard/Orders/SellerOrderDetails.jsx";
 import SellerHome from "./Components/Seller/Seller Dashboard/Home/Home.jsx";
-import Orderlist from "./Components/Order/Orderlist.jsx";
 import OrderDetails from "./Components/Order/OrderDetails.jsx";
 import CustomerProfile from "./Components/Customer/Profile/CustomerProfile.jsx";
-import OrderListings from "./Components/Order/OrderListings.jsx";
 import ResponsiveAppBar from "./Components/Navbar/MuiNavBar.jsx";
 import ProductByCategory from "./Components/Product/ProductByCategory.jsx";
 import Category from "./Components/Home/categories/Category.jsx";
+import CustomerVerify from "./Components/Customer/Login and Register/CustomerVerify.jsx";
 
 function App() {
   return (
@@ -163,7 +162,7 @@ function App() {
 
           <Route path="customer-register" element={<RegisterForm />} />
 
-          <Route path="customer/auth/verify/:email/:token/" element={<LoginForm />} />
+          <Route path="customer/auth/verify/:email/:token/" element={<CustomerVerify />} />
 
           <Route
             path="order-placed"

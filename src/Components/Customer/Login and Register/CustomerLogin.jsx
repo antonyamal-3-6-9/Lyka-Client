@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Alert, AlertTitle } from "@mui/material";
+import FloatingAlert from "../../FloatingAlert/FloatingAlert";
 import { useDispatch } from "react-redux";
 import { customerLogin } from "../../../redux/customerAuth/actions/authCustomerActions";
 import Button from "@mui/material/Button";
@@ -9,14 +9,16 @@ import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Avatar from "@mui/material/Avatar";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
-
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import { Backdrop } from "@mui/material";
+import { CircularProgress } from "@mui/material";
+import "./login.css"
 
 const Page = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -50,6 +52,7 @@ const LoginForm = () => {
   const [alertData, setAlertData] = useState("");
   const [alertSeverity, setAlertSeverity] = useState("");
   const [alertEnable, setAlertEnable] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
 
   const navigate = useNavigate();
   const BASE_URL = "http://127.0.0.1:8000/customer/";
@@ -79,21 +82,28 @@ const LoginForm = () => {
 
   const otpCreate = async () => {
     try {
+      setIsLoading(true)
       const otpCreateResponse = await axios.get(
         `${BASE_URL}otp-login-create/${loginData.email}/`
       );
       if (otpCreateResponse.status === 200) {
         setIsSend(true);
+        setIsLoading(false)
+        setAlertData("OTP successfully send")
+        setAlertEnable(true)
+        setAlertSeverity("success")
       }
     } catch (error) {
-      setAlertData("Server not responding");
+      setAlertData("OTP sending failed");
       setAlertEnable(true);
       setAlertSeverity("error");
+      setIsLoading(false)
     }
   };
 
   const otpVerify = async () => {
     try {
+      setIsLoading(true)
       const otpVerifyResponse = await axios.post(
         `${BASE_URL}otp-login-verify/`,
         {
@@ -102,12 +112,14 @@ const LoginForm = () => {
         }
       );
       if (otpVerifyResponse.status === 200) {
-        localStorage.setItem(otpVerifyResponse.data.token);
+        localStorage.setItem("token", otpVerifyResponse.data.token);
+        setIsLoading(false)
         dispatch(customerLogin());
         navigate("/");
       }
     } catch (error) {
-      setAlertData(error.response.data.message);
+      setIsLoading(false)
+      setAlertData("OTP verification Failed");
       setAlertEnable(true);
       setAlertSeverity("error");
       setLoginData({ ...loginData, otp: "" });
@@ -134,6 +146,7 @@ const LoginForm = () => {
     }
 
     try {
+      setIsLoading(true)
       const passwordLoginResponse = await axios.post(
         `${BASE_URL}password-login/`,
         {
@@ -144,10 +157,12 @@ const LoginForm = () => {
       if (passwordLoginResponse.status === 200) {
         localStorage.setItem(passwordLoginResponse.data.token);
         dispatch(customerLogin());
+        setIsLoading(false)
         navigate("/");
       }
     } catch (error) {
-      setAlertData(error.response.data.message);
+      setIsLoading(false)
+      setAlertData("Login Failed");
       setAlertEnable(true);
       setAlertSeverity("error");
       setLoginData({ ...loginData, password: "" });
@@ -155,7 +170,7 @@ const LoginForm = () => {
   };
 
   const loggingIn = () => {
-    if (loginData.email.length <= 0) {
+    if (loginData.email === "") {
       return;
     }
 
@@ -167,16 +182,16 @@ const LoginForm = () => {
     }
 
     if (loginData.type === "otp") {
-      if (isSend && loginData.otp.length < 6) {
+      if (loginData.otp.length < 6) {
         setAlertData("Enter a Valid Otp");
         setAlertEnable(true);
         setAlertSeverity("warning");
       }
 
-      if (!isSend) {
-        otpCreate();
-      } else {
+      if (isSend) {
         otpVerify();
+      } else {
+        otpCreate();
       }
     } else if (loginData.type === "normal") {
       passwordLogin();
@@ -185,39 +200,42 @@ const LoginForm = () => {
 
   const resendOtp = async () => {
     try {
+      setIsLoading(true)
       const otpCreateResponse = await axios.get(
         `${BASE_URL}otp-login-create/${loginData.email}/`
       );
       if (otpCreateResponse.status === 200) {
         setIsSend(true);
+        setIsLoading(false)
+        setAlertData("OTP successfully send")
+        setAlertEnable(true)
+        setAlertSeverity("success")
       }
     } catch (error) {
-      setAlertData("Server not responding");
+      setAlertData("OTP sending failed");
       setAlertEnable(true);
       setAlertSeverity("error");
+      setIsLoading(false)
     }
   };
-
-  const handleAlertClose = () => {
-    setAlertEnable(false)
-  }
 
   const defaultTheme = createTheme();
 
   return (
     <>
-      <div className="container-fluid login-container">
-        {alertEnable && (
-          <Alert
+       <Page>
+      <div className="container-fluid login-container" style={{marginTop: "84px"}}>
+          <FloatingAlert
+            enable={alertEnable}
+            setEnable={setAlertEnable}
             severity={alertSeverity}
-            onClose={handleAlertClose}
-            className="custom-alert"
+            message={alertData}
+          />
+          <Backdrop
+            open={isLoading}
           >
-            <AlertTitle>{alertSeverity}</AlertTitle>
-            {alertData}
-          </Alert>
-        )}
-        <Page>
+            <CircularProgress/>
+          </Backdrop>
           <ThemeProvider theme={defaultTheme}>
             <Container component="main" maxWidth="xs">
               <CssBaseline />
@@ -230,10 +248,10 @@ const LoginForm = () => {
                 }}
               >
                 <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-                  <LockOutlinedIcon />
+                  <AssignmentIndIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5">
-                  Sign in
+                  sign In
                 </Typography>
                 <Box component="form" noValidate sx={{ mt: 1 }}>
                   {!isSend && (
@@ -241,12 +259,12 @@ const LoginForm = () => {
                       margin="normal"
                       required
                       fullWidth
-                      id="email"
                       label="Email Address"
                       name="email"
                       autoComplete="email"
                       autoFocus
-                      Onchange={handleChange}
+                      value={loginData.email}
+                      onChange={handleChange}
                     />
                   )}
                   {loginData.type === "password" || isSend ? (
@@ -254,12 +272,12 @@ const LoginForm = () => {
                       margin="normal"
                       required
                       fullWidth
-                      name={loginData.type === "otp" ? "OTP" : "password"}
+                      name={loginData.type === "otp" ? "otp" : "password"}
                       label={loginData.type === "otp" ? "OTP" : "Password"}
                       type="password"
-                      id={loginData.type === "otp" ? "OTP" : "password"}
                       autoComplete="current-password"
-                      Onchange={handleChange}
+                      onChange={handleChange}
+                      value={loginData.type === "otp" ? loginData.otp : loginData.password}
                     />
                   ) : null}
                   {isSend && (
@@ -269,18 +287,19 @@ const LoginForm = () => {
                       onClick={() => {
                         resendOtp();
                       }}
+                      style={{color:"#16213E"}}
                     >
                       Resend OTP
                     </Button>
                   )}
                   <Button
-                    type="submit"
                     fullWidth
                     variant="contained"
                     sx={{ mt: 3, mb: 2 }}
                     onClick={loggingIn}
+                    style={{backgroundColor:"#16213E"}}
                   >
-                    Sign In
+                    {loginData.type === "otp" ? "Continue" : "Sign In"}
                   </Button>
                   <Grid container>
                     <Grid item xs>
@@ -288,12 +307,12 @@ const LoginForm = () => {
                         Forgot password?
                       </Link>
                     </Grid>
-                    <Grid item>
+                    <Grid item xs>
                       <Link href="#" variant="body2" to="/customer-register">
                         {"Don't have an account? Sign Up"}
                       </Link>
                     </Grid>
-                    <Grid>
+                    <Grid item>
                       <Link
                         href="#"
                         onClick={() => {
@@ -304,7 +323,7 @@ const LoginForm = () => {
                         variant="body2"
                       >
                         {`Login Using ${
-                          loginData.type === "otp" ? "OTP" : "Password"
+                          loginData.type === "otp" ? "Password" : "OTP"
                         }`}
                       </Link>
                     </Grid>
@@ -314,8 +333,8 @@ const LoginForm = () => {
               <Copyright sx={{ mt: 8, mb: 4 }} />
             </Container>
           </ThemeProvider>
-        </Page>
       </div>
+      </Page>
       )
     </>
   );
