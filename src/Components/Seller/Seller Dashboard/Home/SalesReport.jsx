@@ -64,7 +64,7 @@ const SalesReport = () => {
   const formatAmountWithRupeeSymbol = (amount) => {
     amount = parseInt(amount);
     if (typeof amount !== "number" || isNaN(amount)) {
-      return "Invalid Amount";
+      return 0;
     }
     const formattedAmount = amount.toLocaleString("en-IN", {
       maximumFractionDigits: 2,

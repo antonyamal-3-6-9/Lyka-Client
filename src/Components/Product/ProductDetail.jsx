@@ -12,6 +12,8 @@ import { styled } from "@mui/material/styles";
 import { Button } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
+import {Backdrop} from "@mui/material";
+import { CircularProgress } from "@mui/material";
 
 const Container = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -26,6 +28,7 @@ const ProductDetail = () => {
   const [variation, setVariation] = useState();
   const [similar, setSimilar] = useState();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false)
 
   const BASE_URL = "http://127.0.0.1:8000/product/";
 
@@ -54,6 +57,7 @@ const ProductDetail = () => {
     const fetchData = async () => {
       const item_id = localStorage.getItem("item_id");
       try {
+        setIsLoading(true)
         const productResponse = await axios.get(
           `${BASE_URL}get-item-details/${item_id}/`
         );
@@ -62,9 +66,11 @@ const ProductDetail = () => {
           setColor(productResponse.data.color_code.id);
           setVariation(productResponse.data.variant.id);
           similarProducts(productResponse.data.product.main_category.main_id);
+          setIsLoading(false)
         }
       } catch (error) {
         console.log(error);
+        setIsLoading(false)
       }
     };
     fetchData();
@@ -73,23 +79,28 @@ const ProductDetail = () => {
   const handleColorClick = async (color_id) => {
     try {
       const is_variant_color = "color";
+      setIsLoading(true)
       const colorResponse = await axios.get(
         `${BASE_URL}color-or-variation-exists/${unit.seller}/${unit.product.productId}/${color_id}/${variation}/${is_variant_color}/`
       );
       if (colorResponse.status === 200) {
         setUnit(colorResponse.data);
         setColor(colorResponse.data.color_code.id);
+        setIsLoading(false)
         navigate(`/product/${colorResponse.data.slug}/`);
+
       }
     } catch (error) {
       setAlertData("Given color not available");
       setAlertEnable(true);
       setAlertSeverity("error");
+      setIsLoading(false)
     }
   };
 
   const handleVariantClick = async (variant_id) => {
     try {
+      setIsLoading(true)
       const is_variant_color = "variant";
       const variantResponse = await axios.get(
         `${BASE_URL}color-or-variation-exists/${unit.seller}/${unit.product.productId}/${color}/${variant_id}/${is_variant_color}/`
@@ -98,11 +109,13 @@ const ProductDetail = () => {
         setUnit(variantResponse.data);
         setVariation(variantResponse.data.variant.id);
         navigate(`/product/${variantResponse.data.slug}/`);
+        setIsLoading(false)
       }
     } catch (error) {
       setAlertData("Given variant not available");
       setAlertEnable(true);
       setAlertSeverity("error");
+      setIsLoading(false)
     }
   };
 
@@ -136,6 +149,7 @@ const ProductDetail = () => {
 
     const token = localStorage.getItem("token");
     try {
+      setIsLoading(true)
       const inCartResponse = await axios.get(
         `http://127.0.0.1:8000/cart/item-in-cart/${unit_id}/`,
         {
@@ -165,17 +179,20 @@ const ProductDetail = () => {
             setAlertData("Item Added to the cart");
             setAlertEnable(true);
             setAlertSeverity("success");
+            setIsLoading(false)
           }
         } catch (error) {
           setAlertData(error.response.data.message);
           setAlertEnable(true);
           setAlertSeverity("error");
+          setIsLoading(false)
         }
       }
     } catch (error) {
       setAlertData(error.response.data.message);
       setAlertEnable(true);
       setAlertSeverity("info");
+      setIsLoading(false)
     }
   };
 
@@ -196,6 +213,7 @@ const ProductDetail = () => {
     }
 
     try {
+      setIsLoading(true)
       const orderCreateResponse = await axios.post(
         `http://127.0.0.1:8000/order/create-single-order/`,
         {
@@ -211,12 +229,14 @@ const ProductDetail = () => {
       );
       if (orderCreateResponse.status === 201) {
         sessionStorage.setItem("order_id", orderCreateResponse.data.order_id);
+        setIsLoading(false)
         navigate("/checkout");
       }
     } catch (error) {
       setAlertData(error.response.data.message);
       setAlertEnable(true);
       setAlertSeverity("error");
+      setIsLoading(false)
     }
   };
 
@@ -233,6 +253,11 @@ const ProductDetail = () => {
           enable={alertEnable}
           setEnable={setAlertEnable}
         />
+        <Backdrop
+          open={isLoading}
+        >
+          <CircularProgress/>
+        </Backdrop>
         <Container>
           <div className="row w-100">
             <div className="col-md-5">

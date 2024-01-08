@@ -1,34 +1,23 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux/es/hooks/useSelector";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHandshake } from "@fortawesome/free-regular-svg-icons";
-import { faThumbsDown } from "@fortawesome/free-regular-svg-icons";
-import { faShopSlash } from "@fortawesome/free-solid-svg-icons";
-import { faTimesCircle } from "@fortawesome/free-regular-svg-icons";
-import { faThumbsUp } from "@fortawesome/free-regular-svg-icons";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { faTruckPickup } from "@fortawesome/free-solid-svg-icons";
-import { faTruckFast } from "@fortawesome/free-solid-svg-icons";
-import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
 import { styled } from "@mui/material/styles";
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: "center",
+  color: theme.palette.text.secondary,
+}));
+
 
 const Orderlist = () => {
   const [exists, setExists] = useState(null);
   const token = localStorage.getItem("token");
   const BASE_URL = "http://127.0.0.1:8000/order/";
   const [orders, setOrders] = useState([]);
-
-  const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-    ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: "center",
-    color: theme.palette.text.secondary,
-  }));
 
   useEffect(() => {
     const fetchData = async () => {
@@ -97,7 +86,7 @@ const Orderlist = () => {
             <div className="row">
               <div className="col-lg-2 d-flex justify-content-center align-items-center">
                 <img
-                  src={`http://127.0.0.1:8000/${order.item.product.thumbnail}`}
+                  src={`http://127.0.0.1:8000${order.item.product.thumbnail}`}
                   style={{ width: "75px" }}
                 />
               </div>

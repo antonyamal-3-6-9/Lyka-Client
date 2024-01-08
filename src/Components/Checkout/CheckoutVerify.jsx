@@ -6,6 +6,8 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import { Button } from "@mui/material";
 import { ArrowRight } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
+import { Backdrop } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 
 const CheckoutVerify = ({ data, setData, isSingle, setIsItemVerified, calculateMultipleSubTotal, calculateSingleSubTotal, subtotal, setAddressAdded, BASE_URL, itemConfirmation }) => {
 
@@ -13,6 +15,8 @@ const CheckoutVerify = ({ data, setData, isSingle, setIsItemVerified, calculateM
   const [alertData, setAlertData] = useState('')
   const [alertEnable, setAlertEnable] = useState(false)
   const [alertSeverity, setAlertSeverity] = useState("")
+
+  const [isLoading, setIsLoading] = useState(false)
 
   const token = localStorage.getItem('token')
   const formatAmountWithRupeeSymbol = (amountStr) => {
@@ -51,6 +55,7 @@ const CheckoutVerify = ({ data, setData, isSingle, setIsItemVerified, calculateM
 
   const handleItemIncrement = async (order_id) => {
     try{
+      setIsLoading(true)
     const incrementResponse = await axios.patch(`${BASE_URL}increament-item/${order_id}/`, {}, {
       headers: {
         "content-Type": "Application/json",
@@ -59,11 +64,13 @@ const CheckoutVerify = ({ data, setData, isSingle, setIsItemVerified, calculateM
     })
     if (incrementResponse.status === 200){
       handleIncreaseQuantity(order_id)
+      setIsLoading(false)
     }
     } catch (error) {
       setAlertData(error.response.data.message)
       setAlertEnable(true)
       setAlertSeverity("error")
+      setIsLoading(false)
     }
   }
 
@@ -95,6 +102,7 @@ const CheckoutVerify = ({ data, setData, isSingle, setIsItemVerified, calculateM
 
   const handleItemDecrement = async (order_id) => {
     try{
+      setIsLoading(true)
     const incrementResponse = await axios.patch(`${BASE_URL}decreament-item/${order_id}/`, {}, {
       headers: {
         "content-Type": "Application/json",
@@ -103,20 +111,26 @@ const CheckoutVerify = ({ data, setData, isSingle, setIsItemVerified, calculateM
     })
     if (incrementResponse.status === 200){
       handleDecreaseQuantity(order_id)
+      setIsLoading(false)
     }
     } catch (error) {
       setAlertData(error.response.data.message)
       setAlertEnable(true)
       setAlertSeverity("error")
+      setIsLoading(false)
     }
   }
 
   const handleOnContinue = async () => {
+    setIsLoading(true)
     if(await itemConfirmation()){
       setIsItemVerified(false)
       setAddressAdded(true)
+      setIsLoading(false)
     } else {
-      console.log("Confirmation failed")
+      setAlertData("Confirmation failed")
+      setAlertEnable(true)
+      setAlertSeverity("error")
     }
   }
 
@@ -132,6 +146,11 @@ const CheckoutVerify = ({ data, setData, isSingle, setIsItemVerified, calculateM
       setEnable={setAlertEnable}
       severity={alertSeverity}
     />
+    <Backdrop
+      open={isLoading}
+    >
+      <CircularProgress/>
+    </Backdrop>
       <div className="row w-100 checkout-verify-container">
         <table className="table table-hover table-responsive">
           <thead>
@@ -149,7 +168,7 @@ const CheckoutVerify = ({ data, setData, isSingle, setIsItemVerified, calculateM
                   <td>
                     <img
                       style={{ width: "100px", height: "auto" }}
-                      src={`http://127.0.0.1:8000/${item.item.product.thumbnail}`}
+                      src={`http://127.0.0.1:8000${item.item.product.thumbnail}`}
                       alt={`${item.item.product.brand} ${item.item.product.name} ${item.item.product_variant.variation} ${item.item.product_color.color}`}
                     />
                   </td>
@@ -181,7 +200,7 @@ const CheckoutVerify = ({ data, setData, isSingle, setIsItemVerified, calculateM
                 <td>
                   <img
                     style={{ width: "100px", height: "auto" }}
-                    src={`http://127.0.0.1:8000/${data.item.product.thumbnail}`}
+                    src={`http://127.0.0.1:8000${data.item.product.thumbnail}`}
                     alt={`${data.item.product.brand} ${data.item.product.name} ${data.item.product_variant.variation} ${data.item.product_color.color}`}
                   />
                 </td>

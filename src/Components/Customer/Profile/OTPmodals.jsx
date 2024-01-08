@@ -2,27 +2,19 @@ import React from "react";
 import Modal from "react-modal";
 
 const OTPModal = ({
-  isEmail,
   setEmailOtp,
-  setPhoneOtp,
   setShowConfirmation,
   showConfirmation,
   handleOtpConfirm,
   emailOtp,
-  phoneOtp,
 }) => {
   const handleChange = (e) => {
-    if (isEmail) {
       setEmailOtp(e.target.value);
-    } else {
-      setPhoneOtp(e.target.value);
-    }
   };
 
   const handleClose = () => {
     setShowConfirmation(false);
     setEmailOtp("")
-    setPhoneOtp("")
   };
 
   return (
@@ -61,7 +53,7 @@ const OTPModal = ({
                 className="form-control"
                 name="otp"
                 required
-                value={isEmail ? emailOtp : phoneOtp}
+                value={emailOtp}
                 onChange={handleChange}
                 maxLength="6"
               />

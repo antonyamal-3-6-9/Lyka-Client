@@ -23,7 +23,6 @@ const Page = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(3),
-  marginBottom: theme.spacing(3),
   color: theme.palette.text.secondary,
 }));
 
@@ -100,8 +99,8 @@ const RegisterForm = () => {
 
   return (
     <>
-              <Page>
-        <div className="container-fluid login-container" style={{marginTop: "84px"}}>
+        <div className="container-fluid login-container">
+        <Page>
           <FloatingAlert
             message={alertData}
             setEnable={setAlertEnable}
@@ -155,12 +154,11 @@ const RegisterForm = () => {
                     >
                       Continue
                     </Button>
-                    <Grid container>
+                    <Grid container style={{marginTop: "30px"}}>
                       <Grid item>
                         <Link
-                          href="#"
-                          variant="body2"
-                          oncliCk={() => navigate("customer-login")}
+                          style={{marginTop: "30px"}}
+                          to="/customer-login"
                         >
                           {"Already have an account! Sign In"}
                         </Link>
@@ -172,9 +170,8 @@ const RegisterForm = () => {
               </Container>
             </ThemeProvider>
           )}
-
+          </Page>
         </div>
-        </Page>
     </>
   );
 };

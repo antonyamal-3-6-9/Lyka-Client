@@ -9,6 +9,8 @@ import { styled } from "@mui/material/styles";
 import { Button } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
+import { Backdrop } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 
 const Container = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -23,6 +25,8 @@ const ProductCard = (props) => {
   const sm = window.matchMedia("(max-width: 767px)");
   const md = window.matchMedia("(max-width: 992px)");
   const lg = window.matchMedia("(max-width: 1400px");
+
+  const [isLoading, setIsLoading] = useState(false)
 
   const isLoggedIn = useSelector(
     (state) => state.customerAuth.isCustomerLoggedIn
@@ -124,6 +128,7 @@ const ProductCard = (props) => {
 
     const token = localStorage.getItem("token");
     try {
+      setIsLoading(true)
       const inCartResponse = await axios.get(
         `${BASE_URL}item-in-cart/${props.unit_id}/`,
         {
@@ -153,17 +158,20 @@ const ProductCard = (props) => {
             setAlertData("Item Added to the cart");
             setAlertEnable(true);
             setAlertSeverity("success");
+            setIsLoading(false)
           }
         } catch (error) {
           setAlertData(error.response.data.message);
           setAlertEnable(true);
           setAlertSeverity("error");
+          setIsLoading(false)
         }
       }
     } catch (error) {
       setAlertData(error.response.data.message);
       setAlertEnable(true);
       setAlertSeverity("info");
+      setIsLoading(false)
     }
   };
 
@@ -196,6 +204,7 @@ const ProductCard = (props) => {
     }
     const token = localStorage.getItem("token");
     try {
+      setIsLoading(true)
       const orderCreateResponse = await axios.post(
         `http://127.0.0.1:8000/order/create-single-order/`,
         {
@@ -212,12 +221,14 @@ const ProductCard = (props) => {
       if (orderCreateResponse.status === 201) {
         console.log(orderCreateResponse);
         sessionStorage.setItem("order_id", orderCreateResponse.data.order_id);
+        setIsLoading(false)
         navigate("/checkout");
       }
     } catch (error) {
       setAlertData(error.response.data.message);
       setAlertEnable(true);
       setAlertSeverity("error");
+      setIsLoading(false)
     }
   };
 
@@ -233,6 +244,11 @@ const ProductCard = (props) => {
         enable={alertEnable}
         setEnable={setAlertEnable}
       />
+      <Backdrop
+        open={isLoading}
+      >
+        <CircularProgress></CircularProgress>
+      </Backdrop>
       <Container>
         <div className="media align-items-lg-center flex-column flex-lg-row">
           <div className="container-fluid">

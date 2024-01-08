@@ -49,14 +49,6 @@ const NumberForm = ({
         </div>
         <div className="row">
           <div className="col-lg-3">
-            {/* <input
-              className={`form-control rounded-0 border-2 ${isPhoneEdit ? 'border-primary' : 'border-temporary'} bg-temporary p-3`}
-              type="number"
-              value={isNumberChanged ? numberData.user.phone : userData.user.phone}
-              name="phone"
-              onChange={handleChange}
-              readOnly={!isPhoneEdit}
-            /> */}
             <TextField
               variant="standard"
               type="number"

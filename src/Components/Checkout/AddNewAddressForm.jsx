@@ -1,11 +1,12 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import StateSelect from "./StateSelect";
 import axios from "axios";
 import FloatingAlert from "../FloatingAlert/FloatingAlert";
 import { Button } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
+import { Backdrop } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 
 const Container = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -41,6 +42,8 @@ const AddNewAddressForm = ({
   const [alertEnable, setAlertEnable] = useState(false);
   const [alertSeverity, setAlertSeverity] = useState("");
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const handleChange = (e) => {
     setNewAddress({ ...newAddress, [e.target.name]: e.target.value });
   };
@@ -50,6 +53,7 @@ const AddNewAddressForm = ({
     e.preventDefault();
     const token = localStorage.getItem("token");
     try {
+      setIsLoading(true)
       const newAddressResponse = await axios.post(
         `${BASE_URL}create-customer-address/`,
         {
@@ -68,11 +72,13 @@ const AddNewAddressForm = ({
         setSavedAddress(updatedAddress);
         setIsAddNewAddress(false);
         setAddressId(newAddressResponse.data.id);
+        setIsLoading(false)
       }
     } catch (error) {
       setAlertData(error.response.data.message);
       setAlertEnable(true);
       setAlertSeverity("error");
+      setIsLoading(false)
     }
   };
 
@@ -87,19 +93,21 @@ const AddNewAddressForm = ({
       return
     }
     try {
+      setIsLoading(true)
       const zipcodeResponse = await axios.get(
         `https://api.postalpincode.in/pincode/${zipcode}`
       );
+      console.log(zipcodeResponse)
       setNewAddress({
         ...newAddress,
-        ["state"]: zipcodeResponse[0]["PostOffice"][0]["Circle"],
-        ["district"]: zipcodeResponse[0]["PostOffice"][0]["District"],
-        ["city"]: zipcodeResponse[0]["PostOffice"][0]["Name"],
+        ["state"]: zipcodeResponse.data[0]["PostOffice"][0]["Circle"],
+        ["district"]: zipcodeResponse.data[0]["PostOffice"][0]["District"],
+        ["city"]: zipcodeResponse.data[0]["PostOffice"][0]["Name"],
       });
+      setIsLoading(false)
     } catch (error) {
-      setAlertData("Error fetching address");
-      setAlertEnable(true);
-      setAlertSeverity("Warning");
+      console.log(error)
+      setIsLoading(false)
     }
   }
 
@@ -111,6 +119,11 @@ const AddNewAddressForm = ({
         enable={alertEnable}
         severity={alertSeverity}
       />
+      <Backdrop
+        open={isLoading}
+      >
+        <CircularProgress/>
+      </Backdrop>
       <Container>
       <form className="needs-validation" noValidate onSubmit={handleSubmit}>
         <div className="row p-2">

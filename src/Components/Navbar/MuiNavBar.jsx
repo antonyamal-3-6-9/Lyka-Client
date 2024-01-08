@@ -24,7 +24,10 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
+import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
+import AddBusinessIcon from '@mui/icons-material/AddBusiness';
+
+
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -69,6 +72,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function ResponsiveAppBar({ setOption }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const [socket, setSocket] = useState(null)
 
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
@@ -79,6 +83,7 @@ export default function ResponsiveAppBar({ setOption }) {
   };
 
   const [username, setUsername] = useState("");
+  const [userId, setUserId] = useState(null)
 
   const isLoggedIn = useSelector(
     (state) => state.customerAuth.isCustomerLoggedIn
@@ -98,8 +103,8 @@ export default function ResponsiveAppBar({ setOption }) {
           },
         });
         if (loggedInResponse.status === 200) {
-          console.log(loggedInResponse);
           setUsername(loggedInResponse.data.name);
+          console.log(loggedInResponse)
           dispatch(customerLogin());
         }
       } catch (error) {
@@ -108,7 +113,7 @@ export default function ResponsiveAppBar({ setOption }) {
       }
     };
     fetchData();
-  }, []);
+}, []);
 
   const handleLogout = async () => {
     try {
@@ -156,6 +161,22 @@ export default function ResponsiveAppBar({ setOption }) {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
+            <MenuItem>
+          <IconButton
+            size="large"
+            aria-label="account of current user"
+            aria-controls="primary-search-account-menu"
+            aria-haspopup="true"
+            color="inherit"
+            onClick={() => {
+              navigateLink("/seller-login")
+            }}
+
+          >
+            <AddBusinessIcon />
+          </IconButton>
+          <p>Login AS Seller</p>
+        </MenuItem>
       <MenuItem>
         <IconButton
           size="large"
@@ -249,6 +270,26 @@ export default function ResponsiveAppBar({ setOption }) {
             }}
             style={{ paddingRight: "100px" }}
           >
+                      <Box
+              onClick={() => {
+                navigateLink("/seller-login");
+              }}
+              sx={{
+                display: {
+                  xs: "none",
+                  md: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+              }}
+            >
+              <IconButton edge="end" size="large" color="inherit">
+                <AddBusinessIcon />
+              </IconButton>
+              <Typography>
+                <a>Start Selling</a>
+              </Typography>
+            </Box>
             <Box
               onClick={() => {
                 navigateLink("/cart");
@@ -308,7 +349,7 @@ export default function ResponsiveAppBar({ setOption }) {
                 }}
               >
                 <IconButton size="large" edge="end" color="inherit">
-                  <AccountCircle />
+                <ArrowOutwardIcon />
                 </IconButton>
                 <Typography>
                   <a>Logout</a>

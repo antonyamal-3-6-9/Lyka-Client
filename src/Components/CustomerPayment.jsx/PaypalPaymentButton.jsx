@@ -7,13 +7,17 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import FloatingAlert from "../FloatingAlert/FloatingAlert";
 import { useState } from "react";
+import { Backdrop } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 
 
 function PaypalPaymentButton() {
 
+  const [isLoading, setIsLoading] = useState(false)
   const [alertData, setAlertData] = useState('')
   const [alertEnable, setAlertEnable] = useState(false)
   const [alertSeverity, setAlertSeverity] = useState("")
+
 
 
   const navigate = useNavigate()
@@ -42,6 +46,11 @@ function PaypalPaymentButton() {
       severity={alertSeverity}
       setEnable={setAlertEnable}
     />
+    <Backdrop
+      open={isLoading}
+    >
+      <CircularProgress/>
+    </Backdrop>
       <PayPalScriptProvider options={initialOptions}>
         {FUNDING_SOURCES.map((fundingSource) => {
           return (
@@ -79,6 +88,7 @@ function PaypalPaymentButton() {
               }}
               onApprove={async (data, actions) => {
                 try {
+                    setIsLoading(true)
                   const response = await axios.patch(
                     `http://localhost:8000/payments/capture-paypal-order/${data.orderID}/${order_id}/`,
                     {},
@@ -91,6 +101,7 @@ function PaypalPaymentButton() {
                   );
 
                   if (response.status === 200){
+                    setIsLoading(false)
                     navigate("/order-placed")
                   }
         
@@ -98,6 +109,7 @@ function PaypalPaymentButton() {
                   setAlertEnable(true)
                   setAlertData(error.response.data.message)
                   setAlertSeverity('error')
+                  setIsLoading(false)
                 }
               }}
             />

@@ -1,0 +1,14 @@
+#search-results-container {
+  height: 500px;
+  width: 450px;
+  background-color: white;
+  position: absolute;
+  z-index: 9999;
+  left: 278px;
+}
+
+.result-card {
+  height: 100px;
+  width: 100%;
+  background-color: aquamarine;
+}/*# sourceMappingURL=search.css.map */

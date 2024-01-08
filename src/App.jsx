@@ -31,6 +31,14 @@ import Category from "./Components/Home/categories/Category.jsx";
 import CustomerVerify from "./Components/Customer/Login and Register/CustomerVerify.jsx";
 
 function App() {
+  React.useEffect(() => {
+    const webSocket = new WebSocket(`ws://localhost:8000/ws/notification/11/`);
+    console.log(webSocket);
+    webSocket.onmessage = (e) => {
+      console.log(e);
+    };
+  });
+
   return (
     <>
       <Router>
@@ -103,7 +111,7 @@ function App() {
             element={<EditProduct />}
           />
           <Route
-            path="seller/edit-address/:address_id" 
+            path="seller/edit-address/:address_id"
             element={<EditStore />}
           />
           <Route path="seller-login" element={<SellerLogin />} />
@@ -123,13 +131,16 @@ function App() {
             }
           />
 
-          <Route path="/product/:type/:name" element={
-            <>
-              <ResponsiveAppBar/>
-              <Category/>
-              <ProductByCategory/>
-            </>
-          }/>
+          <Route
+            path="/product/:type/:name"
+            element={
+              <>
+                <ResponsiveAppBar />
+                <Category />
+                <ProductByCategory />
+              </>
+            }
+          />
 
           <Route
             path="/product/:product_id"
@@ -162,7 +173,10 @@ function App() {
 
           <Route path="customer-register" element={<RegisterForm />} />
 
-          <Route path="customer/auth/verify/:email/:token/" element={<CustomerVerify />} />
+          <Route
+            path="customer/auth/verify/:email/:token/"
+            element={<CustomerVerify />}
+          />
 
           <Route
             path="order-placed"

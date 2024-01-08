@@ -7,6 +7,8 @@ import TextField from "@mui/material/TextField";
 import { useState } from "react";
 import axios from "axios";
 import FloatingAlert from "../../FloatingAlert/FloatingAlert";
+import { Backdrop } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 
 const style = {
   position: "absolute",
@@ -36,9 +38,11 @@ export default function NewPasswordModal({
     new_password2: "",
   });
 
-  const [alertEnable, setAlertEnable] = useState(null)
-  const [alertData, setAlertData] = useState(null)
-  const [alertSeverity, setAlertSeverity] = useState(null)
+  const [alertEnable, setAlertEnable] = useState(null);
+  const [alertData, setAlertData] = useState(null);
+  const [alertSeverity, setAlertSeverity] = useState(null);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
@@ -53,34 +57,33 @@ export default function NewPasswordModal({
   };
 
   const handleSubmit = async (e) => {
-
-    if (hasPassword){
-      if (passwordData.old_password.length <= 0){
-        setAlertData("Existing Password cannot be empty.")
-        setAlertEnable(true)
-        setAlertSeverity("warning")
+    if (hasPassword) {
+      if (passwordData.old_password.length <= 0) {
+        setAlertData("Existing Password cannot be empty.");
+        setAlertEnable(true);
+        setAlertSeverity("warning");
         return;
       }
     }
 
-    if (passwordData.new_password.length <= 0){
-      setAlertData("New Password Cannot be empty.")
-      setAlertEnable(true)
-      setAlertSeverity("warning")
+    if (passwordData.new_password.length <= 0) {
+      setAlertData("New Password Cannot be empty.");
+      setAlertEnable(true);
+      setAlertSeverity("warning");
       return;
     }
 
     if (!checkPassword) {
-      setAlertData("Passwords are not matching.")
-      setAlertEnable(true)
-      setAlertSeverity("warning")
+      setAlertData("Passwords are not matching.");
+      setAlertEnable(true);
+      setAlertSeverity("warning");
       return;
     }
 
     e.preventDefault();
 
-
     try {
+      setIsLoading(true);
       const passwordChangeResponse = await axios.patch(
         `${BASE_URL}set-password/`,
         {
@@ -96,12 +99,16 @@ export default function NewPasswordModal({
       );
       if (passwordChangeResponse.status === 200) {
         setIsUpdatePassword(false);
-        console.log("Password has been successfully update");
+        setIsLoading(false);
+        setAlertData("Password has been changed successfully");
+        setAlertEnable(true);
+        setAlertSeverity("success");
       }
     } catch (error) {
-      setAlertEnable(true)
-      setAlertData(error.response.data.message)
-      setAlertSeverity("error")
+      setAlertEnable(true);
+      setAlertData(error.response.data.message);
+      setAlertSeverity("error");
+      setIsLoading(false);
     }
   };
 
@@ -113,7 +120,12 @@ export default function NewPasswordModal({
         severity={alertSeverity}
         setEnable={setAlertEnable}
       />
-      <Button onClick={handleOpen} style={{color:"#16213E"}}>Change Password</Button>
+      <Backdrop open={isLoading}>
+        <CircularProgress />
+      </Backdrop>
+      <Button onClick={handleOpen} style={{ color: "#16213E" }}>
+        Change Password
+      </Button>
       <Modal
         open={open}
         onClose={handleClose}

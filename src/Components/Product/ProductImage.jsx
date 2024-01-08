@@ -64,7 +64,7 @@ const ImageGallery = ({ images }) => {
               {images.map((image, index) => (
                 <img
                   key={index}
-                  src={`http://127.0.0.1:8000/${image.image}`}
+                  src={`http://127.0.0.1:8000${image.image}`}
                   alt={`Thumbnail ${index}`}
                   onClick={() => handleThumbnailClick(image)}
                   className={`m-3 ${
@@ -96,7 +96,7 @@ const ImageGallery = ({ images }) => {
               }}
             >
               <img
-                src={`http://127.0.0.1:8000/${selectedImage.image}`}
+                src={`http://127.0.0.1:8000${selectedImage.image}`}
                 alt="Main"
                 ref={imageRef}
                 style={{

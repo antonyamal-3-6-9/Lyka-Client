@@ -5,6 +5,7 @@ import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const Category = () => {
+  
   const API_BASE_URL = "http://localhost:8000/category/";
   const navigate = useNavigate();
 
@@ -13,9 +14,9 @@ const Category = () => {
   const [subData, setSub] = useState([]);
 
   const [rootid, setRootId] = useState(0);
-  const [mainId, setMainId] = useState(0)
+  const [mainId, setMainId] = useState(0);
 
-  const [isHovered, setIsHovered] = useState(false)
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     axios
@@ -35,18 +36,28 @@ const Category = () => {
   }, []);
 
   const handleHover = () => {
-    setIsHovered(true)
-  }
+    setIsHovered(true);
+  };
 
   const handleClose = () => {
-      setIsHovered(false)
-  }
+    setIsHovered(false);
+  };
 
   return (
-    <div id="root-container" className="pb-3" onMouseOver={handleHover} onMouseOut={handleClose} style={isHovered ? {marginTop: "68px"} : {marginTop: "30px" }}>
+    <div
+      id="root-container"
+      className="pb-3"
+      onMouseOver={handleHover}
+      onMouseOut={handleClose}
+      style={isHovered ? { marginTop: "68px" } : { marginTop: "30px" }}
+    >
       <div className="row">
         <div className="top-bar">
-          <ul className="categories" onMouseOver={handleHover} onMouseOut={handleClose}>
+          <ul
+            className="categories"
+            onMouseOver={handleHover}
+            onMouseOut={handleClose}
+          >
             {data.map((item) => (
               <li
                 onMouseEnter={() => {
@@ -59,7 +70,7 @@ const Category = () => {
                   onClick={() => {
                     navigate(`/product/root/${item.name}`);
                     localStorage.setItem("cat_id", item.root_id);
-                    window.location.reload()
+                    window.location.reload();
                   }}
                 >
                   {item.name}
@@ -78,7 +89,7 @@ const Category = () => {
                           onClick={() => {
                             navigate(`/product/main/${mainItem.name}`);
                             localStorage.setItem("cat_id", mainItem.main_id);
-                            window.location.reload()
+                            window.location.reload();
                           }}
                         >
                           {mainItem.name}
@@ -95,7 +106,7 @@ const Category = () => {
                                       "cat_id",
                                       subItem.sub_id
                                     );
-                                    window.location.reload()
+                                    window.location.reload();
                                   }}
                                 >
                                   {subItem.name}

@@ -3,7 +3,8 @@ import MakePayment from "./MakePayment";
 import axios from "axios";
 import FloatingAlert from "../FloatingAlert/FloatingAlert";
 import { Button } from "@mui/material";
-
+import { Backdrop } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 
@@ -26,10 +27,12 @@ const CheckoutPayment = ({ data, setData }) => {
   const [alertEnable, setAlertEnable] = useState(false)
   const [alertSeverity, setAlertSeverity] = useState("")
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const formatAmountWithRupeeSymbol = (amountStr) => {
     const amount = parseInt(amountStr);
     if (typeof amount !== "number" || isNaN(amount)) {
-      return "Invalid Amount";
+      return 0;
     }
     const formattedAmount = amount.toLocaleString("en-IN", {
       maximumFractionDigits: 2,
@@ -43,12 +46,15 @@ const CheckoutPayment = ({ data, setData }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true)
         const couponResponse = await axios.get(`${BASE_URL}get-coupons/`);
         setCoupons(couponResponse.data);
+        setIsLoading(false)
       } catch (error) {
         setAlertData("Error fetching coupons")
         setAlertEnable(true)
         setAlertSeverity("error")
+        setIsLoading(false)
       }
     };
     fetchData();
@@ -64,6 +70,7 @@ const CheckoutPayment = ({ data, setData }) => {
 
   const handleApplyCoupon = async (coupon_code) => {
     try{
+      setIsLoading(true)
       const applyCouponResponse = await axios.post(`http://127.0.0.1:8000/order/apply-coupon/`, {
         coupon_code : coupon_code,
         order_id : order_id
@@ -75,6 +82,7 @@ const CheckoutPayment = ({ data, setData }) => {
         }
       })
       setIsCouponApplied(true)
+      setIsLoading(false)
       if(data.type === "single"){
         setData({...data, price_details : {...data.price_details, item : {...data.price_details.item, coupon_discount : applyCouponResponse.data.coupon_discount, product_price: applyCouponResponse.data.total_price}} })
       } else if(data.type === "multiple"){
@@ -86,13 +94,17 @@ const CheckoutPayment = ({ data, setData }) => {
         setAlertEnable(true)
         setAlertSeverity("error")
         setIsCouponApplied(true)
+        setIsLoading(false)
       } else {
         setAlertData(error.response.data.message)
         setAlertEnable(true)
         setAlertSeverity("error")
+        setIsLoading(false)
       }
     }
   }
+
+  console.log(data)
 
   return (
     <>
@@ -209,10 +221,9 @@ const CheckoutPayment = ({ data, setData }) => {
                     <div className="col-lg-5">
                       <h6 className="h6">
                        
-                          {formatAmountWithRupeeSymbol(
-                            data.price_details.item.total_selling_price
-                          )}
-                        
+              
+                            {data.price_details.item.selling_price}
+                   
                       </h6>
                     </div>
                   </div>
@@ -270,7 +281,7 @@ const CheckoutPayment = ({ data, setData }) => {
                       <h6 className="h6">
                         
                           {formatAmountWithRupeeSymbol(
-                            data.price_details.item.total_shipping_charge
+                            data.price_details.shipping_charge
                           )}
                    
                       </h6>
@@ -284,7 +295,7 @@ const CheckoutPayment = ({ data, setData }) => {
                       <h5 className="h5">
                         
                           {formatAmountWithRupeeSymbol(
-                            data.price_details.item.total_price
+                            data.price_details.item.product_price
                           )}
                         
                       </h5>

@@ -10,43 +10,51 @@ import { Button } from "@mui/material";
 import { ClearIcon } from "@mui/icons-material/Clear";
 import { Add, ArrowRight } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
+import { Backdrop } from "@mui/material";
+import { CircularProgress } from "@mui/material";
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(3),
+  color: theme.palette.text.secondary,
+}));
+
 
 const CheckoutAddress = (props) => {
   const token = localStorage.getItem("token");
   const BASE_URL = "http://127.0.0.1:8000/address/";
 
-  const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-    ...theme.typography.body2,
-    padding: theme.spacing(3),
-    color: theme.palette.text.secondary,
-  }));
-
   const [savedAddress, setSavedAddress] = useState();
   const [isSavedAddress, setIsSavedAddress] = useState(false);
   const [isAddNewAddress, setIsAddNewAddress] = useState(false);
   const [isSelected, setIsSelected] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [alertData, setAlertData] = useState("");
   const [alertEnable, setAlertEnable] = useState(false);
   const [alertSeverity, setAlertSeverity] = useState("");
 
   const onContinue = async () => {
+    setIsLoading(true)
     if (props.addessId !== 0) {
       if (await props.addressAdding()) {
         props.setAddressAdded(false);
         props.setIsPayment(true);
+        setIsLoading(false)
       }
     } else {
       setAlertData("Select an address before proceeding");
       setAlertEnable(true);
       setAlertSeverity("info");
+      setIsLoading(false)
     }
   };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true)
         const addressResponse = await axios.get(
           `${BASE_URL}get-customer-address/`,
           {
@@ -61,9 +69,11 @@ const CheckoutAddress = (props) => {
           const id = addressResponse.data[0].id;
           props.setAddressId(id);
           setIsSavedAddress(true);
+          setIsLoading(false)
         }
       } catch (error) {
         setIsSavedAddress(false);
+        setIsLoading(false)
       }
     };
     fetchData();
@@ -83,6 +93,11 @@ const CheckoutAddress = (props) => {
         enable={alertEnable}
         severity={alertSeverity}
       />
+      <Backdrop
+        open={isLoading}
+      >
+        <CircularProgress/>
+      </Backdrop>
       {isSavedAddress && !isAddNewAddress ? (
         <Item style={{ margin: "10px" }}>
           <div className="row m-0 p-0">

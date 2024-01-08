@@ -17,6 +17,8 @@ import StoreIcon from "@mui/icons-material/Store";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import { useLocation } from "react-router-dom";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+import { Backdrop } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 import "../Cart/cart.css"
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -33,8 +35,8 @@ const ShoppingCart = () => {
   const [subtotal, setSubTotal] = useState(0);
   const [isCartEmpty, setIsCartEmpty] = useState(null);
   const [totalItems, setIsTotalItems] = useState(0);
+  const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate();
-  const location = useLocation();
 
   const isLoggedIn = useSelector(
     (state) => state.customerAuth.isCustomerLoggedIn
@@ -57,6 +59,7 @@ const ShoppingCart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true)
         const cartItemsResponse = await axios.get(`${BASE_URL}get-cart-item/`, {
           headers: {
             "content-Type": "Application/json",
@@ -65,16 +68,19 @@ const ShoppingCart = () => {
         });
         if (cartItemsResponse.status === 200) {
           if (cartItemsResponse.data.length === 0) {
+            setIsLoading(false)
             setIsCartEmpty(true);
           } else {
             setIsCartEmpty(false);
             calculateSubTotal(cartItemsResponse.data);
             setCartItems(cartItemsResponse.data);
             setIsTotalItems(cartItemsResponse.data.length);
+            setIsLoading(false)
           }
         }
       } catch (error) {
         setIsCartEmpty(true);
+        setIsLoading(false)
       }
     };
     fetchData();
@@ -104,6 +110,7 @@ const ShoppingCart = () => {
 
   const handleIncrementCart = async (cart_item_id) => {
     try {
+      setIsLoading(true)
       const incrementResponse = await axios.patch(
         `${BASE_URL}increment-cart/${cart_item_id}/`,
         {},
@@ -116,11 +123,13 @@ const ShoppingCart = () => {
       );
       if (incrementResponse.status === 200) {
         incrementCart(cart_item_id);
+        setIsLoading(false)
       }
     } catch (error) {
       setAlertData(error.response.data.message);
       setAlertEnable(true);
       setAlertSeverity("error");
+      setIsLoading(false)
     }
   };
 
@@ -144,6 +153,7 @@ const ShoppingCart = () => {
 
   const handleDecrementCart = async (cart_item_id) => {
     try {
+      setIsLoading(true)
       const decrementResponse = await axios.patch(
         `${BASE_URL}decrement-cart/${cart_item_id}/`,
         {},
@@ -156,11 +166,13 @@ const ShoppingCart = () => {
       );
       if (decrementResponse.status === 200) {
         decrementCart(cart_item_id);
+        setIsLoading(false)
       }
     } catch (error) {
       setAlertData(error.response.data.message);
       setAlertEnable(true);
       setAlertSeverity("error");
+      setIsLoading(false)
     }
   };
 
@@ -175,6 +187,7 @@ const ShoppingCart = () => {
 
   const handleDeleteItem = async (cart_item_id) => {
     try {
+      setIsLoading(true)
       const decrementResponse = await axios.delete(
         `${BASE_URL}delete-cart-item/${cart_item_id}/`,
         {
@@ -185,19 +198,21 @@ const ShoppingCart = () => {
         }
       );
       if (decrementResponse.status === 200) {
+        setIsLoading(false)
         deleteCartItem(cart_item_id);
       }
     } catch (error) {
       setAlertData(error.response.data.message);
       setAlertEnable(true);
       setAlertSeverity("error");
+      setIsLoading(false)
     }
   };
 
   const formatAmountWithRupeeSymbol = (amountStr) => {
     const amount = parseInt(amountStr);
     if (typeof amount !== "number" || isNaN(amount)) {
-      return "Invalid Amount";
+      return 0;
     }
     const formattedAmount = amount.toLocaleString("en-IN", {
       maximumFractionDigits: 2,
@@ -210,6 +225,7 @@ const ShoppingCart = () => {
 
   const OnCheckOut = async () => {
     try {
+      setIsLoading(true)
       const orderCreateResponse = await axios.post(
         `http://127.0.0.1:8000/order/create-multiple-order/`,
         {},
@@ -221,6 +237,7 @@ const ShoppingCart = () => {
         }
       );
       if (orderCreateResponse.status === 201) {
+        setIsLoading(false)
         console.log(orderCreateResponse);
         sessionStorage.setItem("order_id", orderCreateResponse.data);
         navigate("/checkout");
@@ -229,6 +246,7 @@ const ShoppingCart = () => {
       setAlertData(error.response.data.message);
       setAlertEnable(true);
       setAlertSeverity("error");
+      setIsLoading(false)
     }
   };
 
@@ -244,6 +262,11 @@ const ShoppingCart = () => {
         enable={alertEnable}
         setEnable={setAlertEnable}
       />
+      <Backdrop
+        open={isLoading}
+      >
+        <CircularProgress></CircularProgress>
+      </Backdrop>
       {isCartEmpty || !isLoggedIn ? (
         <>
           <div className="container d-flex justify-content-center align-items-center mt-5 pt-5">
@@ -260,17 +283,18 @@ const ShoppingCart = () => {
                 />
               ) : null}
               <h2 className="text-center h2 mb-5">
-                {isLoggedIn ? "Empty Cart" : "Login Now"}
+                {isLoggedIn ? "Empty Cart" : "Sign in to view cart"}
               </h2>
               <Button
                 to={isLoggedIn ? "/" : "/customer-login"}
                 onClick={() => {
-                  navigate(isLoggedIn ? "/" : "customer-login");
+                  navigate(isLoggedIn ? "/" : "/customer-login");
                 }}
                 variant="contained"
+                style={{alignItems: "center"}}
               >
                 {" "}
-                {isLoggedIn ? "Continue Shopping" : "Login now"}
+                {isLoggedIn ? "Continue Shopping" : "Sign In"}
               </Button>
             </Item>
           </div>
@@ -290,7 +314,7 @@ const ShoppingCart = () => {
                     <div className="row m-3">
                       <div className="col-sm-3">
                         <img
-                          src={`http://127.0.0.1:8000/${item.unit.product.thumbnail}/`}
+                          src={`http://127.0.0.1:8000${item.unit.product.thumbnail}/`}
                           alt={item.unit.product.name}
                           width="100px"
                         />

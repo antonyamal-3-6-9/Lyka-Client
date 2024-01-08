@@ -92,7 +92,7 @@ const SellerLogin = () => {
   };
 
   const handleSendOtp = async () => {
-    if (sellerLoginData.phone.length >= 0){
+    if (sellerLoginData.phone.length <= 0){
       setAlertData("Enter your phone Number")
       setAlertEnable(true)
       setAlertSeverity("warning")

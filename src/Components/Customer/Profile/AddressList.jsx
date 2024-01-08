@@ -8,6 +8,10 @@ import AddIcon from "@mui/icons-material/Add";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 import EditAddress from "./EditAddress"
+import { Backdrop } from "@mui/material";
+import { CircularProgress } from "@mui/material";
+import FloatingAlert from "../../FloatingAlert/FloatingAlert";
+import { CircleSharp } from "@mui/icons-material";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -30,10 +34,15 @@ const AddressList = ({
   const [isEdit, setIsEdit] = useState(false);
   const [addressIdEdit, setAddressIdEdit] = useState(null)
   const [addressIndex, setAddressIndex] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [alertData, setAlertData] = useState("")
+  const [alertEnable, setAlertEnable] = useState(false)
+  const [alertSeverity, setAlertSeverity] = useState("")
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true)
         const addressResponse = await axios.get(
           `${BASE_URL}get-customer-address/`,
           {
@@ -45,11 +54,15 @@ const AddressList = ({
         );
         if (addressResponse.status === 200) {
           setIsSavedAddress(true);
+          setIsLoading(false)
           setSavedAddress(addressResponse.data);
         }
       } catch (error) {
         setIsSavedAddress(false);
-        console.log(error);
+        setAlertData("Address not found")
+        setAlertEnable(true)
+        setAlertSeverity("warning")
+        setIsLoading(false)
       }
     };
     fetchData();
@@ -61,6 +74,7 @@ const AddressList = ({
 
   const handleDelete =  async (address_id, addressIndex) => {
     try{
+      setIsLoading(true)
       const deleteResponse = await axios.delete(`${BASE_URL}delete-address/${address_id}/`, {
         headers: {
           "content-Type": "Application/json",
@@ -71,15 +85,30 @@ const AddressList = ({
         const updatedAddress = [...savedAddress]
         updatedAddress.splice(addressIndex, 1)
         setSavedAddress(updatedAddress)
+        setIsLoading(false)
       }
     } catch (error){
-      alert("deletion failed")
+      setAlertData("error deleting address")
+      setAlertEnable(true)
+      setAlertSeverity("warning")
+      setIsLoading(false)
     }
   }
 
   return (
     <>
       <div className="container-fluid">
+      <FloatingAlert
+        message={alertData}
+        setEnable={setAlertEnable}
+        enable={setAlertEnable}
+        severity={alertSeverity}
+      />
+      <Backdrop
+        open={isLoading}
+      >
+        <CircularProgress />
+      </Backdrop>
         <Button
           variant="text"
           onClick={() => {

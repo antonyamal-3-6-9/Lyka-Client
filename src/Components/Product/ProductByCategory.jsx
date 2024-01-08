@@ -106,7 +106,6 @@ const ProductByCategory = () => {
         name={name}
       />
       <div className="container-fluid mt-2" id="product-container">
-      <p>{`/${name}`}</p>
         {products.map((item) => (
           <div className="row m-3">
             <ProductCard

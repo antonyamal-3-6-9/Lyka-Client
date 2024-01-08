@@ -24,7 +24,6 @@ const Page = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(3),
-  marginBottom: theme.spacing(3),
   color: theme.palette.text.secondary,
 }));
 
@@ -37,9 +36,9 @@ function Copyright(props) {
       {...props}
     >
       {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
+      <Link color="inherit" to="/">
+        Lyka
+      </Link>
       {new Date().getFullYear()}
       {"."}
     </Typography>
@@ -128,6 +127,9 @@ const LoginForm = () => {
 
   const passwordLogin = async () => {
     if (loginData.email.length <= 0) {
+      setAlertData("Enter a valid e-mail id");
+      setAlertEnable(true);
+      setAlertSeverity("warning");
       return;
     }
 
@@ -169,8 +171,11 @@ const LoginForm = () => {
     }
   };
 
-  const loggingIn = () => {
+  const loggingIn = async () => {
     if (loginData.email === "") {
+      setAlertData("Enter a valid e-mail id");
+      setAlertEnable(true);
+      setAlertSeverity("warning");
       return;
     }
 
@@ -182,19 +187,19 @@ const LoginForm = () => {
     }
 
     if (loginData.type === "otp") {
-      if (loginData.otp.length < 6) {
+      if (loginData.otp.length < 6 && isSend) {
         setAlertData("Enter a Valid Otp");
         setAlertEnable(true);
         setAlertSeverity("warning");
       }
 
       if (isSend) {
-        otpVerify();
+        await otpVerify();
       } else {
-        otpCreate();
+        await otpCreate();
       }
-    } else if (loginData.type === "normal") {
-      passwordLogin();
+    } else if (loginData.type === "password") {
+      await passwordLogin();
     }
   };
 
@@ -223,8 +228,8 @@ const LoginForm = () => {
 
   return (
     <>
-       <Page>
-      <div className="container-fluid login-container" style={{marginTop: "84px"}}>
+      <div className="container-fluid login-container">
+      <Page>
           <FloatingAlert
             enable={alertEnable}
             setEnable={setAlertEnable}
@@ -333,8 +338,8 @@ const LoginForm = () => {
               <Copyright sx={{ mt: 8, mb: 4 }} />
             </Container>
           </ThemeProvider>
+          </Page>
       </div>
-      </Page>
       )
     </>
   );
