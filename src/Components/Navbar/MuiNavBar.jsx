@@ -16,7 +16,7 @@ import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import { useSelector } from "react-redux";
 import {
-  customerLogin,
+  NotificationSignal,
   customerLogout,
 } from "../../redux/customerAuth/actions/authCustomerActions";
 import { useNavigate } from "react-router-dom";
@@ -25,9 +25,8 @@ import { useDispatch } from "react-redux";
 import axios from "axios";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
-import AddBusinessIcon from '@mui/icons-material/AddBusiness';
-
-
+import AddBusinessIcon from "@mui/icons-material/AddBusiness";
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -72,7 +71,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function ResponsiveAppBar({ setOption }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-  const [socket, setSocket] = useState(null)
+  const [socket, setSocket] = useState(null);
 
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
@@ -82,8 +81,7 @@ export default function ResponsiveAppBar({ setOption }) {
     setAnchorEl(event.currentTarget);
   };
 
-  const [username, setUsername] = useState("");
-  const [userId, setUserId] = useState(null)
+  const userName = useSelector((state) => state.customerAuth.customerName);
 
   const isLoggedIn = useSelector(
     (state) => state.customerAuth.isCustomerLoggedIn
@@ -92,29 +90,6 @@ export default function ResponsiveAppBar({ setOption }) {
 
   const BASE_URL = "http://127.0.0.1:8000/customer/";
   const token = localStorage.getItem("token");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const loggedInResponse = await axios.get(`${BASE_URL}is-logged-in/`, {
-          headers: {
-            "content-Type": "Application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (loggedInResponse.status === 200) {
-          setUsername(loggedInResponse.data.name);
-          console.log(loggedInResponse)
-          dispatch(customerLogin());
-        }
-      } catch (error) {
-        console.log(error);
-        dispatch(customerLogout());
-      }
-    };
-    fetchData();
-}, []);
-
   const handleLogout = async () => {
     try {
       const logoutResponse = await axios.post(
@@ -161,22 +136,36 @@ export default function ResponsiveAppBar({ setOption }) {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-            <MenuItem>
-          <IconButton
-            size="large"
-            aria-label="account of current user"
-            aria-controls="primary-search-account-menu"
-            aria-haspopup="true"
-            color="inherit"
-            onClick={() => {
-              navigateLink("/seller-login")
-            }}
-
-          >
-            <AddBusinessIcon />
-          </IconButton>
-          <p>Login AS Seller</p>
-        </MenuItem>
+      <MenuItem>
+        <IconButton
+          size="large"
+          aria-label="account of current user"
+          aria-controls="primary-search-account-menu"
+          aria-haspopup="true"
+          color="inherit"
+          onClick={() => {
+            navigateLink("/seller-login");
+          }}
+        >
+          <AddBusinessIcon />
+        </IconButton>
+        <p>Login AS Seller</p>
+      </MenuItem>
+      <MenuItem>
+        <IconButton
+          size="large"
+          aria-label="account of current user"
+          aria-controls="primary-search-account-menu"
+          aria-haspopup="true"
+          color="inherit"
+          onClick={() => {
+            dispatch(NotificationSignal())
+          }}
+        >
+          <NotificationsActiveIcon />
+        </IconButton>
+        <p>Notifications</p>
+      </MenuItem>
       <MenuItem>
         <IconButton
           size="large"
@@ -197,12 +186,19 @@ export default function ResponsiveAppBar({ setOption }) {
           size="large"
           aria-label="show 17 new notifications"
           color="inherit"
+          onClick={() => {
+            if (isLoggedIn) {
+              navigateLink("/account");
+            } else {
+              navigateLink("customer-login");
+            }
+          }}
         >
           <Badge badgeContent={17} color="error">
             <ShoppingCartCheckoutIcon />
           </Badge>
         </IconButton>
-        <p>{isLoggedIn ? username : "Login"}</p>
+        <p>{isLoggedIn ? userName : "Login"}</p>
       </MenuItem>
       {isLoggedIn ? (
         <MenuItem>
@@ -213,11 +209,7 @@ export default function ResponsiveAppBar({ setOption }) {
             aria-haspopup="true"
             color="inherit"
             onClick={() => {
-              if (isLoggedIn) {
-                navigateLink("/account");
-              } else {
-                navigateLink("customer-login");
-              }
+              handleLogout();
             }}
           >
             <ArrowOutwardIcon />
@@ -270,7 +262,7 @@ export default function ResponsiveAppBar({ setOption }) {
             }}
             style={{ paddingRight: "100px" }}
           >
-                      <Box
+            <Box
               onClick={() => {
                 navigateLink("/seller-login");
               }}
@@ -331,7 +323,7 @@ export default function ResponsiveAppBar({ setOption }) {
                 <AccountCircle />
               </IconButton>
               <Typography>
-                <a>{isLoggedIn ? "Account" : "Login"}</a>
+                <a>{isLoggedIn ? userName : "Login"}</a>
               </Typography>
             </Box>
             {isLoggedIn ? (
@@ -349,13 +341,35 @@ export default function ResponsiveAppBar({ setOption }) {
                 }}
               >
                 <IconButton size="large" edge="end" color="inherit">
-                <ArrowOutwardIcon />
+                  <ArrowOutwardIcon />
                 </IconButton>
                 <Typography>
                   <a>Logout</a>
                 </Typography>
               </Box>
             ) : null}
+            <Box
+              sx={{
+                display: {
+                  xs: "none",
+                  md: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+              }}
+              onClick={() => {
+                dispatch(NotificationSignal())
+              }}
+            >
+              <IconButton edge="end" size="large" color="inherit">
+              <Badge>
+                <NotificationsActiveIcon />
+                </Badge>
+              </IconButton>
+              <Typography>
+                <a></a>
+              </Typography>
+            </Box>
           </Box>
           <Box sx={{ display: { xs: "flex", md: "none" } }}>
             <IconButton

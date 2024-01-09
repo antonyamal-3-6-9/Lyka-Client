@@ -16,7 +16,6 @@ const Category = () => {
   const [rootid, setRootId] = useState(0);
   const [mainId, setMainId] = useState(0);
 
-  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     axios
@@ -35,28 +34,16 @@ const Category = () => {
       .catch((error) => console.error(error));
   }, []);
 
-  const handleHover = () => {
-    setIsHovered(true);
-  };
-
-  const handleClose = () => {
-    setIsHovered(false);
-  };
-
   return (
     <div
       id="root-container"
-      className="pb-3"
-      onMouseOver={handleHover}
-      onMouseOut={handleClose}
-      style={isHovered ? { marginTop: "68px" } : { marginTop: "30px" }}
+      className=""
+      style={{marginTop: "70px"}}
     >
       <div className="row">
         <div className="top-bar">
           <ul
             className="categories"
-            onMouseOver={handleHover}
-            onMouseOut={handleClose}
           >
             {data.map((item) => (
               <li

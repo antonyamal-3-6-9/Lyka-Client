@@ -6,17 +6,14 @@ import ProductByCategory from "../Product/ProductByCategory.jsx";
 import ResponsiveAppBar from "../Navbar/MuiNavBar.jsx";
 
 
-
-
 function Home() {
+
   return (
     <>
-
-    <Category/>
-    <ResponsiveAppBar/>
-      <Header/>
-      {/* <Contents /> */}
-      <ProductByCategory/>
+      <ResponsiveAppBar />
+      <Category />
+      <Header />
+      <ProductByCategory />
     </>
   );
 }

@@ -1,4 +1,5 @@
-import React from "react";
+import { React, useEffect } from "react";
+import axios from "axios";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./Components/Home/Home.jsx";
 import AddProduct from "./Components/Seller/Seller Dashboard/Products/AddProducts/AddProduct.jsx";
@@ -29,20 +30,179 @@ import ResponsiveAppBar from "./Components/Navbar/MuiNavBar.jsx";
 import ProductByCategory from "./Components/Product/ProductByCategory.jsx";
 import Category from "./Components/Home/categories/Category.jsx";
 import CustomerVerify from "./Components/Customer/Login and Register/CustomerVerify.jsx";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  customerLogin,
+  customerLogout,
+  CustomerCredentials,
+  CustomerNotification,
+  CustomerNotifications,
+} from "./redux/customerAuth/actions/authCustomerActions.js";
+import Notification from "./Components/Notification/Notification.jsx";
 
 function App() {
-  React.useEffect(() => {
-    const webSocket = new WebSocket(`ws://localhost:8000/ws/notification/11/`);
-    console.log(webSocket);
-    webSocket.onmessage = (e) => {
-      console.log(e);
+  const isActive = useSelector(
+    (state) => state.customerAuth.isCustomerLoggedIn
+  );
+
+  const signal = useSelector((state) => state.customerAuth.notificationSignal);
+
+  const dispatch = useDispatch();
+
+  const BASE_URL = "http://127.0.0.1:8000/";
+
+  const userId = useSelector((state) => state.customerAuth.customerId);
+
+  window.onload = () => {
+    console.log(isActive);
+    if (isActive) {
+      const webSocket = new WebSocket(
+        `ws://localhost:8000/ws/notification/private/${userId}/`
+      );
+      console.log(webSocket);
+      webSocket.onmessage = (e) => {
+        const data = JSON.parse(e.data);
+        console.log(data.message);
+        dispatch(
+          CustomerNotification({ message: data.message, time: data.time })
+        );
+      };
+    } else {
+    }
+  };
+
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const loggedInResponse = await axios.get(
+          `${BASE_URL}customer/is-logged-in/`,
+          {
+            headers: {
+              "content-Type": "Application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (loggedInResponse.status === 200) {
+          dispatch(customerLogin());
+          dispatch(
+            CustomerCredentials(
+              loggedInResponse.data.user.name,
+              loggedInResponse.data.user.id
+            )
+          );
+          try {
+            const notificationResponse = await axios.get(
+              `${BASE_URL}owner/notification/`,
+              {
+                headers: {
+                  "content-Type": "Application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+            dispatch(CustomerNotifications(notificationResponse.data));
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        dispatch(customerLogout());
+      }
     };
-  });
+    fetchData();
+  }, []);
 
   return (
     <>
+      {signal && <Notification />}
+
       <Router>
         <Routes>
+          //Customer User Interface Routes
+          <Route
+            exact
+            path="/"
+            element={
+              <>
+                <Home />
+              </>
+            }
+          />
+          <Route
+            path="/product/:type/:name"
+            element={
+              <>
+                <ResponsiveAppBar />
+                <Category />
+                <ProductByCategory />
+              </>
+            }
+          />
+          <Route
+            path="/product/:product_id"
+            element={
+              <>
+                <ResponsiveAppBar />
+                <ProductDetail />
+              </>
+            }
+          />
+          <Route
+            path="/cart"
+            element={
+              <>
+                <ResponsiveAppBar />
+                <ShoppingCart />
+              </>
+            }
+          />
+          <Route
+            path="/checkout"
+            element={
+              <>
+                <ResponsiveAppBar />
+                <Checkout />
+              </>
+            }
+          />
+          <Route path="customer-login" element={<LoginForm />} />
+          <Route path="customer-register" element={<RegisterForm />} />
+          <Route
+            path="customer/auth/verify/:email/:token/"
+            element={<CustomerVerify />}
+          />
+          <Route
+            path="order-placed"
+            element={
+              <>
+                <ResponsiveAppBar />
+                <OrderPlaced />
+              </>
+            }
+          />
+          <Route
+            path="account"
+            element={
+              <>
+                <ResponsiveAppBar />
+                <CustomerProfile />
+              </>
+            }
+          />
+          <Route
+            path="order/:orderId"
+            element={
+              <>
+                <ResponsiveAppBar />
+                <OrderDetails />
+              </>
+            }
+          />
+          //Seller Interface routes
           <Route
             path="seller/products"
             element={
@@ -120,91 +280,6 @@ function App() {
           <Route path="seller/check-product" element={<CheckProduct />} />
           <Route path="seller/add-item" element={<AddItem />} />
           <Route path="seller/add-store" element={<AddPickupStore />} />
-          <Route
-            exact
-            path="/"
-            element={
-              <>
-                <ResponsiveAppBar />
-                <Home />
-              </>
-            }
-          />
-
-          <Route
-            path="/product/:type/:name"
-            element={
-              <>
-                <ResponsiveAppBar />
-                <Category />
-                <ProductByCategory />
-              </>
-            }
-          />
-
-          <Route
-            path="/product/:product_id"
-            element={
-              <>
-                <ResponsiveAppBar />
-                <ProductDetail />
-              </>
-            }
-          />
-          <Route
-            path="/cart"
-            element={
-              <>
-                <ResponsiveAppBar />
-                <ShoppingCart />
-              </>
-            }
-          />
-          <Route
-            path="/checkout"
-            element={
-              <>
-                <ResponsiveAppBar />
-                <Checkout />
-              </>
-            }
-          />
-          <Route path="customer-login" element={<LoginForm />} />
-
-          <Route path="customer-register" element={<RegisterForm />} />
-
-          <Route
-            path="customer/auth/verify/:email/:token/"
-            element={<CustomerVerify />}
-          />
-
-          <Route
-            path="order-placed"
-            element={
-              <>
-                <ResponsiveAppBar />
-                <OrderPlaced />
-              </>
-            }
-          />
-          <Route
-            path="account"
-            element={
-              <>
-                <ResponsiveAppBar />
-                <CustomerProfile />
-              </>
-            }
-          />
-          <Route
-            path="order/:orderId"
-            element={
-              <>
-                <ResponsiveAppBar />
-                <OrderDetails />
-              </>
-            }
-          />
         </Routes>
       </Router>
     </>

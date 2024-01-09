@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import FloatingAlert from "../../FloatingAlert/FloatingAlert";
 import { useDispatch } from "react-redux";
-import { customerLogin } from "../../../redux/customerAuth/actions/authCustomerActions";
+import { customerLogin, CustomerCredentials } from "../../../redux/customerAuth/actions/authCustomerActions";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -110,10 +110,12 @@ const LoginForm = () => {
           otp: loginData.otp,
         }
       );
+
       if (otpVerifyResponse.status === 200) {
         localStorage.setItem("token", otpVerifyResponse.data.token);
         setIsLoading(false)
         dispatch(customerLogin());
+        dispatch(CustomerCredentials(otpVerifyResponse.data.user.name, otpVerifyResponse.data.user.id))
         navigate("/");
       }
     } catch (error) {
@@ -159,6 +161,7 @@ const LoginForm = () => {
       if (passwordLoginResponse.status === 200) {
         localStorage.setItem(passwordLoginResponse.data.token);
         dispatch(customerLogin());
+        dispatch(CustomerCredentials(passwordLoginResponse.data.user.name, passwordLoginResponse.data.user.id))
         setIsLoading(false)
         navigate("/");
       }
