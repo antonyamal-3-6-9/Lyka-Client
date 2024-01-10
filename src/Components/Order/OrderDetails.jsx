@@ -6,6 +6,7 @@ import Modal from "react-modal";
 import CheckIcon from "@mui/icons-material/Check";
 import { Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import FloatingAlert from "../FloatingAlert/FloatingAlert";
 
 const OrderDetails = () => {
   const { orderId } = useParams();
@@ -14,6 +15,23 @@ const OrderDetails = () => {
 
   const [order, setOrder] = useState();
   const [isOrderAction, setIsOrderAction] = useState(false);
+
+  const [alertEnable, setAlertEnable] = useState(false);
+  const [alertData, setAlertData] = useState("");
+  const [alertSeverity, setAlertSeverity] = useState("");
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+    };
+    return date.toLocaleString("en-US", options);
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,9 +46,10 @@ const OrderDetails = () => {
           }
         );
         setOrder(orderResponse.data);
-        console.log(orderResponse);
       } catch (error) {
-        console.log(error);
+        setAlertEnable(true);
+        setAlertData("Error fetching orders");
+        setAlertSeverity("error");
       }
     };
     fetchData();
@@ -67,10 +86,15 @@ const OrderDetails = () => {
         }
       );
       if (cancelResponse.status === 200) {
+        setAlertData("Cancellation request has been successfully send");
+        setAlertEnable(true);
+        setAlertSeverity("success");
         return true;
       }
     } catch (error) {
-      console.log(error);
+      setAlertData("Failed to initiate cancellation request");
+      setAlertEnable(true);
+      setAlertSeverity("error");
       return false;
     }
   };
@@ -88,23 +112,27 @@ const OrderDetails = () => {
         }
       );
       if (returnResponse.status === 200) {
-        console.log("Return has been successfully requested");
+        setAlertData("Return has been successfully requested");
+        setAlertEnable(true);
+        setAlertSeverity("error");
+        return true;
       }
     } catch (error) {
-      console.log(error);
+      setAlertData("Failed to initiate a return request");
+      setAlertEnable(true);
+      setAlertSeverity("error");
+      return false;
     }
   };
 
   const handleAccept = async () => {
-    if (order.order_status === "Delivered") {
+    if (order.order_status === "DELIVERED") {
       if (await handleReturn()) {
-        setOrder({ ...order, order_status: "Return Requested" });
-        console.log("returned");
+        setOrder({ ...order, status: "RETURN REQUESTED" });
       }
     } else {
       if (await handleCancel()) {
-        setOrder({ ...order, order_status: "Cancelled" });
-        console.log("cancelled");
+        setOrder({ ...order, status: "CANCELLATION REQUESTED" });
       }
     }
     setIsOrderAction(false);
@@ -116,6 +144,12 @@ const OrderDetails = () => {
 
   return (
     <>
+      <FloatingAlert
+        message={alertData}
+        setEnable={setAlertEnable}
+        severity={alertSeverity}
+        enable={alertEnable}
+      ></FloatingAlert>
       <Modal
         isOpen={isOrderAction}
         onRequestClose={handleActionCancel}
@@ -123,6 +157,7 @@ const OrderDetails = () => {
           content: {
             width: "400px",
             margin: "auto",
+            height: "400px",
             borderRadius: "8px",
             boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
             padding: "20px",
@@ -134,10 +169,17 @@ const OrderDetails = () => {
       >
         <h2 style={{ marginBottom: "10px" }}>Confirmation</h2>
         <p style={{ marginBottom: "20px" }}>Are you sure ?</p>
-        <button style={{ marginRight: "10px" }} onClick={() => handleAccept()}>
+        <Button
+          variant="contained"
+          color="success"
+          style={{ marginRight: "10px" }}
+          onClick={() => handleAccept()}
+        >
           Confirm
-        </button>
-        <button onClick={handleActionCancel}>Cancel</button>
+        </Button>
+        <Button varinat="contained" color="danger" onClick={handleActionCancel}>
+          Cancel
+        </Button>
       </Modal>
       <div
         className="container-fluid"
@@ -159,7 +201,9 @@ const OrderDetails = () => {
             <div className="card m-3 p-3">
               <div className="mb-3 d-flex justify-content-between">
                 <div>
-                  <span className="me-3">placed on: {order.time}</span>
+                  <span className="me-3">
+                    placed on: {formatDate(order.time)}
+                  </span>
                   <span className="badge bg-info">{order.order_status}</span>
                 </div>
               </div>
@@ -276,7 +320,7 @@ const OrderDetails = () => {
                   </div>
                   <div className="row m-2">
                     <div className="col-lg-6">
-                      <span className="text-dark">{order.order_status === "Rejected" || order.order_status === "Cancelled" || order.order_status === "Returned" ? "Refund Status:" : "Payment Status:"} </span>
+                      <span className="text-dark">Payment Status: </span>
                     </div>
                     <div className="col-lg-6">
                       <Button
@@ -329,51 +373,29 @@ const OrderDetails = () => {
               </address>
             </div>
             <div className="card p-3 m-3">
-              <button
-                className={` d-flex justify-content-center btn ${
-                  order.order_status === "Delivered"
-                    ? "btn-danger"
-                    : order.order_status === "Cancelled"
-                    ? "btn-warning"
-                    : order.order_status === "Returned"
-                    ? "btn-danger"
-                    : order.order_status === "Return Requested"
-                    ? "btn-primary"
-                    : order.order_status === "Picked Up for Return"
-                    ? "btn-success"
-                    : "btn-warning"
-                }`}
-                disabled={
-                  order.order_status === "Cancelled" ||
-                  order.order_status === "Returned" ||
-                  order.order_status === "Return Requested" ||
-                  order.order_status === "Picked Up for Return" ||
-                  order.order_status === "Rejected"
-                }
-                onClick={() => setIsOrderAction(true)}
-              >
-                {" "}
-                <h4 className="text-center h3 m-0 p-0">
-                  {order.order_status === "Delivered"
-                    ? "Return"
-                    : order.order_status === "Return Requested"
-                    ? "Return Requested"
-                    : order.order_status === "Picked Up for Return"
-                    ? "Picked Up For Return"
-                    : order.order_status === "Cancelled"
-                    ? "Cancelled"
-                    : order.order_status === "In Transist" ||
-                      order.order_status === "Accepted"
-                    ? "Cancel"
-                    : order.order_status === "Returned"
-                    ? "Returned"
-                    : order.order_status === "Placed"
-                    ? "Cancel"
-                    : order.order_status === "Rejected"
-                    ? "Rejected"
-                    : null}
-                </h4>
-              </button>
+              <label className="text-center">status: </label>
+              <h6 className="h6 text-dark">{order.status}</h6>
+              {order.status === "DELIVERED" ? (
+                <Button
+                  onClick={() => setIsOrderAction(true)}
+                  variant="outlined"
+                  fullWidth
+                >
+                  Return
+                </Button>
+              ) : order.status === "PICKED UP" ||
+                order.status === "IN TRANSIST" ||
+                order.status === "SHIPPED" ||
+                order.status === "OUT OF DELIVERY" ||
+                order.status === "CONFIRMED" ? (
+                <Button
+                  onClick={() => setIsOrderAction(true)}
+                  variant="outlined"
+                  fullWidth
+                >
+                  Cancel
+                </Button>
+              ) : null}
             </div>
           </div>
         </div>

@@ -15,11 +15,12 @@ const Notification = () => {
         className="card"
         style={{
           height: "400px",
-          width: "350px",
-          position: "absolute",
+          width: "370px",
+          position: "fixed",
           top: "80px",
           right: "3%",
           zIndex: "999",
+          overflow: "scroll"
         }}
       >
         {notifications.length <= 0 ? (
@@ -28,11 +29,9 @@ const Notification = () => {
             </div>
         ) : (
           <div className="row d-flex justify-content-center align-items-center ps-4">
-            <ul>
-              <hr></hr>
-              {notifications.map((not) =>  (<li className="text-dark">{not.message}</li>))}
-              <hr></hr>
-            </ul>
+              
+              {notifications.map((not) =>  (<><hr></hr><p className="text-dark">{not.message}</p><hr></hr></>))}
+              
           </div>
         )}
       </div>
