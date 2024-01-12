@@ -15,8 +15,8 @@ const Notification = () => {
         className="card"
         style={{
           height: "400px",
-          width: "350px",
-          position: "absolute",
+          width: "370px",
+          position: "fixed",
           top: "80px",
           right: "3%",
           zIndex: "999",
@@ -30,8 +30,13 @@ const Notification = () => {
         ) : (
           <div className="row d-flex justify-content-center align-items-center ps-4">
               
+<<<<<<< HEAD
               {notifications.map((not) =>  (<><hr></hr><p className="text-dark">{not.message} {not.time}</p><hr></hr></>))}
 
+=======
+              {notifications.map((not) =>  (<><hr></hr><p className="text-dark">{not.message}</p><hr></hr></>))}
+              
+>>>>>>> 7fea3a9b293183ba2a88d13f51cf2ae7cad7b6ac
           </div>
         )}
       </div>
