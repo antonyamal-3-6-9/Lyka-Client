@@ -101,7 +101,7 @@ const Orderlist = () => {
                 </p>
               </div>
               <div className="col-lg-4 d-flex justify-content-center align-items-center">
-                <p className="listing text-dark">{order.order_status}</p>
+                <p className="listing text-dark">{order.status}</p>
               </div>
             </div>
           </div>

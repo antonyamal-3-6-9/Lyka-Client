@@ -20,6 +20,7 @@ const Notification = () => {
           top: "80px",
           right: "3%",
           zIndex: "999",
+          overflow: "scroll"
         }}
       >
         {notifications.length <= 0 ? (
@@ -28,11 +29,9 @@ const Notification = () => {
             </div>
         ) : (
           <div className="row d-flex justify-content-center align-items-center ps-4">
-            <ul>
-              <hr></hr>
-              {notifications.map((not) =>  (<li className="text-dark">{not.message}</li>))}
-              <hr></hr>
-            </ul>
+              
+              {notifications.map((not) =>  (<><hr></hr><p className="text-dark">{not.message} {not.time}</p><hr></hr></>))}
+
           </div>
         )}
       </div>

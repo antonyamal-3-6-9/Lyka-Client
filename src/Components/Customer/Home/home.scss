@@ -1,0 +1,127 @@
+
+
+.header-container{
+  background-color: #FFF;
+  box-shadow: 5px 5px 22px rgba(0, 0, 0, 0.5)  ; 
+}
+
+
+.carousal-img{
+  height: 300px;
+  width: max-content;
+}
+
+
+.owl-theme .owl-nav [class*='owl-'] {
+    color: #FFF;
+    font-size: 14px;
+    margin: 0px !important;
+    padding: 4px 7px;
+    background: black !important;
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+
+.owl-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.owl-nav .owl-prev,
+.owl-nav .owl-next {
+  border: none;
+  font-size: 24px;
+  color: #000 !important;
+  cursor: pointer;
+}
+
+.c-icon{
+  height: 65px !important;
+  width: 50px !important;
+}
+
+
+
+#feature-container{
+  height: 300px;
+  margin-top: 5px;
+  background-color: white;
+}
+
+.feature-sub-container{
+  height: 100%;
+  width: 100%;
+}
+
+.feature-icon{
+  font-size: 5rem;
+  margin-top: 70px;
+}
+
+.feature-text{
+  font-size: 2rem;
+  font-weight: bolder;
+}
+
+
+
+
+
+
+
+
+.top-bar {
+  background-color: #f1f1f1;
+}
+
+.categories {
+  list-style-type: none;
+  margin: 0;
+  padding: 0 0px;
+  display: flex;
+}
+
+.categories li {
+  position: relative;
+  padding: 0 50px;
+}
+
+.categories li a {
+  display: block;
+  padding: 10px 20px;
+}
+
+.subcategories {
+  display: none;
+  position: absolute;
+  top: 88%;
+  left: 0;
+  background-color: #fff;
+  padding: 10px;
+  z-index: 9999;
+}
+
+.sub-subcategories {
+  list-style-type: none;
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  background-color: #fff;
+  padding: 10px;
+}
+
+.categories li:hover > .subcategories {
+  display: block;
+}
+
+.subcategories li:hover > .sub-subcategories {
+  display: block;
+}
