@@ -39,7 +39,7 @@ const ShoppingCart = () => {
   const navigate = useNavigate();
 
   const isLoggedIn = useSelector(
-    (state) => state.customerAuth.isCustomerLoggedIn
+    (state) => state.userAuth.isLoggedIn
   );
 
   const [alertData, setAlertData] = useState("");

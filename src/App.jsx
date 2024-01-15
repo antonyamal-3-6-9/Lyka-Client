@@ -32,12 +32,12 @@ import Category from "./Components/Home/categories/Category.jsx";
 import CustomerVerify from "./Components/Customer/Login and Register/CustomerVerify.jsx";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  customerLogin,
-  customerLogout,
-  CustomerCredentials,
-  CustomerNotification,
-  CustomerNotifications,
-} from "./redux/customerAuth/actions/authCustomerActions.js";
+  Login,
+  Logout,
+  Credentials,
+  Notification,
+  Notifications,
+} from "./redux/actions/authUserActions.jsx";
 import Notification from "./Components/Notification/Notification.jsx";
 
 function App() {
@@ -45,13 +45,13 @@ function App() {
     (state) => state.customerAuth.isCustomerLoggedIn
   );
 
-  const signal = useSelector((state) => state.customerAuth.notificationSignal);
+  const signal = useSelector((state) => state.userAuth.notificationSignal);
 
   const dispatch = useDispatch();
 
   const BASE_URL = "http://127.0.0.1:8000/";
 
-  const userId = useSelector((state) => state.customerAuth.customerId);
+  const userId = useSelector((state) => state.userAuth.userId);
 
   window.onload = () => {
     console.log(isActive);
@@ -64,7 +64,7 @@ function App() {
         const data = JSON.parse(e.data);
         console.log(data.message);
         dispatch(
-          CustomerNotification({ message: data.message, time: data.time })
+          Notification({ message: data.message, time: data.time })
         );
       };
     } else {
@@ -86,11 +86,12 @@ function App() {
           }
         );
         if (loggedInResponse.status === 200) {
-          dispatch(customerLogin());
+          dispatch(Login());
           dispatch(
-            CustomerCredentials(
+            Credentials(
               loggedInResponse.data.user.name,
-              loggedInResponse.data.user.id
+              loggedInResponse.data.user.id,
+              loggedInResponse.data.role
             )
           );
           try {
@@ -103,14 +104,14 @@ function App() {
                 },
               }
             );
-            dispatch(CustomerNotifications(notificationResponse.data));
+            dispatch(Notifications(notificationResponse.data));
           } catch (error) {
             console.log(error);
           }
         }
       } catch (error) {
         console.log(error);
-        dispatch(customerLogout());
+        dispatch(Logout());
       }
     };
     fetchData();

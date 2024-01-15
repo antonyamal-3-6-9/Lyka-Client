@@ -81,10 +81,10 @@ export default function ResponsiveAppBar({ setOption }) {
     setAnchorEl(event.currentTarget);
   };
 
-  const userName = useSelector((state) => state.customerAuth.customerName);
+  const userName = useSelector((state) => state.userAuth.name);
 
   const isLoggedIn = useSelector(
-    (state) => state.customerAuth.isCustomerLoggedIn
+    (state) => state.userAuth.isLoggedIn
   );
   const dispatch = useDispatch();
 
@@ -106,7 +106,7 @@ export default function ResponsiveAppBar({ setOption }) {
       console.log(error);
     }
     localStorage.clear("token");
-    dispatch(customerLogout());
+    dispatch(Logout());
   };
 
   const handleMobileMenuClose = () => {
