@@ -204,7 +204,7 @@ const OrderDetails = () => {
                   <span className="me-3">
                     placed on: {formatDate(order.time)}
                   </span>
-                  <span className="badge bg-info">{order.order_status}</span>
+                  <span className="badge bg-info">{order.status}</span>
                 </div>
               </div>
               <table className="table table-borderless">
@@ -301,7 +301,7 @@ const OrderDetails = () => {
 
             <div className="card m-3">
               <OrderProgress
-                status={order.order_status}
+                status={order.status}
                 tracking_id={order.credentials.tracking_id}
                 delivery_date={order.delivery_date}
               />
@@ -387,6 +387,7 @@ const OrderDetails = () => {
                 order.status === "IN TRANSIST" ||
                 order.status === "SHIPPED" ||
                 order.status === "OUT OF DELIVERY" ||
+                order.status === "PLACED" ||
                 order.status === "CONFIRMED" ? (
                 <Button
                   onClick={() => setIsOrderAction(true)}

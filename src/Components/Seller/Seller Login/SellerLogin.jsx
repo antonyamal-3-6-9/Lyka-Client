@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from "react";
-import "../Seller/seller.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { Alert, AlertTitle } from "@mui/material";
 import axios from "axios";
+import { ThemeProvider } from "@mui/material";
+import {
+  Box,
+  Container,
+  CssBaseline,
+  TextField,
+  Button,
+  Avatar,
+  AssignmentIndIcon,
+} from "@mui/material";
+import { createTheme } from "@mui/material";
 
 const SellerLogin = () => {
   const [loginWithOTP, setLoginWithOTP] = useState(false);
@@ -26,6 +36,8 @@ const SellerLogin = () => {
   const handleEmailCheckboxChange = () => {
     setUseEmail(!useEmail);
   };
+
+  const defaultTheme = createTheme();
 
   const [sellerLoginData, setSellerLoginData] = useState({
     email: "",
@@ -92,18 +104,18 @@ const SellerLogin = () => {
   };
 
   const handleSendOtp = async () => {
-    if (sellerLoginData.phone.length <= 0){
-      setAlertData("Enter your phone Number")
-      setAlertEnable(true)
-      setAlertSeverity("warning")
-      return
+    if (sellerLoginData.phone.length <= 0) {
+      setAlertData("Enter your phone Number");
+      setAlertEnable(true);
+      setAlertSeverity("warning");
+      return;
     }
     try {
       const otpResponse = await axios.get(
         BASE_URL + "phone-otp-login-create/",
         {
           params: {
-            phone: sellerLoginData.phone
+            phone: sellerLoginData.phone,
           },
         }
       );
@@ -114,9 +126,9 @@ const SellerLogin = () => {
       }
     } catch (error) {
       setAlertEnable(true);
-      console.log(error.response.data.message)
+      console.log(error.response.data.message);
       setAlertSeverity("error");
-      setAlertData(error.response.data.message)
+      setAlertData(error.response.data.message);
     }
   };
 
@@ -133,8 +145,8 @@ const SellerLogin = () => {
   }, [otpCreated]);
 
   const handleAlertClose = () => {
-    setAlertEnable(false)
-  }
+    setAlertEnable(false);
+  };
 
   return (
     <>
@@ -146,88 +158,100 @@ const SellerLogin = () => {
           </Alert>
         )}
       </div>
-      <div className="login-container">
-        <div className="login-form">
-          <h2>Seller Login</h2>
-          <form onSubmit={handleSubmit}>
-          <div className="input-group">
-          {!useEmail && <span className="input-group-text">+91</span>}
-            <input
-              type={useEmail ? "email" : "number"}
-              className="form-control"
-              placeholder={useEmail ? "email" : "phone"}
-              name={useEmail ? "email" : "phone"}
-              value={useEmail ? sellerLoginData.email : sellerLoginData.phone}
-              onChange={handleChange}
-              required
-            />
-            </div>
-            <br />
-            {loginWithOTP ? (
-              <>
-                <input
-                  type="number"
-                  className="form-control"
-                  placeholder="OTP"
-                  name="otp"
-                  value={sellerLoginData.otp}
-                  onChange={handleChange}
-                  required
-                />
-                <br />
-                <button
-                  className="mb-1 btn btn-success"
-                  type="button"
-                  disabled={otpbuttonDisbled}
-                  onClick={handleSendOtp}
-                >
-                  {otpCreated ? "Resend OTP" : "Send OTP"}
-                </button>
-              </>
-            ) : (
-              <input
-                type="password"
-                className="form-control"
-                placeholder="Password"
-                name="password"
-                value={sellerLoginData.password}
-                onChange={handleChange}
-                required
-              />
-            )}
-            <br />
-            <button type="submit">Login</button>
-          </form>
-          {useEmail === false && (
-            <div className="otp-option">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={loginWithOTP}
-                  onChange={handleOtpCheckboxChange}
-                />
-                Login via OTP
-              </label>
-            </div>
-          )}
+          <ThemeProvider theme={defaultTheme}>
+            <Container component="main" maxWidth="xs">
+              <CssBaseline />
+              <Box
+                sx={{
+                  marginTop: 8,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+                  <AssignmentIndIcon />
+                </Avatar>
+                <h1>HYYY</h1>
+                <form onSubmit={handleSubmit}>
+                  <div>
+                    {!useEmail && <span className="input-group-text">+91</span>}
+                    <TextField
+                      type={useEmail ? "email" : "number"}
+                      placeholder={useEmail ? "email" : "phone"}
+                      name={useEmail ? "email" : "phone"}
+                      value={
+                        useEmail ? sellerLoginData.email : sellerLoginData.phone
+                      }
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                  <br />
+                  {loginWithOTP ? (
+                    <>
+                      <TextField
+                        type="number"
+                        placeholder="OTP"
+                        name="otp"
+                        value={sellerLoginData.otp}
+                        onChange={handleChange}
+                        required
+                      />
+                      <br />
+                      <Button
+                        className="mb-1 btn btn-success"
+                        type="button"
+                        disabled={otpbuttonDisbled}
+                        onClick={handleSendOtp}
+                      >
+                        {otpCreated ? "Resend OTP" : "Send OTP"}
+                      </Button>
+                    </>
+                  ) : (
+                    <TextField
+                      type="password"
+                      placeholder="Password"
+                      name="password"
+                      value={sellerLoginData.password}
+                      onChange={handleChange}
+                      required
+                    />
+                  )}
+                  <br />
+                  <Button type="submit">Login</Button>
+                </form>
+                {useEmail === false && (
+                  <div className="otp-option">
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={loginWithOTP}
+                        onChange={handleOtpCheckboxChange}
+                      />
+                      Login via OTP
+                    </label>
+                  </div>
+                )}
 
-          {loginWithOTP === false && (
-            <div className="otp-option">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={useEmail}
-                  onChange={handleEmailCheckboxChange}
-                />
-                Use email instead of phone
-              </label>
-            </div>
-          )}
-          <div>
-            <Link to="/seller-register">Register Now</Link>
-          </div>
-        </div>
-      </div>
+                {loginWithOTP === false && (
+                  <div className="otp-option">
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={useEmail}
+                        onChange={handleEmailCheckboxChange}
+                      />
+                      Use email instead of phone
+                    </label>
+                  </div>
+                )}
+                <div>
+                  <Link to="/seller-register">Register Now</Link>
+                </div>
+              </Box>
+            </Container>
+          </ThemeProvider>
     </>
   );
 };
