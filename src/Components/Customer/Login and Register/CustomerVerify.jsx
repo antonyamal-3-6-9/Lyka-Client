@@ -8,6 +8,8 @@ import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 import FloatingAlert from "../../FloatingAlert/FloatingAlert";
 import { Link } from "react-router-dom";
+import { initialAction } from "../../../redux/actions/authUserActions";
+import { useDispatch } from "react-redux";
 import "./login.css";
 
 const Page = styled(Paper)(({ theme }) => ({
@@ -67,6 +69,7 @@ const Failed = () => {
 };
 
 const CustomerVerify = () => {
+  const dispatch = useDispatch()
   const { email, token } = useParams();
   const [isVerified, setIsVerified] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -119,7 +122,7 @@ const CustomerVerify = () => {
       });
       if (passwordResponse.status === 200) {
         localStorage.setItem("token", passwordResponse.data.token);
-        setIsLoading(false);
+        dispatch(initialAction())
         navigate("/");
       }
     } catch (error) {

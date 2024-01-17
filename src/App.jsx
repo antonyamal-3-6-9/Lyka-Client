@@ -31,91 +31,20 @@ import ProductByCategory from "./Components/Product/ProductByCategory.jsx";
 import Category from "./Components/Home/categories/Category.jsx";
 import CustomerVerify from "./Components/Customer/Login and Register/CustomerVerify.jsx";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  Login,
-  Logout,
-  Credentials,
-  Notification,
-  Notifications,
-} from "./redux/actions/authUserActions.jsx";
+import { initialAction, logOutAction } from "./redux/actions/authUserActions.jsx";
 import Notification from "./Components/Notification/Notification.jsx";
 
 function App() {
-  const isActive = useSelector(
-    (state) => state.customerAuth.isCustomerLoggedIn
-  );
 
   const signal = useSelector((state) => state.userAuth.notificationSignal);
-
   const dispatch = useDispatch();
 
-  const BASE_URL = "http://127.0.0.1:8000/";
-
-  const userId = useSelector((state) => state.userAuth.userId);
-
-  window.onload = () => {
-    console.log(isActive);
-    if (isActive) {
-      const webSocket = new WebSocket(
-        `ws://localhost:8000/ws/notification/private/${userId}/`
-      );
-      console.log(webSocket);
-      webSocket.onmessage = (e) => {
-        const data = JSON.parse(e.data);
-        console.log(data.message);
-        dispatch(
-          Notification({ message: data.message, time: data.time })
-        );
-      };
-    } else {
-    }
-  };
-
-  const token = localStorage.getItem("token");
-
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const loggedInResponse = await axios.get(
-          `${BASE_URL}customer/is-logged-in/`,
-          {
-            headers: {
-              "content-Type": "Application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (loggedInResponse.status === 200) {
-          dispatch(Login());
-          dispatch(
-            Credentials(
-              loggedInResponse.data.user.name,
-              loggedInResponse.data.user.id,
-              loggedInResponse.data.role
-            )
-          );
-          try {
-            const notificationResponse = await axios.get(
-              `${BASE_URL}owner/notification/`,
-              {
-                headers: {
-                  "content-Type": "Application/json",
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            );
-            dispatch(Notifications(notificationResponse.data));
-          } catch (error) {
-            console.log(error);
-          }
-        }
-      } catch (error) {
-        console.log(error);
-        dispatch(Logout());
-      }
-    };
-    fetchData();
-  }, []);
+    dispatch(initialAction());
+    return () => {
+      dispatch(logOutAction())
+    }
+  }, [])
 
   return (
     <>

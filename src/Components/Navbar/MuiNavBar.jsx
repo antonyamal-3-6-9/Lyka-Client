@@ -15,12 +15,9 @@ import MoreIcon from "@mui/icons-material/MoreVert";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import { useSelector } from "react-redux";
-import {
-  NotificationSignal,
-  customerLogout,
-} from "../../redux/customerAuth/actions/authCustomerActions";
+import { Logout, NotificationSignal } from "../../redux/actions/authUserActions";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -82,6 +79,9 @@ export default function ResponsiveAppBar({ setOption }) {
   };
 
   const userName = useSelector((state) => state.userAuth.name);
+  const userRole = useSelector((state) => state.userAuth.role)
+
+  console.log(userName, userRole)
 
   const isLoggedIn = useSelector(
     (state) => state.userAuth.isLoggedIn
@@ -200,7 +200,7 @@ export default function ResponsiveAppBar({ setOption }) {
         </IconButton>
         <p>{isLoggedIn ? userName : "Login"}</p>
       </MenuItem>
-      {isLoggedIn ? (
+      {isLoggedIn ?  (
         <MenuItem>
           <IconButton
             size="large"
@@ -304,7 +304,7 @@ export default function ResponsiveAppBar({ setOption }) {
             </Box>
             <Box
               onClick={() => {
-                if (isLoggedIn) {
+                if (isLoggedIn && userRole === "customer") {
                   navigateLink("/account");
                 } else {
                   navigateLink("/customer-login");
@@ -323,10 +323,10 @@ export default function ResponsiveAppBar({ setOption }) {
                 <AccountCircle />
               </IconButton>
               <Typography>
-                <a>{isLoggedIn ? userName : "Login"}</a>
+                <a>{isLoggedIn && userRole === "customer" ? userName : "Login"}</a>
               </Typography>
             </Box>
-            {isLoggedIn ? (
+            {isLoggedIn && userRole === "Customer" ? (
               <Box
                 onClick={() => {
                   handleLogout();

@@ -19,7 +19,6 @@ const Orderlist = () => {
   const BASE_URL = "http://127.0.0.1:8000/order/";
   const [orders, setOrders] = useState([]);
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -46,7 +45,6 @@ const Orderlist = () => {
     fetchData();
   }, [token]);
 
-
   const formatAmountWithRupeeSymbol = (amount) => {
     amount = parseInt(amount);
     if (typeof amount !== "number" || isNaN(amount)) {
@@ -70,29 +68,6 @@ const Orderlist = () => {
       <Item>
         {orders.map((order) => (
           <>
-<<<<<<< HEAD
-          <hr></hr>
-          <div className="p-3" id={order.order_id}>
-            <div className="row">
-              <div className="col-lg-2 d-flex justify-content-center align-items-center">
-                <img
-                  src={`http://127.0.0.1:8000${order.item.product.thumbnail}`}
-                  style={{ width: "75px" }}
-                />
-              </div>
-              <div className="col-lg-4 d-flex justify-content-center align-items-center">
-                <Link to={`/order/${order.order_id}`}>
-                  <h6 className=" h6 listing text-dark">{`${order.item.product.brand} ${order.item.product.name} ${order.item.product_variant.variation} ${order.item.product_color.color}`}</h6>
-                </Link>
-              </div>
-              <div className="col-lg-2 d-flex justify-content-center align-items-center">
-                <p className="listing text-dark" style={{fontSize: "0.95rem"}}>
-                  {formatAmountWithRupeeSymbol(order.item.product_price)}
-                </p>
-              </div>
-              <div className="col-lg-4 d-flex justify-content-center align-items-center">
-                <p className="listing text-dark">{order.status}</p>
-=======
             <hr></hr>
             <div className="p-3" id={order.order_id}>
               <div className="row">
@@ -118,7 +93,6 @@ const Orderlist = () => {
                 <div className="col-lg-4 d-flex justify-content-center align-items-center">
                   <p className="listing text-dark">{order.status}</p>
                 </div>
->>>>>>> 7fea3a9b293183ba2a88d13f51cf2ae7cad7b6ac
               </div>
             </div>
             <hr></hr>

@@ -29,7 +29,7 @@ const ProductCard = (props) => {
   const [isLoading, setIsLoading] = useState(false)
 
   const isLoggedIn = useSelector(
-    (state) => state.customerAuth.isCustomerLoggedIn
+    (state) => state.userAuth.isLoggedIn
   );
 
   const navigate = useNavigate();
