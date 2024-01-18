@@ -229,7 +229,7 @@ const LoginForm = () => {
 
   return (
     <>
-      <div className="container-fluid login-container">
+      <div className="container-fluid login-container" style={{marginTop: "20px"}}>
       <Page>
           <FloatingAlert
             enable={alertEnable}
@@ -341,7 +341,6 @@ const LoginForm = () => {
           </ThemeProvider>
           </Page>
       </div>
-      )
     </>
   );
 };

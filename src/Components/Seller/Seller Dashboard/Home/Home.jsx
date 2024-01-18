@@ -4,9 +4,10 @@ import SalesChart from "./SalesChart";
 import SalesReport from "./SalesReport";
 
 
+
 const SellerHome = () => {
     return (<>
-        <div className="container-fluid mt-5">
+        <div className="container-fluid" style={{marginTop: "30px"}}>
             <div className="row">
                 <div className="col-lg-4">
                     <SalesReport />

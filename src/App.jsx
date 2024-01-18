@@ -4,10 +4,10 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./Components/Home/Home.jsx";
 import AddProduct from "./Components/Seller/Seller Dashboard/Products/AddProducts/AddProduct.jsx";
 import Registration from "./Components/Seller/Seller Registration/Registration.jsx";
-import SellerLogin from "./Components/Seller/SellerLogin.jsx";
+import SellerLogin from "./Components/Seller/Seller Login/SellerLogin.jsx";
 import EditProduct from "./Components/Seller/Seller Dashboard/Products/Edit Products/EditProduct.jsx";
 import AddPickupStore from "./Components/Seller/Seller Dashboard/PickupStore/AddPickupStore.jsx";
-import SellerHomeNavbar from "./Components/Seller/SellerNavbar.jsx";
+import SellerHomeNavbar from "./Components/Seller/Seller Dashboard/Home/SellerNavbar.jsx";
 import SellerProducts from "./Components/Seller/Seller Dashboard/Products/SellerProducts.jsx";
 import PickupStore from "./Components/Seller/Seller Dashboard/PickupStore/PickupStore.jsx";
 import SellerOrder from "./Components/Seller/Seller Dashboard/Orders/SellerOrder.jsx";
@@ -173,8 +173,8 @@ function App() {
             path="seller/home"
             element={
               <>
-                <SellerHomeNavbar />
-                <SellerHome />
+              <SellerHomeNavbar/>
+                <SellerHome/>
               </>
             }
           />

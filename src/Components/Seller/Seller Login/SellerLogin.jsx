@@ -1,163 +1,246 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Alert, AlertTitle } from "@mui/material";
 import axios from "axios";
-import { ThemeProvider } from "@mui/material";
-import {
-  Box,
-  Container,
-  CssBaseline,
-  TextField,
-  Button,
-  Avatar,
-  AssignmentIndIcon,
-} from "@mui/material";
-import { createTheme } from "@mui/material";
+import FloatingAlert from "../../FloatingAlert/FloatingAlert";
+import { useDispatch } from "react-redux";
+import { initialAction } from "../../../redux/actions/authUserActions";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Avatar from "@mui/material/Avatar";
+import Paper from "@mui/material/Paper";
+import { styled } from "@mui/material/styles";
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import { Backdrop } from "@mui/material";
+import { CircularProgress } from "@mui/material";
+
+const Page = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(3),
+  color: theme.palette.text.secondary,
+}));
+
+function Copyright(props) {
+  return (
+    <Typography
+      variant="body2"
+      color="text.secondary"
+      align="center"
+      {...props}
+    >
+      {"Copyright © "}
+      <Link color="inherit" to="/">
+        Lyka
+      </Link>
+      {new Date().getFullYear()}
+      {"."}
+    </Typography>
+  );
+}
 
 const SellerLogin = () => {
-  const [loginWithOTP, setLoginWithOTP] = useState(false);
-  const [useEmail, setUseEmail] = useState(false);
+  const dispatch = useDispatch();
 
-  const [otpCreated, setOtpCreated] = useState(false);
-  const [otpbuttonDisbled, setOtpButtonDisabled] = useState(false);
-
-  const [alertEnable, setAlertEnable] = useState(false);
   const [alertData, setAlertData] = useState("");
   const [alertSeverity, setAlertSeverity] = useState("");
+  const [alertEnable, setAlertEnable] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
 
   const navigate = useNavigate();
-
   const BASE_URL = "http://127.0.0.1:8000/seller/";
 
-  const handleOtpCheckboxChange = () => {
-    setLoginWithOTP(!loginWithOTP);
-  };
-
-  const handleEmailCheckboxChange = () => {
-    setUseEmail(!useEmail);
-  };
-
-  const defaultTheme = createTheme();
-
-  const [sellerLoginData, setSellerLoginData] = useState({
+  const [loginData, setLoginData] = useState({
     email: "",
-    phone: "",
     password: "",
     otp: "",
+    type: "password",
   });
 
-  const handleChange = (e) => {
-    setSellerLoginData({ ...sellerLoginData, [e.target.name]: e.target.value });
+  const [isSend, setIsSend] = useState(false);
+
+  const onTypeChange = (type) => {
+    setLoginData({ ...loginData, type: type });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleChange = (e) => {
+    setLoginData({ ...loginData, [e.target.name]: e.target.value });
+  };
 
+  const inputCleaner = (e) => {
+    setLoginData({ ...loginData, email: "", password: "", otp: "" });
+  };
+
+  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  const otpCreate = async () => {
     try {
-      if (useEmail && !loginWithOTP) {
-        const payload = {
-          email: sellerLoginData.email,
-          password: sellerLoginData.password,
-        };
-
-        const response = await axios.post(BASE_URL + "login-email/", payload);
-
-        if (response.status === 200) {
-          const token = response.data.token;
-          localStorage.setItem("token", token);
-          navigate("/seller/home");
-        }
-      } else if (!useEmail && !loginWithOTP) {
-        const payload = {
-          phone: sellerLoginData.phone,
-          password: sellerLoginData.password,
-        };
-
-        const response = await axios.post(BASE_URL + "login-phone/", payload);
-
-        if (response.status === 200) {
-          const token = response.data.token;
-          localStorage.setItem("token", token);
-          navigate("/seller/home");
-        }
-      } else if (!useEmail && loginWithOTP) {
-        const payload = {
-          phone: sellerLoginData.phone,
-          user_otp: sellerLoginData.otp,
-        };
-        const response = await axios.post(
-          BASE_URL + "phone-otp-login-verify/",
-          payload
-        );
-
-        if (response.status === 200) {
-          const token = response.data.token;
-          localStorage.setItem("token", token);
-          navigate("/seller/home");
-        }
+      setIsLoading(true)
+      const otpCreateResponse = await axios.get(
+        `${BASE_URL}otp-login-create/${loginData.email}/`
+      );
+      if (otpCreateResponse.status === 200) {
+        setIsSend(true);
+        setIsLoading(false)
+        setAlertData("OTP successfully send")
+        setAlertEnable(true)
+        setAlertSeverity("success")
       }
     } catch (error) {
+      setAlertData("OTP sending failed");
       setAlertEnable(true);
-      setAlertData(error.response.data.message);
       setAlertSeverity("error");
+      setIsLoading(false)
     }
   };
 
-  const handleSendOtp = async () => {
-    if (sellerLoginData.phone.length <= 0) {
-      setAlertData("Enter your phone Number");
+  const otpVerify = async () => {
+    try {
+      setIsLoading(true)
+      const otpVerifyResponse = await axios.post(
+        `${BASE_URL}otp-login-verify/`,
+        {
+          email: loginData.email,
+          otp: loginData.otp,
+        }
+      );
+
+      if (otpVerifyResponse.status === 200) {
+        localStorage.setItem("token", otpVerifyResponse.data.token);
+        setIsLoading(false)
+        dispatch(initialAction())
+        navigate("/seller/home");
+      }
+    } catch (error) {
+      setIsLoading(false)
+      setAlertData("OTP verification Failed");
+      setAlertEnable(true);
+      setAlertSeverity("error");
+      setLoginData({ ...loginData, otp: "" });
+    }
+  };
+
+  const passwordLogin = async () => {
+    if (loginData.email.length <= 0) {
+      setAlertData("Enter a valid e-mail id");
       setAlertEnable(true);
       setAlertSeverity("warning");
       return;
     }
+
+    if (!emailRegex.test(loginData.email)) {
+      setAlertData("Enter a valid e-mail id");
+      setAlertEnable(true);
+      setAlertSeverity("warning");
+      return;
+    }
+
+    if (loginData.password.length <= 0) {
+      setAlertData("Enter a valid password");
+      setAlertEnable(true);
+      setAlertSeverity("warning");
+      return;
+    }
+
     try {
-      const otpResponse = await axios.get(
-        BASE_URL + "phone-otp-login-create/",
+      setIsLoading(true)
+      const passwordLoginResponse = await axios.post(
+        `${BASE_URL}password-login/`,
         {
-          params: {
-            phone: sellerLoginData.phone,
-          },
+          email: loginData.email,
+          password: loginData.password,
         }
       );
-
-      if (otpResponse.status === 200) {
-        setOtpCreated(true);
-        setOtpButtonDisabled(true);
+      if (passwordLoginResponse.status === 200) {
+        localStorage.setItem("token", passwordLoginResponse.data.token);
+        dispatch(initialAction())
+        setIsLoading(false)
+        navigate("/seller/home");
       }
     } catch (error) {
+      setIsLoading(false)
+      setAlertData("Login Failed");
       setAlertEnable(true);
-      console.log(error.response.data.message);
       setAlertSeverity("error");
-      setAlertData(error.response.data.message);
+      setLoginData({ ...loginData, password: "" });
     }
   };
 
-  useEffect(() => {
-    let timer;
-
-    if (otpCreated) {
-      timer = setTimeout(() => {
-        setOtpButtonDisabled(false);
-      }, 60000);
+  const loggingIn = async () => {
+    if (loginData.email === "") {
+      setAlertData("Enter a valid e-mail id");
+      setAlertEnable(true);
+      setAlertSeverity("warning");
+      return;
     }
 
-    return () => clearTimeout(timer);
-  }, [otpCreated]);
+    if (!emailRegex.test(loginData.email)) {
+      setAlertData("Enter a valid e-mail id");
+      setAlertEnable(true);
+      setAlertSeverity("warning");
+      return;
+    }
 
-  const handleAlertClose = () => {
-    setAlertEnable(false);
+    if (loginData.type === "otp") {
+      if (loginData.otp.length < 6 && isSend) {
+        setAlertData("Enter a Valid Otp");
+        setAlertEnable(true);
+        setAlertSeverity("warning");
+      }
+
+      if (isSend) {
+        await otpVerify();
+      } else {
+        await otpCreate();
+      }
+    } else if (loginData.type === "password") {
+      await passwordLogin();
+    }
   };
+
+  const resendOtp = async () => {
+    try {
+      setIsLoading(true)
+      const otpCreateResponse = await axios.get(
+        `${BASE_URL}otp-login-create/${loginData.email}/`
+      );
+      if (otpCreateResponse.status === 200) {
+        setIsSend(true);
+        setIsLoading(false)
+        setAlertData("OTP successfully send")
+        setAlertEnable(true)
+        setAlertSeverity("success")
+      }
+    } catch (error) {
+      setAlertData("OTP sending failed");
+      setAlertEnable(true);
+      setAlertSeverity("error");
+      setIsLoading(false)
+    }
+  };
+
+  const defaultTheme = createTheme();
 
   return (
     <>
-      <div>
-        {alertEnable && (
-          <Alert severity={alertSeverity} onClose={handleAlertClose}>
-            <AlertTitle>Error</AlertTitle>
-            {alertData}
-          </Alert>
-        )}
-      </div>
+      <div className="container-fluid login-container" style={{marginTop: "20px"}}>
+      <Page>
+          <FloatingAlert
+            enable={alertEnable}
+            setEnable={setAlertEnable}
+            severity={alertSeverity}
+            message={alertData}
+          />
+          <Backdrop
+            open={isLoading}
+          >
+            <CircularProgress/>
+          </Backdrop>
           <ThemeProvider theme={defaultTheme}>
             <Container component="main" maxWidth="xs">
               <CssBaseline />
@@ -172,86 +255,91 @@ const SellerLogin = () => {
                 <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
                   <AssignmentIndIcon />
                 </Avatar>
-                <h1>HYYY</h1>
-                <form onSubmit={handleSubmit}>
-                  <div>
-                    {!useEmail && <span className="input-group-text">+91</span>}
+                <Typography component="h1" variant="h5">
+                  sign In
+                </Typography>
+                <Box component="form" noValidate sx={{ mt: 1 }}>
+                  {!isSend && (
                     <TextField
-                      type={useEmail ? "email" : "number"}
-                      placeholder={useEmail ? "email" : "phone"}
-                      name={useEmail ? "email" : "phone"}
-                      value={
-                        useEmail ? sellerLoginData.email : sellerLoginData.phone
-                      }
-                      onChange={handleChange}
+                      margin="normal"
                       required
-                    />
-                  </div>
-                  <br />
-                  {loginWithOTP ? (
-                    <>
-                      <TextField
-                        type="number"
-                        placeholder="OTP"
-                        name="otp"
-                        value={sellerLoginData.otp}
-                        onChange={handleChange}
-                        required
-                      />
-                      <br />
-                      <Button
-                        className="mb-1 btn btn-success"
-                        type="button"
-                        disabled={otpbuttonDisbled}
-                        onClick={handleSendOtp}
-                      >
-                        {otpCreated ? "Resend OTP" : "Send OTP"}
-                      </Button>
-                    </>
-                  ) : (
-                    <TextField
-                      type="password"
-                      placeholder="Password"
-                      name="password"
-                      value={sellerLoginData.password}
+                      fullWidth
+                      label="Email Address"
+                      name="email"
+                      autoComplete="email"
+                      autoFocus
+                      value={loginData.email}
                       onChange={handleChange}
-                      required
                     />
                   )}
-                  <br />
-                  <Button type="submit">Login</Button>
-                </form>
-                {useEmail === false && (
-                  <div className="otp-option">
-                    <label>
-                      <input
-                        type="checkbox"
-                        checked={loginWithOTP}
-                        onChange={handleOtpCheckboxChange}
-                      />
-                      Login via OTP
-                    </label>
-                  </div>
-                )}
-
-                {loginWithOTP === false && (
-                  <div className="otp-option">
-                    <label>
-                      <input
-                        type="checkbox"
-                        checked={useEmail}
-                        onChange={handleEmailCheckboxChange}
-                      />
-                      Use email instead of phone
-                    </label>
-                  </div>
-                )}
-                <div>
-                  <Link to="/seller-register">Register Now</Link>
-                </div>
+                  {loginData.type === "password" || isSend ? (
+                    <TextField
+                      margin="normal"
+                      required
+                      fullWidth
+                      name={loginData.type === "otp" ? "otp" : "password"}
+                      label={loginData.type === "otp" ? "OTP" : "Password"}
+                      type="password"
+                      autoComplete="current-password"
+                      onChange={handleChange}
+                      value={loginData.type === "otp" ? loginData.otp : loginData.password}
+                    />
+                  ) : null}
+                  {isSend && (
+                    <Button
+                      type="button"
+                      variant="text"
+                      onClick={() => {
+                        resendOtp();
+                      }}
+                      style={{color:"#16213E"}}
+                    >
+                      Resend OTP
+                    </Button>
+                  )}
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                    onClick={loggingIn}
+                    style={{backgroundColor:"#16213E"}}
+                  >
+                    {loginData.type === "otp" ? "Continue" : "Sign In"}
+                  </Button>
+                  <Grid container>
+                    <Grid item xs>
+                      <Link href="#" variant="body2">
+                        Forgot password?
+                      </Link>
+                    </Grid>
+                    <Grid item xs>
+                      <Link href="#" variant="body2" to="/seller-register">
+                        {"Don't have an account? Sign Up"}
+                      </Link>
+                    </Grid>
+                    <Grid item>
+                      <Link
+                        href="#"
+                        onClick={() => {
+                          loginData.type === "password"
+                            ? onTypeChange("otp")
+                            : onTypeChange("password");
+                        }}
+                        variant="body2"
+                      >
+                        {`Login Using ${
+                          loginData.type === "otp" ? "Password" : "OTP"
+                        }`}
+                      </Link>
+                    </Grid>
+                  </Grid>
+                </Box>
               </Box>
+              <Copyright sx={{ mt: 8, mb: 4 }} />
             </Container>
           </ThemeProvider>
+          </Page>
+      </div>
     </>
   );
 };

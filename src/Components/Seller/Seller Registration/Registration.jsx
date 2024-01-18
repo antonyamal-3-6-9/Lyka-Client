@@ -1,26 +1,25 @@
 import React from "react";
 import SellerBasicRegistration from "./SellerBasicRegistration";
-import "./registration.scss";
+import "./registration.css";
+import { styled, Paper } from "@mui/material";
+
+const Page = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(3),
+  color: theme.palette.text.secondary,
+}));
 
 const Registration = () => {
-
   const BASE_URL = "http://127.0.0.1:8000/seller/";
 
   return (
     <>
-      <div className="container-fluid d-flex justify-content-center align-items-center h-100 m-0">
-        <div className="row w-75 p-5">
-          <div className="col-lg-12 ps-1 pe-0">
-            <div className="card h-100 w-100 m-0 border-0 rounded-0 pt-3 pb-3">
-              <div className="container-fluid w-75 h-100">
-              <h2 className="text-center">Register Here</h2>
-                  <SellerBasicRegistration 
-                  url = {BASE_URL}
-                  />
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="container-fluid" id="registration-container" style={{marginTop: "20px"}}>
+      <Page>
+        <h2 className="text-center">Register Here</h2>
+        <SellerBasicRegistration url={BASE_URL} />
+        </Page>
       </div>
     </>
   );

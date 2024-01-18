@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { Alert, AlertTitle } from "@mui/material";
+import { Alert, AlertTitle, TextField, Button } from "@mui/material";
 
 const SellerBasicRegistration = (props) => {
   const [otpCreated, setOtpCreated] = useState(false);
@@ -45,16 +45,9 @@ const SellerBasicRegistration = (props) => {
       });
 
       if (registerResponse.status === 201) {
-        const loginResponse = await axios.post(props.url + "login-phone/", {
-          phone: sellerData.phoneNumber,
-          password: sellerData.password,
-        });
-
-        if (loginResponse.status === 200) {
-          const token = loginResponse.data.token;
-          localStorage.setItem("token", token);
-          navigate("/seller/products");
-        }
+        setAlertData('Registration is successful' )
+        setAlertEnable(true)
+          navigate('/seller-login')        
       }
     } catch (error) {
       setAlertEnable(true);
@@ -65,7 +58,6 @@ const SellerBasicRegistration = (props) => {
   };
 
   const handleOtpCreationClick = async () => {
-    const phone = `+91${sellerData.phoneNumber}`
     try {
       const existsResponse = await axios.get(
         props.url + "seller-exists-or-not/",
@@ -82,10 +74,7 @@ const SellerBasicRegistration = (props) => {
         setAlertData(existsResponse.data.message);
         setAlertSeverity("error");
       } else if (existsResponse.status === 200) {
-        const otpResponse = await axios.get(props.url + "phone-otp-create/", {
-          params: {
-            to_number: phone,
-          },
+        const otpResponse = await axios.get(props.url + "email-otp-create/" + sellerData.email + "/", {
         });
 
         if (otpResponse.status === 200) {
@@ -105,11 +94,10 @@ const SellerBasicRegistration = (props) => {
   };
 
   const handleOtpVerifyClick = async () => {
-    const phone = `+91${sellerData.phoneNumber}`
     try {
-      const response = await axios.post(props.url + "phone-otp-verify/", {
-        user_typed: sellerData.otp,
-        phone_number: phone,
+      const response = await axios.post(props.url + "email-otp-verify/", {
+        otp: sellerData.otp,
+        email: sellerData.email,
       });
 
       if (response.status === 200) {
@@ -158,10 +146,12 @@ const SellerBasicRegistration = (props) => {
             <div className="row">
               <div className="col-lg-6">
                 <div className="basic-first-name">
-                  <input
+                  <TextField
+                    fullWidth
                     type="text"
-                    class="form-control"
-                    placeholder="First Name"
+                    label="First Name"
+                    autoComplete="firstName"
+                    autoFocus="firstName"
                     name="firstName"
                     value={sellerData.firstName}
                     onChange={handleChange}
@@ -171,10 +161,12 @@ const SellerBasicRegistration = (props) => {
               </div>
               <div className="col-lg-6">
                 <div className="basic-last-name">
-                  <input
+                  <TextField
                     type="text"
-                    class="form-control"
-                    placeholder="Last name"
+                    autoComplete="lastName"
+                    autoFocus="lastName"
+                    fullWidth
+                    label="Last name"
                     name="lastName"
                     value={sellerData.lastName}
                     onChange={handleChange}
@@ -184,12 +176,14 @@ const SellerBasicRegistration = (props) => {
               </div>
             </div>
           </div>
-          <div className="col-lg-12 mb-4">
+          <div className="col-lg-6 mb-4">
             <div className="basic-email-id">
-              <input
+              <TextField
                 type="email"
-                class="form-control"
-                placeholder="Email-id"
+                label="Email"
+                autoComplete="email"
+                autoFocus="email"
+                fullWidth
                 name="email"
                 value={sellerData.email}
                 onChange={handleChange}
@@ -197,13 +191,14 @@ const SellerBasicRegistration = (props) => {
               />
             </div>
           </div>
-          <div className="col-lg-12 mb-4">
+          <div className="col-lg-6 mb-4">
             <div className="input-group">
-            <span className="input-group-text">+91</span>
-              <input
+              <TextField
                 type="number"
-                class="form-control"
-                placeholder="Phone Number"
+                label="Phone Number"
+                autoComplete="phoneNumber"
+                autoFocus="phoneNumber"
+                fullWidth
                 name="phoneNumber"
                 value={sellerData.phoneNumber}
                 onChange={handleChange}
@@ -211,12 +206,14 @@ const SellerBasicRegistration = (props) => {
               />
             </div>
           </div>
-          <div className="col-lg-12 mb-4">
+          <div className="col-lg-6 mb-4">
             <div className="basic-first-name">
-              <input
+              <TextField
                 type="text"
-                class="form-control"
-                placeholder="Bussiness Name"
+                label="Bussiness Name"
+                autoComplete="businessName"
+                autoFocus="businessName"
+                fullWidth
                 name="businessName"
                 value={sellerData.businessName}
                 onChange={handleChange}
@@ -224,12 +221,14 @@ const SellerBasicRegistration = (props) => {
               />
             </div>
           </div>
-          <div className="col-lg-12 mb-4">
+          <div className="col-lg-6 mb-4">
             <div className="basic-first-name">
-              <input
+              <TextField
                 type="password"
-                class="form-control"
-                placeholder="Password"
+                fullWidth
+                autoComplete="password"
+                autoFocus="password"
+                label="Password"
                 name="password"
                 value={sellerData.password}
                 onChange={handleChange}
@@ -241,10 +240,12 @@ const SellerBasicRegistration = (props) => {
             <div className="d-flex w-100 align-items-center">
               <div className="row flex-grow-1">
                 <div className="col-lg-4">
-                  <input
+                  <TextField
                     type="password"
-                    class="form-control"
-                    placeholder="otp"
+                    fullWidth
+                    autoComplete="otp"
+                    autoFocus="otp"
+                    label="OTP"
                     name="otp"
                     value={sellerData.otp}
                     onChange={handleChange}
@@ -253,27 +254,26 @@ const SellerBasicRegistration = (props) => {
                 </div>
                 <div className="col-lg-4">
                   <div className="basic-otp-create-button me-3 w-100">
-                    <button
-                      type="button"
-                      className="btn btn-outline-dark w-100"
+                    <Button
+                      variant="text"
                       onClick={handleOtpCreationClick}
                       disabled={disableSendButton}
                     >
                       Send OTP
-                    </button>
+                    </Button>
                   </div>
                 </div>
                 {otpCreated && (
                   <div className="col-lg-4">
                     <div className="basic-otp-verify-button me-3 w-100">
-                      <button
+                      <Button
                         type="button"
-                        className="btn btn-outline-dark w-100"
+                        variant="text"
                         onClick={handleOtpVerifyClick}
                         disabled={otpVerified}
                       >
                         {otpVerified ? "Verified" : "Verify"}
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 )}
@@ -284,21 +284,22 @@ const SellerBasicRegistration = (props) => {
             <div className="row d-flex align-items-center justify-content-center">
               <div className="col-lg-4 flex-grow-1">
                 <div className="basic-first-name w-100">
-                  <button
+                  <Button
                     type="submit"
                     disabled={!otpVerified}
-                    className="btn btn-success w-100"
+                    variant="contained"
+                    fullWidth
                   >
                     Register
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </form>
-      <div className="pt-5 text-center">
-        <Link className="btn btn-dark" to="/seller-login">
+      <div className="pt-3 text-center">
+        <Link variant="contained" to="/seller-login">
           Already a seller, Login Now
         </Link>
       </div>

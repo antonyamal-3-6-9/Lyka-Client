@@ -1,3 +1,11 @@
-#registration-forms-seller {
-  background-color: aquamarine;
-}/*# sourceMappingURL=registration.css.map */
+@media (max-width: 960px){
+    #registration-container{
+        width: 100% !important; 
+    }
+}
+
+@media (min-width: 960px){
+    #registration-container{
+        width: 70% !important;
+    }
+}
