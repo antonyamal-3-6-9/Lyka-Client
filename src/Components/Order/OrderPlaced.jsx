@@ -13,7 +13,7 @@ const OrderPlaced = () => {
    const navigate = useNavigate()
 
    const isLoggedIn = useSelector(
-    (state) => state.customerAuth.isCustomerLoggedIn
+    (state) => state.userAuth.isLoggedIn
   );
 
   if (!isLoggedIn){

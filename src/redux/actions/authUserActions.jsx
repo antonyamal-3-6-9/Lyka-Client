@@ -52,16 +52,25 @@ export const WebSocketConnect = (userId) => {
       const webSocket = new WebSocket(
         `ws://localhost:8000/ws/notification/private/${userId}/`
       );
+
       dispatch(enableSocket(webSocket));
-      if (webSocket.OPEN) {
-        webSocket.onmessage((message) => {
-          console.log(message)
-          const messageJson = JSON.parse(message);
-          dispatch(Notification(messageJson.data));
-        });
-      }
+
+      webSocket.addEventListener('open', () => {
+        console.log('WebSocket connected');
+      });
+
+      webSocket.addEventListener('message', (event) => {
+        console.log(event.data);
+        const messageJson = JSON.parse(event.data);
+        console.log(messageJson)
+        dispatch(Notification({message: messageJson.message}));
+      });
+
+      webSocket.addEventListener('close', () => {
+        console.log('WebSocket closed');
+      });
     } catch (error) {
-      console.log(error);
+      console.error('WebSocket connection error:', error);
     }
   };
 };
@@ -110,7 +119,7 @@ export const initialAction = () => {
             isActiveResponse.data.user.role
           )
         );
-        dispatch(WebSocketConnect(isActiveResponse.data.user.id));
+        dispatch(WebSocketConnect(isActiveResponse.data.user.id))
       }
     } catch (error) {
       console.log("user is not logged in");

@@ -87,6 +87,7 @@ const SalesChart = () => {
         }
       );
       return sales.data;
+      console.log(sales)
     } catch (error) {
       console.log(error);
     }
@@ -146,6 +147,7 @@ const SalesChart = () => {
           },
         }
       );
+      console.log(yearSales)
       return yearSales.data;
     } catch (error) {
       console.log(error);

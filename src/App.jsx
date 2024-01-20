@@ -39,12 +39,12 @@ function App() {
   const signal = useSelector((state) => state.userAuth.notificationSignal);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(initialAction());
-    return () => {
-      dispatch(logOutAction())
-    }
-  }, [])
+  // useEffect(() => {
+  //   dispatch(initialAction());
+  //   return () => {
+  //     dispatch(logOutAction())
+  //   }
+  // }, [])
 
   return (
     <>
