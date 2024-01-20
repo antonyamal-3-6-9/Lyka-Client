@@ -60,6 +60,7 @@ const SellerProfile = () => {
       if (profileResponse.status === 200) {
         setSellerProfileData(profileResponse.data);
         setIsVerified(profileResponse.data.verified);
+        console.log(profileResponse)
       }
     };
     fetchData();
@@ -128,6 +129,7 @@ const SellerProfile = () => {
       setAlertData("Error updating details");
       setAlertEnable(true);
       setAlertSeverity("error");
+      console.log(error)
     }
   };
 
@@ -146,6 +148,7 @@ const SellerProfile = () => {
         }
       );
       if (emailupdateResponse.status === 200) {
+        UpdateVerifyState()
         setIsEmailEdit(false);
         setAlertData("Email Updated Successfully");
         setAlertEnable(true);
@@ -160,7 +163,7 @@ const SellerProfile = () => {
 
   const handleNumberSubmit = async (e) => {
     e.preventDefault();
-
+    const token = localStorage.getItem("token");
     if (sellerUpdatedPhoneData.user.phone.length !== 10) {
       setAlertData("Invalid Number");
       setAlertEnable(true);
@@ -168,29 +171,31 @@ const SellerProfile = () => {
       return;
     }
 
-    const phone = `+91${sellerUpdatedPhoneData.user.phone}`;
-
     try {
-      const createOtpResponse = await axios.get(
-        `${BASE_URL}phone-otp-create/`,
+      const updatePhoneResponse = await axios.patch(
+        `${BASE_URL}update-profile/${sellerProfileData.unique_id}/`,
+        sellerUpdatedPhoneData,
         {
-          params: {
-            to_number: phone,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
           },
         }
       );
-
-      if (createOtpResponse.status === 200) {
-        setAlertData("Otp Send Successfully");
+      if (updatePhoneResponse.status === 200) {
+        setIsPhoneEdit(false);
+        setAlertData("Phone Number Updated Successfully");
         setAlertEnable(true);
-        setAlertSeverity("info");
-        setShowConfirmation(true);
+        setAlertSeverity("success");
       }
     } catch (error) {
-      setAlertData("Otp creation Failed, Try Again");
+      setAlertData("Error Updating Phone Number");
       setAlertEnable(true);
       setAlertSeverity("error");
+      console.log(error);
     }
+
+
   };
 
   if (
@@ -212,49 +217,7 @@ const SellerProfile = () => {
 
   const handleOtpConfirm = async () => {
     const token = localStorage.getItem("token");
-    if (!isEmail) {
-      const phone = `+91${sellerUpdatedPhoneData.user.phone}`;
-      try {
-        const otpVerifyResponse = await axios.post(
-          `${BASE_URL}phone-otp-verify/`,
-          {
-            user_typed: phoneOtp,
-            phone_number: phone,
-          }
-        );
-        if (otpVerifyResponse.status === 200) {
-          setShowConfirmation(false);
-          try {
-            const updatePhoneResponse = await axios.patch(
-              `${BASE_URL}update-profile/${sellerProfileData.unique_id}/`,
-              sellerUpdatedPhoneData,
-              {
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: "Bearer " + token,
-                },
-              }
-            );
-            if (updatePhoneResponse.status === 200) {
-              setIsPhoneEdit(false);
-              setAlertData("Phone Number Updated Successfully");
-              setAlertEnable(true);
-              setAlertSeverity("success");
-            }
-          } catch (error) {
-            setAlertData("Error Updating Phone Number");
-            setAlertEnable(true);
-            setAlertSeverity("error");
-            console.log(error);
-          }
-        }
-      } catch (error) {
-        setAlertData("Invalid Otp");
-        setAlertEnable(true);
-        setAlertSeverity("error");
-        console.log(error);
-      }
-    } else {
+    setShowConfirmation(false);
       try{
       const emailOtpVerifyResponse = await axios.post(
         `${BASE_URL}email-otp-verify/`,
@@ -270,21 +233,23 @@ const SellerProfile = () => {
       );
       if(emailOtpVerifyResponse.status === 200){
         setShowConfirmation(false)
-        UpdateVerifyState()
+        handleEmailSubmit()
       }
       } catch (error) {
         setAlertData("Invalid Otp")
         setAlertEnable(true)
         setAlertSeverity("error")
       }
-    }
+
   };
-  const handleEmailVerification = async () => {
+
+  const handleEmailVerification = async (e) => {
+    e.preventDefault()
     const token = localStorage.getItem("token");
     setIsEmail(true);
     try {
       const emailVerifyResponse = await axios.get(
-        `${BASE_URL}email-otp-create/`,
+        `${BASE_URL}email-otp-create/${sellerUpdatedEmailData.user.email}/`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -440,7 +405,7 @@ const SellerProfile = () => {
                 </div>
               </form>
 
-              <form onSubmit={handleEmailSubmit}>
+              <form onSubmit={handleEmailVerification}>
                 <div className="row p-3 mt-3">
                   <div className="col-lg-6 mb-3">
                     {!isEmailEdit && (
@@ -504,22 +469,6 @@ const SellerProfile = () => {
                             }}
                           />
                         </div>
-                      </div>
-                      <div className="col-lg-4">
-                        <button
-                          className={`btn ${
-                            sellerProfileData.email_verified
-                              ? "btn-outline-success"
-                              : "btn-outline-danger"
-                          }`}
-                          type="button"
-                          disabled={sellerProfileData.email_verified}
-                          onClick={handleEmailVerification}
-                        >
-                          {sellerProfileData.email_verified
-                            ? "Verified"
-                            : "Verify Now"}
-                        </button>
                       </div>
                     </div>
                   </div>
@@ -593,21 +542,6 @@ const SellerProfile = () => {
                             }}
                           />
                         </div>
-                      </div>
-                      <div className="col-lg-4">
-                        <button
-                          className={`btn ${
-                            sellerProfileData.number_verified
-                              ? "btn-outline-success"
-                              : "btn-outline-danger"
-                          }`}
-                          type="button"
-                          disabled={sellerProfileData.number_verified}
-                        >
-                          {sellerProfileData.number_verified
-                            ? "Verified"
-                            : "Verify Now"}
-                        </button>
                       </div>
                     </div>
                   </div>

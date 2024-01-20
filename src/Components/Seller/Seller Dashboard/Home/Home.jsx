@@ -7,7 +7,7 @@ import SalesReport from "./SalesReport";
 
 const SellerHome = () => {
     return (<>
-        <div className="container-fluid" style={{marginTop: "30px"}}>
+        <div className="container-fluid" style={{marginTop: "83px"}}>
             <div className="row">
                 <div className="col-lg-4">
                     <SalesReport />

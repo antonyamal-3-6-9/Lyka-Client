@@ -75,25 +75,20 @@ const SellerProducts = () => {
     const unitIndex = productData.findIndex((item) => item.unit_id === unit_id);
     if (unitIndex !== -1) {
       const updatedProductData = [...productData];
-      updatedProductData.splice(unitIndex, 1)
+      updatedProductData.splice(unitIndex, 1);
       setProductData(updatedProductData);
     }
   };
 
   const updateStock = (unit_id, stock) => {
-    const unitIndex = productData.findIndex(
-      (item) =>item.unit_id === unit_id
-    );
-      if (unitIndex !== -1) {
-        const updatedProductData = [...productData];
-        const currentStock = parseInt(
-          updatedProductData[unitIndex].stock
-        );
-        const newStock = currentStock + parseInt(stock);
-        updatedProductData[unitIndex].stock =
-          String(newStock);
-        setProductData(updatedProductData);
-      }
+    const unitIndex = productData.findIndex((item) => item.unit_id === unit_id);
+    if (unitIndex !== -1) {
+      const updatedProductData = [...productData];
+      const currentStock = parseInt(updatedProductData[unitIndex].stock);
+      const newStock = currentStock + parseInt(stock);
+      updatedProductData[unitIndex].stock = String(newStock);
+      setProductData(updatedProductData);
+    }
   };
 
   const makeLive = async (unit_id) => {
@@ -238,14 +233,17 @@ const SellerProducts = () => {
         }
       );
       if (verifiedResponse.data.verified) {
-        try{
-          const storeExistsResponse = await axios.get(`http://127.0.0.1:8000/seller/store-exists-or-not/`,         {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
-            },
-          })
-          if (storeExistsResponse.status === 200){
+        try {
+          const storeExistsResponse = await axios.get(
+            `http://127.0.0.1:8000/seller/store-exists-or-not/`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+              },
+            }
+          );
+          if (storeExistsResponse.status === 200) {
             navigate("/seller/check-product");
           }
         } catch {
@@ -278,6 +276,19 @@ const SellerProducts = () => {
     localStorage.setItem("product_name", name);
     navigate("/seller/add-item");
   };
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+    };
+    return date.toLocaleString("en-US", options);
+  }
 
   return (
     <>
@@ -368,7 +379,6 @@ const SellerProducts = () => {
                       <img
                         key={item.product.productId}
                         src={"http://localhost:8000" + item.product.thumbnail}
-                        alt="hyy"
                       />
                     </div>
                   </div>
@@ -377,21 +387,23 @@ const SellerProducts = () => {
                       <div className="col-lg-12 pb-5">
                         <div className="row">
                           <div className="col-lg-6">
-                            <div className="product-deatil">
+                            <div className="product-detail">
                               <div className="row">
                                 <div className="col-lg-12">
-                                  <h5 className="name">
-                                    <a href="#">
+                                  <h5 className="h4 text-dark">
                                       {item.product.brand} {item.product.name}{" "}
-                                      {item.variant.variation}{" "}
-                                      {item.color_code.color}
-                                      <span>
+                                  </h5>
+                                  <h5 className="h6 text-dark">
+                                  {item.variant.variation}{" "}
+                                  </h5>
+                                  <h5 className="h6" style={{color: item.color_code.color}}>
+                                  {item.color_code.color}
+                                  </h5>
+                                  <p className="text-dark">
                                         {item.product.root_category.name}/
                                         {item.product.main_category.name}/
                                         {item.product.sub_category.name}
-                                      </span>
-                                    </a>
-                                  </h5>
+                                      </p>
                                 </div>
                                 <div className="col-lg-4 mt-2">
                                   <p className="m-0 p-0 mt-3">
@@ -466,24 +478,24 @@ const SellerProducts = () => {
                             <button
                               className="btn btn-outline-dark"
                               type="button"
-                              onClick={() =>
+                              onClick={() => {
                                 handleAddVariants(
                                   item.product.productId,
                                   `${item.product.brand} ${item.product.name}`
-                                )
-                              }
+                                );
+                              }}
                             >
                               Add More Variants
                             </button>
                           </div>
                           <div className="col-3 mb-3">
                             <p>
-                              <span>Added On: {item.added_on}</span>
+                              <span>Added On: {formatDate(item.added_on)}</span>
                             </p>
                           </div>
                           <div className="col-3 mb-3">
                             <p>
-                              <span>Launch: {item.product.launch_date}</span>
+                              <span>Launched on: {item.product.launch_date}</span>
                             </p>
                           </div>
                           <div className="col-3 mb-3">

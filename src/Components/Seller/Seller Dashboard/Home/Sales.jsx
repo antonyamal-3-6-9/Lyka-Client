@@ -1,5 +1,14 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { Paper, styled } from "@mui/material";
+
+const Page = styled(Paper)(({theme}) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(3),
+  marginBottom: theme.spacing(3),
+  color: theme.palette.text.secondary,
+}))
 
 const Sales = () => {
   const [sales, setSales] = useState([]);
@@ -60,7 +69,7 @@ const Sales = () => {
 
   return (
     <>
-      <div className="card p-3 mt-3">
+     <Page>
         <h2 className="text-center m-3">Sales</h2>
         <table className="table table-striped table-bordered">
           <thead className="thead-dark">
@@ -86,7 +95,7 @@ const Sales = () => {
             ))}
           </tbody>
         </table>
-      </div>
+      </Page>
     </>
   );
 };

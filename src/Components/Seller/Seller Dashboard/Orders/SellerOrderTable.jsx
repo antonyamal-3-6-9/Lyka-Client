@@ -15,7 +15,7 @@ const SellerOrderTable = ({ setExists }) => {
   const [isAccept, setIsAccept] = useState(null);
 
   const [alertData, setAlertData] = useState("");
-  const [alertEnable, setAlertEnable] = useState(true);
+  const [alertEnable, setAlertEnable] = useState(false);
   const [alertSeverity, setAlertSeverity] = useState("");
 
   useEffect(() => {
@@ -59,7 +59,7 @@ const SellerOrderTable = ({ setExists }) => {
       (order) => order.order_id === order_id
     );
     if (orderIndex !== -1) {
-      newOrders[orderIndex].order_status = status;
+      newOrders[orderIndex].status = status;
       setOrders(newOrders);
     }
   };
@@ -80,7 +80,7 @@ const SellerOrderTable = ({ setExists }) => {
         }
       );
       if (orderUpdateResponse.status === 200) {
-        updateOrderStatus(order_id, status);
+        updateOrderStatus(order_id, "CONFIRMED");
         setIsOrderAction(false);
       }
     } catch (error) {
@@ -107,7 +107,7 @@ const SellerOrderTable = ({ setExists }) => {
         }
       );
       if (orderUpdateResponse.status === 200) {
-        updateOrderStatus(order_id, "Accepted");
+        updateOrderStatus(order_id, "REJECTED");
         setIsOrderAction(false);
       }
     } catch (error) {
@@ -161,9 +161,6 @@ const SellerOrderTable = ({ setExists }) => {
                 Placed On
               </th>
               <th scope="col" className="h5 text-center">
-                Payment Status
-              </th>
-              <th scope="col" className="h5 text-center">
                 Profit
               </th>
               <th scope="col" className="h5 text-center">
@@ -185,23 +182,13 @@ const SellerOrderTable = ({ setExists }) => {
                   {order.shipping_address.country}
                 </td>
                 <td className="h6">{formatDate(order.time)}</td>
-                <td className="text-center">
-                  <button
-                    className={`btn ${
-                      order.payment_status ? "btn-success" : "btn-danger"
-                    }`}
-                    disabled
-                  >
-                    {order.payment_status ? "Paid" : "Unpaid"}
-                  </button>
-                </td>
                 <td className="h6">
                   {formatAmountWithRupeeSymbol(
                     order.item.product_price - order.item.original_price
                   )}
                 </td>
                 <td className="text-center">
-                  {order.order_status === "Placed" ? (
+                  {order.status === "PLACED" ? (
                     <div className="row m-0 p-0">
                       <div className="col-lg-6">
                         <Button
@@ -225,26 +212,9 @@ const SellerOrderTable = ({ setExists }) => {
                       </div>
                     </div>
                   ) : (
-                    <button
-                      className={`btn ${
-                        order.order_status === "Accepted"
-                          ? "btn-temporary"
-                          : order.order_status === "Processing"
-                          ? "btn-warning"
-                          : order.order_status === "In Transist"
-                          ? "btn-info"
-                          : order.order_status === "Shipped"
-                          ? "btn-primary"
-                          : order.order_status === "Delivered"
-                          ? "btn-success"
-                          : order.order_status === "Rejected"
-                          ? "btn-danger"
-                          : null
-                      }`}
-                      disabled={order.order_status !== "Placed"}
-                    >
-                      {order.order_status}
-                    </button>
+                    <div>
+                      <h6 className="h6 text-dark">{order.status}</h6>
+                    </div>
                   )}
                 </td>
               </tr>

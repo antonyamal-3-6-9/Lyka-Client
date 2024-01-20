@@ -24,6 +24,7 @@ const SellerBasicRegistration = (props) => {
   });
 
   const handleChange = (e) => {
+    console.log(e.target.value);
     setSellerData({ ...sellerData, [e.target.name]: e.target.value });
   };
 
@@ -31,6 +32,7 @@ const SellerBasicRegistration = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(sellerData);
 
     try {
       const registerResponse = await axios.post(props.url + "register/", {

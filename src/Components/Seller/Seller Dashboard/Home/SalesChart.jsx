@@ -11,6 +11,15 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { Paper, styled } from "@mui/material";
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(3),
+  marginBottom: theme.spacing(3),
+  color: theme.palette.text.secondary,
+}));
 
 const SalesChart = () => {
   ChartJS.register(
@@ -313,7 +322,7 @@ const SalesChart = () => {
 
   return (
     <>
-        <div className="card p-3 mt-5">
+        <Item>
           <h3>Earnings Trends</h3>
           <div className="d-flex justify-content-center mb-3">
             <button
@@ -350,7 +359,7 @@ const SalesChart = () => {
             </button>
           </div>
           <Line data={earningsChartData} options={earningsChartOptions} />
-        </div>
+          </Item>
     </>
   );
 };

@@ -64,6 +64,19 @@ const SellerOrderDetails = () => {
     return formattedAmount;
   };
 
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+    };
+    return date.toLocaleString("en-US", options);
+  }
+
   return (
     <>
       <div className="container-fluid mt-5">
@@ -82,16 +95,12 @@ const SellerOrderDetails = () => {
               <div className="card mb-4 p-3">
                 <div className="mb-3 d-flex justify-content-between">
                   <div>
-                    <span className="me-3">placed on: {order.time}</span>
+                    <span className="me-3">placed on: {formatDate(order.time)}</span>
                     <span className="badge rounded-pill bg-info">
                       {order.order_status}
                     </span>
                   </div>
                   <div className="d-flex">
-                    <button className="btn btn-link p-0 me-3 d-none d-lg-block btn-icon-text">
-                      <FontAwesomeIcon icon={faDownload} />{" "}
-                      <span className="text">Invoice</span>
-                    </button>
                     <div className="dropdown">
                       <button
                         className="btn btn-link p-0 text-muted"
@@ -122,7 +131,7 @@ const SellerOrderDetails = () => {
                         <div className="d-flex mb-2">
                           <div className="flex-shrink-0">
                             <img
-                              src={`http://127.0.0.1:8000/${order.item.product.thumbnail}`}
+                              src={`http://127.0.0.1:8000${order.item.product.thumbnail}`}
                               alt="Image"
                               width="35"
                               className="img-fluid"
@@ -197,21 +206,6 @@ const SellerOrderDetails = () => {
                       </div>
                       <div className="col-lg-6">
                         <h3>{order.payment_method}</h3>
-                      </div>
-                    </div>
-                    <div className="row m-2">
-                      <div className="col-lg-6">
-                        <h4 className="h6">Payment Status: </h4>
-                      </div>
-                      <div className="col-lg-6">
-                        <button
-                          className={`"btn" ${
-                            order.payment_status ? "btn-success" : "btn-danger"
-                          }`}
-                          disabled
-                        >
-                          {order.payment_status ? "Paid" : "Unpaid"}
-                        </button>
                       </div>
                     </div>
                     <div className="row m-2">

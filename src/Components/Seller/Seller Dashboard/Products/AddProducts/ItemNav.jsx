@@ -23,7 +23,6 @@ const ItemNav = () => {
                 <Link
                   to="/seller/products"
                   className="btn btn-danger me-2"
-                  onClick
                 >
                   Cancel
                 </Link>

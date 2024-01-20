@@ -1,5 +1,14 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { Paper, styled, Button, TextField } from "@mui/material";
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(3),
+  marginBottom: theme.spacing(3),
+  color: theme.palette.text.secondary,
+}));
 
 const SalesReport = () => {
   const token = localStorage.getItem("token");
@@ -77,7 +86,7 @@ const SalesReport = () => {
 
   return (
     <>
-      <div className="card p-3 mt-5 p-3 m-3">
+      <Item>
         <div className="row">
           <form onSubmit={handleReportSubmit}>
             <div className="col-lg-6">
@@ -103,27 +112,29 @@ const SalesReport = () => {
               />
             </div>
             <div className="col-lg-12">
-              <button className="btn btn-success">Get</button>
+              <Button type="submit" variant="contained" sx={{ mt: 2, mb: 2 }}>
+                Get
+              </Button>
             </div>
           </form>
         </div>
-      </div>
-      <div className="card p-3 m-3">
-        <h4>Total Sales</h4>
-        <h3 className="h-3">{salesReport.total_sales}</h3>
-      </div>
-      <div className="card p-3 m-3">
-        <h4>Total Products Sold</h4>
-        <h3 className="h-3">{salesReport.total_products_sold}</h3>
-      </div>
-      <div className="card p-3 m-3">
-        <h4>Total Gain</h4>
-        <h3 className="h-3">{formatAmountWithRupeeSymbol(salesReport.total_amount)}</h3>
-      </div>
-      <div className="card p-3 m-3">
-        <h4>Total Profit</h4>
-        <h3 className="h-3">{formatAmountWithRupeeSymbol(salesReport.total_profit)}</h3>
-      </div>
+
+        <h5 className="h6 text-dark">Total Sales:</h5>
+        <h3 className="h4 mb-3 text-dark">{salesReport.total_sales ? salesReport.total_sales : 0}</h3>
+
+        <h4 className="h6 text-dark">Total Products Sold:</h4>
+        <h3 className="h4 text-dark mb-3">{salesReport.total_products_sold ? salesReport.total_products_sold : 0}</h3>
+
+        <h4 className="h6 text-dark">Total Gain:</h4>
+        <h3 className="h4 mb-2 text-dark">
+          {salesReport.total_amount ? formatAmountWithRupeeSymbol(salesReport.total_amount) : 0}
+        </h3>
+
+        <h4 className="h6 text-dark">Total Profit:</h4>
+        <h3 className="h4 text-dark mb-2">
+          {salesReport.total_profit ? formatAmountWithRupeeSymbol(salesReport.total_profit) : 0}
+        </h3>
+      </Item>
     </>
   );
 };
