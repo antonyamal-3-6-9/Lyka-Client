@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Alert, AlertTitle } from "@mui/material";
+import { Alert, AlertTitle, Button, TextField } from "@mui/material";
 
 const SellerGstVerification = (props) => {
   const [gstData, setGstData] = useState({
@@ -78,17 +78,18 @@ const SellerGstVerification = (props) => {
       )}
       <form onSubmit={handleSubmit} className="needs-validation" noValidate>
         <div className="row d-flex-justify-content-center align-items-center h-100">
-          <div className="col-lg-12 mb-0">
-            <label htmlFor="gst-number">GSTIN NUMBER</label>
-            <input
+          <div className="col-lg-12 mb-3">
+            <TextField
               type="text"
-              className="form-control"
               id="gst-number"
-              placeholder="GSTIN NUMBER"
+              label="GSTIN NUMBER"
+              autoComplete="gst_number"
+              autoFocus="gst_number"
               name="gst_number"
               value={gstData.gst_number}
               onChange={handleChange}
               required
+              fullWidth
             />
               <div className="invalid-feedback">
                 Please enter a GSTIN number.
@@ -96,12 +97,14 @@ const SellerGstVerification = (props) => {
           </div>
           <div className="col-lg-12">
             <div className="id-verify-button">
-              <button
-                className="btn btn-lg btn-danger w-100 mt-5"
+              <Button
+                fullWidth
+                variant="contained"
+                style={{ backgroundColor: "#3E3232" }}
                 type="submit"
               >
                 Verify
-              </button>
+              </Button>
             </div>
           </div>
         </div>

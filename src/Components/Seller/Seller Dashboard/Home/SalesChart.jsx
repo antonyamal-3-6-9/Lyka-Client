@@ -12,6 +12,8 @@ import {
   Legend,
 } from "chart.js";
 import { Paper, styled } from "@mui/material";
+import { Backdrop } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -33,6 +35,8 @@ const SalesChart = () => {
   );
 
   const [selectedTimeframe, setSelectedTimeframe] = useState("days");
+
+  const [loading, setLoading] = useState(false)
 
   const handleTimeframeChange = (timeframe) => {
     setSelectedTimeframe(timeframe);
@@ -74,6 +78,7 @@ const SalesChart = () => {
 
   const fetchData = async () => {
     try {
+      setLoading(true)
       const sales = await axios.post(
         `${BASE_URL}get-sales/day/`,
         {
@@ -86,15 +91,17 @@ const SalesChart = () => {
           },
         }
       );
+      setLoading(false)
       return sales.data;
-      console.log(sales)
     } catch (error) {
       console.log(error);
+      setLoading(false)
     }
   };
 
   const fetchWeeksData = async () => {
     try {
+      setLoading(true)
       const weekSales = await axios.post(
         `${BASE_URL}get-sales/week/`,
         {
@@ -107,14 +114,17 @@ const SalesChart = () => {
           },
         }
       );
+      setLoading(false)
       return weekSales.data;
     } catch (error) {
       console.log(error);
+      setLoading(false)
     }
   };
 
   const fetchMonthsData = async () => {
     try {
+      setLoading(true)
       const monthsData = await axios.post(
         `${BASE_URL}get-sales/month/`,
         {
@@ -127,14 +137,17 @@ const SalesChart = () => {
           },
         }
       );
+      setLoading(false)
       return monthsData.data;
     } catch (error) {
       console.log(error);
+      setLoading(false)
     }
   };
 
   const fetchYearsData = async () => {
     try {
+      setLoading(true)
       const yearSales = await axios.post(
         `${BASE_URL}get-sales/year/`,
         {
@@ -148,9 +161,11 @@ const SalesChart = () => {
         }
       );
       console.log(yearSales)
+      setLoading(false)
       return yearSales.data;
     } catch (error) {
       console.log(error);
+      setLoading(false)
     }
   };
 
@@ -324,6 +339,9 @@ const SalesChart = () => {
 
   return (
     <>
+    <Backdrop open={loading}>
+      <CircularProgress/>
+    </Backdrop>
         <Item>
           <h3>Earnings Trends</h3>
           <div className="d-flex justify-content-center mb-3">

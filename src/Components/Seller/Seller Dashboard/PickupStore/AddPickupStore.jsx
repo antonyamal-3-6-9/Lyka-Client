@@ -2,7 +2,16 @@ import React, { useEffect, useState } from "react";
 import AddPickupNav from "./AddPickUpNav";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Alert, AlertTitle, Button } from "@mui/material";
+import { Alert, AlertTitle, Button, Paper, styled, Backdrop, CircularProgress } from "@mui/material";
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(3),
+  marginBottom: theme.spacing(3),
+  color: theme.palette.text.secondary,
+}));
+
 
 const AddPickupStore = () => {
   const BASE_URL = "http://127.0.0.1:8000/seller/";
@@ -27,6 +36,8 @@ const AddPickupStore = () => {
   const [alertEnable, setAlertEnable] = React.useState(false);
   const [alertData, setAlertData] = React.useState("");
   const [alertSeverity, setAlertSeverity] = React.useState("");
+
+  const [loading, setLoading] = useState(false)
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,6 +70,7 @@ const AddPickupStore = () => {
     formData.append("image", addressData.image);
 
     try {
+      setLoading(true)
       const addressResponse = await axios.post(
         `${BASE_URL}add-store/`,
         formData,
@@ -71,12 +83,14 @@ const AddPickupStore = () => {
       );
 
       if (addressResponse.status === 200) {
+        setLoading(false)
         navigate("/seller/store");
       }
     } catch (error) {
       setAlertData("Error adding Store");
       setAlertEnable(true);
       setAlertSeverity("error");
+      setLoading(false)
     }
   };
 
@@ -97,9 +111,11 @@ const AddPickupStore = () => {
       alert("Invalid Zip");
     }
     try {
+      setLoading(true)
       const zipcodeResponse = await axios.get(
         `https://api.postalpincode.in/pincode/${zipCode}`
       );
+      setLoading(false)
       setAddressData({
         ...addressData,
         ["state"]: zipcodeResponse[0]["PostOffice"][0]["Circle"],
@@ -107,6 +123,7 @@ const AddPickupStore = () => {
         ["city"]: zipcodeResponse[0]["PostOffice"][0]["Name"],
       });
     } catch (error) {
+      setLoading(false)
       setAlertData("Error fetching address");
       setAlertEnable(true);
       setAlertSeverity("Warning");
@@ -116,18 +133,21 @@ const AddPickupStore = () => {
   return (
     <>
       {" "}
+      <div className="container-fluid w-75" style={{marginTop: "20px"}}>
+      <Item>
+      <Backdrop>
+        <CircularProgress/>
+      </Backdrop>
       <AddPickupNav />
-      <div className="container-fluid w-75 p-5 mt-2">
         {alertEnable && (
           <Alert severity={alertSeverity} onClose={handleAlertClose}>
             <AlertTitle>Error</AlertTitle>
             {alertData}
           </Alert>
         )}
-        <div className="card p-3 mt-5">
           <div className="row">
             <div className="col-lg-12">
-              <h4 className="text-center">Add New Pickup Store</h4>
+              <h4 className="text-center text-dark h4">Add New Inventory</h4>
               <form
                 className="needs-validation"
                 onSubmit={handleSubmit}
@@ -135,7 +155,7 @@ const AddPickupStore = () => {
               >
                 <div className="row g-3">
                   <div className="col-sm-6">
-                    <label className="form-label">Store Name</label>
+                    <label className="form-label text-dark">Store Name</label>
                     <input
                       type="text"
                       className="form-control"
@@ -151,7 +171,7 @@ const AddPickupStore = () => {
                   </div>
 
                   <div className="col-sm-6">
-                    <label className="form-label">Street One</label>
+                    <label className="form-label text-dark">Street One</label>
                     <input
                       type="text"
                       className="form-control"
@@ -167,7 +187,7 @@ const AddPickupStore = () => {
                   </div>
 
                   <div className="col-6">
-                    <label className="form-label">Street Two</label>
+                    <label className="form-label text-dark">Street Two</label>
                     <div className="input-group has-validation">
                       <input
                         type="text"
@@ -184,7 +204,7 @@ const AddPickupStore = () => {
                     </div>
                   </div>
                   <div className="col-6">
-                    <label className="form-label">ThumbNail</label>
+                    <label className="form-label text-dark">ThumbNail</label>
                     <div className="input-group has-validation">
                       <input
                         type="file"
@@ -197,7 +217,7 @@ const AddPickupStore = () => {
                     </div>
                   </div>
                   <div className="col-6">
-                    <label className="form-label">Phone</label>
+                    <label className="form-label text-dark">Phone</label>
                     <input
                       type="number"
                       className="form-control"
@@ -214,7 +234,7 @@ const AddPickupStore = () => {
                   </div>
 
                   <div className="col-6">
-                    <label className="form-label">Alternate Phone</label>
+                    <label className="form-label text-dark">Alternate Phone</label>
                     <input
                       type="number"
                       className="form-control"
@@ -232,7 +252,7 @@ const AddPickupStore = () => {
                   </div>
 
                   <div className="col-6">
-                    <label className="form-label">Landmark</label>
+                    <label className="form-label text-dark">Landmark</label>
                     <input
                       type="text"
                       className="form-control"
@@ -244,7 +264,7 @@ const AddPickupStore = () => {
                   </div>
 
                   <div className="col-md-3">
-                    <label className="form-label">Zip</label>
+                    <label className="form-label text-dark">Zip</label>
                     <input
                       type="text"
                       className="form-control"
@@ -265,7 +285,7 @@ const AddPickupStore = () => {
                   </div>
 
                   <div className="col-6">
-                    <label className="form-label">Locality</label>
+                    <label className="form-label text-dark">Locality</label>
                     <input
                       type="text"
                       className="form-control"
@@ -277,7 +297,7 @@ const AddPickupStore = () => {
                   </div>
 
                   <div className="col-6">
-                    <label className="form-label">District</label>
+                    <label className="form-label text-dark">District</label>
                     <input
                       type="text"
                       className="form-control"
@@ -290,7 +310,7 @@ const AddPickupStore = () => {
                   </div>
 
                   <div className="col-md-5">
-                    <label className="form-label">Country</label>
+                    <label className="form-label text-dark">Country</label>
                     <input
                       className="form-select"
                       id="country"
@@ -306,7 +326,7 @@ const AddPickupStore = () => {
                   </div>
 
                   <div className="col-md-4">
-                    <label className="form-label">State</label>
+                    <label className="form-label text-dark">State</label>
                     <input
                       className="form-select"
                       id="state"
@@ -322,15 +342,16 @@ const AddPickupStore = () => {
                   </div>
                 </div>
                 <div className="col-lg-12 mt-3 mb-3 d-flex align-items-center justify-content-center">
-                  <button type="submit" className="btn btn-success">
+                  <Button type="submit" style={{ backgroundColor: "#3E3232" }} variant="contained">
                     Submit
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>
           </div>
+          </Item>
         </div>
-      </div>
+
     </>
   );
 };

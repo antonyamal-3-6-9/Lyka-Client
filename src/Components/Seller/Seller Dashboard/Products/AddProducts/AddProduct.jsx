@@ -8,6 +8,16 @@ import AddProductNav from "./AddProductNav";
 import { Alert, AlertTitle } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { Button, Paper, styled } from "@mui/material";
+
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(3),
+  marginBottom: theme.spacing(3),
+  color: theme.palette.text.secondary,
+}));
 
 const AddProduct = () => {
   const API_ENDPOINT = "http://127.0.0.1:8000/product/";
@@ -37,12 +47,8 @@ const AddProduct = () => {
   const [alertData, setAlertData] = React.useState("");
   const [alertSeverity, setAlertSeverity] = React.useState("");
 
-
-
   const handleSubmitBasic = async (e) => {
     e.preventDefault();
-    const colorField = document.getElementById("color");
-    const varinatField = document.getElementById("variant");
     const inputFields = document.querySelectorAll(
       "#basic-information input.form-control"
     );
@@ -103,10 +109,10 @@ const AddProduct = () => {
         setAlertEnable(true);
         setAlertData("Product has created successfully");
         setAlertSeverity("success");
-        localStorage.setItem('product_id', response.data.product.productId)
-        const name = `${response.data.product.brand} ${response.data.product.name}`
-        localStorage.setItem('product_name', name)
-        navigate("/seller/add-item")
+        localStorage.setItem("product_id", response.data.product.productId);
+        const name = `${response.data.product.brand} ${response.data.product.name}`;
+        localStorage.setItem("product_name", name);
+        navigate("/seller/add-item");
       }
     } catch (error) {
       setAlertData(error.data.message);
@@ -121,70 +127,68 @@ const AddProduct = () => {
 
   return (
     <>
-      <AddProductNav
-      />
-      <div className="container-fluid w-75 p-5 mt-5">
+      <div className="container-fluid w-75" style={{ marginTop: "20px" }}>
+        <Item>
+          <AddProductNav />
           {alertEnable && (
             <Alert severity={alertSeverity} onClose={handleAlertClose}>
               <AlertTitle>Error</AlertTitle>
               {alertData}
             </Alert>
           )}
-        <div
-          className="row border border-5 rounded-3 p-2"
-          style={{ backgroundColor: "#F5F5F5" }}
-        >
-          <form
-            onSubmit={handleSubmitBasic}
-            encType="multipart/form-data"
-            className="needs-validation"
-            noValidate
-          >
-            <>
-              <div id="basic-information">
-                <div className="row">
+          <div>
+            <form
+              onSubmit={handleSubmitBasic}
+              encType="multipart/form-data"
+              className="needs-validation"
+              noValidate
+            >
+              <>
+                <div id="basic-information">
+                  <div className="row">
+                    <div className="col-lg-12">
+                      <AddCategory
+                        details={productBasicDetails}
+                        setDetails={setProductBasicDetails}
+                      />
+                      <AddBasicDetails
+                        details={productBasicDetails}
+                        setDetails={setProductBasicDetails}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </>
+              <div id="features">
+                <div className="row mt-5">
                   <div className="col-lg-12">
-                    <AddCategory
-                      details={productBasicDetails}
-                      setDetails={setProductBasicDetails}
-                    />
-                    <AddBasicDetails
-                      details={productBasicDetails}
-                      setDetails={setProductBasicDetails}
+                    <AddFeatures
+                      main_id={productBasicDetails.main_category}
+                      url={API_ENDPOINT}
+                      setData={setProductBasicDetails}
+                      data={productBasicDetails}
                     />
                   </div>
                 </div>
               </div>
-            </>
-            <div id="features">
-              <div className="row mt-5">
-                <div className="col-lg-12">
-                  <AddFeatures
-                    main_id={productBasicDetails.main_category}
-                    url={API_ENDPOINT}
-                    setData={setProductBasicDetails}
-                    data={productBasicDetails}
-                  />
+              <>
+                <div id="product-images">
+                  <div className="row">
+                    <AddImages
+                      setImage={setProductBasicDetails}
+                      images={productBasicDetails}
+                    />
+                  </div>
                 </div>
-              </div>
-            </div>
-            <>
-              <div id="product-images">
-                <div className="row">
-                  <AddImages
-                    setImage={setProductBasicDetails}
-                    images={productBasicDetails}
-                  />
+                <div className="col-lg-12 mt-3 mb-3 d-flex align-items-center justify-content-center">
+                  <Button type="submit" variant="contained" style={{backgroundColor: "#3E3232"}} >
+                    Submit
+                  </Button>
                 </div>
-              </div>
-              <div className="col-lg-12 mt-3 mb-3 d-flex align-items-center justify-content-center">
-                <button type="submit" className="btn btn-success">
-                  Submit
-                </button>
-              </div>
-            </>
-          </form>
-        </div>
+              </>
+            </form>
+          </div>
+        </Item>
       </div>
     </>
   );

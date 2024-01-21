@@ -1,8 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { Alert, AlertTitle } from "@mui/material";
-
-
+import { Alert, AlertTitle, Button, TextField } from "@mui/material";
 
 const SellerBankVerification = (props) => {
   const [bankData, setBankData] = useState({
@@ -101,15 +99,16 @@ const SellerBankVerification = (props) => {
       <form onSubmit={handleSubmit} className="needs-validation" noValidate>
   <div className="row">
     <div className="col-lg-12 mb-4">
-      <label htmlFor="account-number">Account Number</label>
-      <input
+      <TextField
         type="number"
-        className="form-control"
         id="account-number"
-        placeholder="Account Number"
+        label="Account Number"
         name="account_number"
+        autoComplete="account_number"
+        autoFocus="account_number"
         value={bankData.account_number}
         onChange={handleChange}
+        fullWidth
         required
       />
       <div className="invalid-feedback">
@@ -117,12 +116,13 @@ const SellerBankVerification = (props) => {
       </div>
     </div>
     <div className="col-lg-12 mb-4">
-      <label htmlFor="confirm-account-number">Confirm Account Number</label>
-      <input
+      <TextField
         type="number"
-        className="form-control"
         id="confirm-account-number"
-        placeholder="Confirm Account Number"
+        label="Confirm Account Number"
+        autoComplete="confirm_account_number"
+        autoFocus="confirm_account_number"
+        fullWidth
         name="confirm_account_number"
         value={bankData.confirm_account_number}
         onChange={handleChange}
@@ -135,13 +135,14 @@ const SellerBankVerification = (props) => {
     <div className="col-lg-12 align-items-center mb-4 w-100">
       <div className="row">
         <div className="col-lg-6">
-          <label htmlFor="account-holder-name">Account Holder Name</label>
-          <input
+          <TextField
             type="text"
             className="form-control"
             id="account-holder-name"
-            placeholder="Account Holder Name"
+            label="Account Holder Name"
             name="account_holder_name"
+            autoComplete="account_holder_name"
+            autoFocus="account_holder_name"
             value={bankData.account_holder_name}
             onChange={handleChange}
             required
@@ -151,12 +152,13 @@ const SellerBankVerification = (props) => {
           </div>
         </div>
         <div className="col-lg-6">
-          <label htmlFor="bank-name">Bank Name</label>
-          <input
+          <TextField
             type="text"
             className="form-control"
             id="bank-name"
-            placeholder="Bank Name"
+            label="Bank Name"
+            autoComplete="bank_name"
+            autoFocus="bank_name"
             name="bank_name"
             value={bankData.bank_name}
             onChange={handleChange}
@@ -171,12 +173,13 @@ const SellerBankVerification = (props) => {
     <div className="col-lg-12 align-items-center mb-4 w-100">
       <div className="row">
         <div className="col-lg-6">
-          <label htmlFor="branch">Branch</label>
-          <input
+          <TextField
             type="text"
             className="form-control"
             id="branch"
-            placeholder="Branch"
+            label="Branch"
+            autoComplete="bank_branch"
+            autoFocus="bank_branch"
             name="bank_branch"
             value={bankData.bank_branch}
             onChange={handleChange}
@@ -187,13 +190,14 @@ const SellerBankVerification = (props) => {
           </div>
         </div>
         <div className="col-lg-6">
-          <label htmlFor="ifsc-code">IFSC Code</label>
-          <input
+          <TextField
             type="text"
             className="form-control"
             id="ifsc-code"
-            placeholder="IFSC Code"
+            label="IFSC Code"
             name="ifsc_code"
+            autoComplete="ifsc_code"
+            autoFocus="ifsc_code"
             value={bankData.ifsc_code}
             onChange={handleChange}
             required
@@ -206,9 +210,9 @@ const SellerBankVerification = (props) => {
     </div>
     <div className="col-lg-12">
       <div className="id-verify-button">
-        <button className="btn btn-lg btn-danger w-100" type="submit">
+        <Button variant="contained" fullWidth type="submit" style={{ backgroundColor: "#3E3232" }}>
           Verify
-        </button>
+        </Button>
       </div>
     </div>
   </div>

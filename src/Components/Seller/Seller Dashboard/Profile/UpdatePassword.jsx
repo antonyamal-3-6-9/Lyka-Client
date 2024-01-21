@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Alert, AlertTitle } from "@mui/material";
+import { Alert, AlertTitle, Button } from "@mui/material";
 import axios from "axios";
 
 const UpdatePassword = (props) => {
@@ -67,7 +67,7 @@ const UpdatePassword = (props) => {
 
   return (
     <>
-      <div className="container-fluid w-75 p-5 pb-0 mt-5">
+      <div className="container-fluid">
         {props.alertEnable && (
           <Alert
             severity={props.alertSeverity}
@@ -77,7 +77,6 @@ const UpdatePassword = (props) => {
             {props.alertData}
           </Alert>
         )}
-        <h2 className="text-center">Update Password</h2>
         <form onSubmit={handleSubmit}>
           <div className="row w-50">
             <div className="col-lg-12">
@@ -116,18 +115,19 @@ const UpdatePassword = (props) => {
               />
             </div>
             <div className="col-lg-6">
-              <button className="btn btn-success" type="submit">
+              <Button variant="contained" type="submit" style={{backgroundColor: "green", margin: "10px"}}>
                 Update Password
-              </button>
+              </Button>
             </div>
             <div className="col-lg-6">
-              <button
-                className="btn btn-success"
+              <Button
+                variant="contained"
+                style={{backgroundColor: "red", margin: "10px"}}
                 type="button"
                 onClick={() => props.setIsUpdatePassword(false)}
               >
                 Cancel
-              </button>
+              </Button>
             </div>
           </div>
         </form>

@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "@mui/material";
 
 const LykaItemList = ({
   lykaItemData,
@@ -15,6 +16,7 @@ const LykaItemList = ({
   return (
     <>
       <div className="row mt-3 p-3 border border-dark">
+      <h6 className="h6 text-dark text-center">Seperate SKUs with selected variant, color and product will be generated</h6>
         <table className="table table-striped table-bordered">
           <thead>
             <tr>
@@ -49,24 +51,25 @@ const LykaItemList = ({
                   <td>{s.store_name}</td>
                 )}
                 <td>
-                  <button
+                  <Button
                     onClick={() => handleRemoveVariant(index)}
-                    className="btn btn-danger"
+                    style={{color: "#3E3232"}}
                   >
                     Remove
-                  </button>
+                  </Button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
         <div className="row d-flex justify-content-center">
-        <button
-          className="btn btn-outline-success w-50"
+        <Button
+          variant="contained"
+          style={{backgroundColor: "#3E3232", width: "50%"}}
           onClick={finalSubmission}
         >
           Create Item
-        </button>
+        </Button>
       </div>
       </div>
 

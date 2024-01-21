@@ -2,14 +2,12 @@ import React, { useEffect, useState } from "react";
 import OrderProgress from "./OrderProgress";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faDownload,
   faEllipsisVertical,
-  faPencil,
   faPrint,
-  faArrowUp,
 } from "@fortawesome/free-solid-svg-icons";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { Backdrop, CircularProgress } from "@mui/material";
 
 const SellerOrderDetails = () => {
   const { orderId } = useParams();
@@ -17,10 +15,12 @@ const SellerOrderDetails = () => {
   const token = localStorage.getItem("token");
 
   const [order, setOrder] = useState();
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true)
         const orderResponse = await axios.get(
           `${BASE_URL}retrive/${orderId}/`,
           {
@@ -32,8 +32,10 @@ const SellerOrderDetails = () => {
         );
         setOrder(orderResponse.data);
         console.log(orderResponse);
+        setLoading(false)
       } catch (error) {
         console.log(error);
+        setLoading(false)
       }
     };
     fetchData();
@@ -79,7 +81,10 @@ const SellerOrderDetails = () => {
 
   return (
     <>
-      <div className="container-fluid mt-5">
+    <Backdrop>
+      <CircularProgress/>
+    </Backdrop>
+      <div className="container-fluid" style={{marginTop: "75px"}}>
         <div className="container">
           {/* Title */}
           <div className="d-flex justify-content-between align-items-center py-3">

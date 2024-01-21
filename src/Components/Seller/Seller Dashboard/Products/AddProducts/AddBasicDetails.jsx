@@ -1,3 +1,4 @@
+import { Button } from "@mui/material";
 import React, { useState } from "react";
 
 const AddBasicDetails = (props) => {
@@ -155,13 +156,13 @@ const AddBasicDetails = (props) => {
               {props.details.colors.map((item, index) => (
                 <div>
                   <h6>{item}</h6>
-                  <button
+                  <Button
                     type="button"
-                    className="btn btn-outline-info"
+                    style={{color: "#3E3232"}} 
                     onClick={() => handleColorRemove(index)}
                   >
                     Remove Color
-                  </button>
+                  </Button>
                 </div>
               ))}
             </div>
@@ -173,13 +174,13 @@ const AddBasicDetails = (props) => {
                 <input className="form-control" name="color" id="color" />
               </div>
               <div className="col-lg-4">
-                <button
+                <Button
                   type="button"
                   onClick={handleColorsChange}
-                  className="btn btn-outline-info"
+                  style={{color: "#3E3232"}} 
                 >
                   Add Color
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -188,13 +189,13 @@ const AddBasicDetails = (props) => {
               {props.details.variations.map((item, index) => (
                 <div>
                   <h6>{item}</h6>
-                  <button
+                  <Button
                     type="button"
-                    className="btn btn-outline-info"
+                    cstyle={{color: "#3E3232"}} 
                     onClick={() => handleColorRemove(index)}
                   >
                     Remove Variant
-                  </button>
+                  </Button>
                 </div>
               ))}
             </div>
@@ -206,13 +207,13 @@ const AddBasicDetails = (props) => {
                 <input className="form-control" name="variant" id="variant" />
               </div>
               <div className="col-lg-4">
-                <button
-                  className="btn btn-outline-info"
+                <Button
+                  style={{color: "#3E3232"}} 
                   onClick={handleVariationChange}
                   type="button"
                 >
                   Add Variant
-                </button>
+                </Button>
               </div>
             </div>
           </div>

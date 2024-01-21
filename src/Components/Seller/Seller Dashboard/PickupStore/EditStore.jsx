@@ -2,7 +2,15 @@ import React, { useEffect, useState } from "react";
 import AddPickupNav from "./AddPickUpNav";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { Alert, AlertTitle, Button } from "@mui/material";
+import { Alert, AlertTitle, Button, Paper, styled, Backdrop, CircularProgress } from "@mui/material";
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(3),
+  marginBottom: theme.spacing(3),
+  color: theme.palette.text.secondary,
+}));
 
 const EditStore = () => {
   const BASE_URL = "http://127.0.0.1:8000/address/";
@@ -12,17 +20,20 @@ const EditStore = () => {
 
   const [isChanged, setIsChanged] = useState(false);
 
+  const [loading, setLoading] = useState(true)
+
   const [alertEnable, setAlertEnable] = useState(false);
   const [alertData, setAlertData] = useState("");
   const [alertSeverity, setAlertSeverity] = useState("");
 
   const { address_id } = useParams();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
       try {
+        setLoading(true)
         const addressResponse = await axios.get(
           `${BASE_URL}get-address/${address_id}/`,
           {
@@ -35,11 +46,13 @@ const EditStore = () => {
 
         if (addressResponse.status === 200) {
           setAddressData(addressResponse.data);
+          setLoading(false)
         }
       } catch (error) {
         setAlertData("Error getting address data");
         setAlertEnable(true);
         setAlertSeverity("error");
+        setLoading(false)
       }
     };
     fetchData();
@@ -72,25 +85,30 @@ const EditStore = () => {
           },
         }
       );
-      if(addressUpdateResponse.status === 200){
-        navigate("/seller/store")
+      if (addressUpdateResponse.status === 200) {
+        navigate("/seller/store");
       }
     } catch (error) {
-      setAlertData("Error updating Address, Try again")
-      setAlertEnable(true)
-      setAlertSeverity("error")
+      setAlertData("Error updating Address, Try again");
+      setAlertEnable(true);
+      setAlertSeverity("error");
     }
   };
 
   const handleUpdateZipcode = async (zipCode) => {
     if (zipCode.length !== 6) {
-      alert("Invalid Zip");
+      setAlertData("Invalid zip");
+      setAlertEnable(true);
+      setAlertSeverity("warning");
+      return;
     }
 
     try {
+      setLoading(true)
       const zipcodeResponse = await axios.get(
         `https://api.postalpincode.in/pincode/${zipCode}`
       );
+      setLoading(false)
       setAddressData({
         ...newAddress,
         ["state"]: zipcodeResponse[0]["PostOffice"][0]["Circle"],
@@ -100,14 +118,20 @@ const EditStore = () => {
     } catch (error) {
       setAlertData("Error fetching address");
       setAlertEnable(true);
-      setAlertSeverity("Warning");
+      setAlertSeverity("warning");
+      setLoading(false)
     }
   };
 
   return (
     <>
+      
+      <div className="container-fluid w-75" style={{marginTop: "20px"}}>
+      <Item>
+      <Backdrop>
+        <CircularProgress/>
+      </Backdrop>
       <AddPickupNav />
-      <div className="container-fluid w-75 p-5 mt-2">
         {alertEnable && (
           <Alert severity={alertSeverity} onClose={handleAlertClose}>
             <AlertTitle>Error</AlertTitle>
@@ -116,7 +140,7 @@ const EditStore = () => {
         )}
         <div className="row">
           <div className="col-lg-12">
-            <h4 className="text-center m-3">Update Store</h4>
+            <h4 className="text-center text-dark h4">Update Inventory</h4>
             <form
               className="needs-validation"
               onSubmit={handleSubmit}
@@ -124,7 +148,7 @@ const EditStore = () => {
             >
               <div className="row g-3">
                 <div className="col-sm-12">
-                  <label className="form-label">Store Name</label>
+                  <label className="form-label text-dark">Store Name</label>
                   <input
                     type="text"
                     className="form-control"
@@ -145,7 +169,7 @@ const EditStore = () => {
                 </div>
 
                 <div className="col-sm-12">
-                  <label className="form-label">Street One</label>
+                  <label className="form-label text-dark">Street One</label>
                   <input
                     type="text"
                     className="form-control"
@@ -166,7 +190,7 @@ const EditStore = () => {
                 </div>
 
                 <div className="col-12">
-                  <label className="form-label">Street Two</label>
+                  <label className="form-label text-dark">Street Two</label>
                   <div className="input-group has-validation">
                     <input
                       type="text"
@@ -192,7 +216,7 @@ const EditStore = () => {
                 <div className="col-12">
                   <div className="row">
                     <div className="col-6">
-                      <label className="form-label">ThumbNail</label>
+                      <label className="form-label text-dark">ThumbNail</label>
                       <div className="input-group has-validation">
                         <input
                           type="file"
@@ -229,7 +253,7 @@ const EditStore = () => {
                 </div>
 
                 <div className="col-6">
-                  <label className="form-label">Phone</label>
+                  <label className="form-label text-dark">Phone</label>
                   <input
                     type="number"
                     className="form-control"
@@ -247,7 +271,7 @@ const EditStore = () => {
                 </div>
 
                 <div className="col-6">
-                  <label className="form-label">Alternate Phone</label>
+                  <label className="form-label text-dark">Alternate Phone</label>
                   <input
                     type="number"
                     className="form-control"
@@ -270,7 +294,7 @@ const EditStore = () => {
                 </div>
 
                 <div className="col-6">
-                  <label className="form-label">Landmark</label>
+                  <label className="form-label text-dark">Landmark</label>
                   <input
                     type="text"
                     className="form-control"
@@ -287,13 +311,12 @@ const EditStore = () => {
                 </div>
 
                 <div className="col-md-4">
-                  <label className="form-label">State</label>
+                  <label className="form-label text-dark">State</label>
                   <input
                     className="form-select"
                     id="state"
                     name="state"
                     required
-                    readOnly
                     value={isChanged ? newAddress.state : addressData.state}
                     onChange={(e) => {
                       handleChange(e);
@@ -306,7 +329,7 @@ const EditStore = () => {
                 </div>
 
                 <div className="col-md-3">
-                  <label className="form-label">Zip</label>
+                  <label className="form-label text-dark">Zip</label>
                   <input
                     type="text"
                     className="form-control"
@@ -326,20 +349,27 @@ const EditStore = () => {
                 </div>
 
                 <div className="col-lg-3">
-                    <Button variant="text" onClick={() => {handleUpdateZipcode(newAddress.zip_code)}}>
-                      Update
-                    </Button>
+                  {isChanged && 
+                  <Button
+                    variant="text"
+                    onClick={() => {
+                      handleUpdateZipcode(newAddress.zip_code);
+                    }}
+                  >
+                    Update
+                  </Button>}
                 </div>
 
-                
                 <div className="col-6">
-                  <label className="form-label">District</label>
+                  <label className="form-label text-dark">District</label>
                   <input
                     type="text"
                     className="form-control"
                     placeholder=""
                     name="district"
-                    value={isChanged ? newAddress.district : addressData.district}
+                    value={
+                      isChanged ? newAddress.district : addressData.district
+                    }
                     onChange={(e) => {
                       handleChange(e);
                       setIsChanged(true);
@@ -348,7 +378,7 @@ const EditStore = () => {
                 </div>
 
                 <div className="col-6">
-                  <label className="form-label">City</label>
+                  <label className="form-label text-dark">City</label>
                   <input
                     type="text"
                     className="form-control"
@@ -363,12 +393,13 @@ const EditStore = () => {
                 </div>
 
                 <div className="col-md-5">
-                  <label className="form-label">Country</label>
+                  <label className="form-label text-dark">Country</label>
                   <select
                     className="form-select"
                     id="country"
                     name="country"
                     required
+                    readOnly
                     onChange={(e) => {
                       handleChange(e);
                       setIsChanged(true);
@@ -383,16 +414,16 @@ const EditStore = () => {
                     Please select a valid country.
                   </div>
                 </div>
-
               </div>
               <div className="col-lg-12 mt-3 mb-3 d-flex align-items-center justify-content-center">
-                <button type="submit" className="btn btn-success">
+                <Button type="submit" variant="contained" style={{ backgroundColor: "#3E3232" }}>
                   Update
-                </button>
+                </Button>
               </div>
             </form>
           </div>
         </div>
+        </Item>
       </div>
     </>
   );

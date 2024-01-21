@@ -3,8 +3,19 @@ import ProfileNav from "./ProfileNac";
 import UpdatePassword from "./UpdatePassword";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { Alert, AlertTitle } from "@mui/material";
+import { Alert, AlertTitle, IconButton } from "@mui/material";
 import ProfileModal from "./ProfileModal";
+import { Paper, styled, Button, TextField } from "@mui/material";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CancelIcon from "@mui/icons-material/Cancel";
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(3),
+  marginBottom: theme.spacing(3),
+  color: theme.palette.text.secondary,
+}));
 
 const SellerProfile = () => {
   const [isBasicEdit, setIsBasicEdit] = useState(false);
@@ -60,7 +71,7 @@ const SellerProfile = () => {
       if (profileResponse.status === 200) {
         setSellerProfileData(profileResponse.data);
         setIsVerified(profileResponse.data.verified);
-        console.log(profileResponse)
+        console.log(profileResponse);
       }
     };
     fetchData();
@@ -129,7 +140,7 @@ const SellerProfile = () => {
       setAlertData("Error updating details");
       setAlertEnable(true);
       setAlertSeverity("error");
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -148,7 +159,7 @@ const SellerProfile = () => {
         }
       );
       if (emailupdateResponse.status === 200) {
-        UpdateVerifyState()
+        UpdateVerifyState();
         setIsEmailEdit(false);
         setAlertData("Email Updated Successfully");
         setAlertEnable(true);
@@ -194,8 +205,6 @@ const SellerProfile = () => {
       setAlertSeverity("error");
       console.log(error);
     }
-
-
   };
 
   if (
@@ -212,13 +221,13 @@ const SellerProfile = () => {
   };
 
   const UpdateVerifyState = () => {
-    setSellerProfileData({...sellerProfileData, email_verified : true})
-  }
+    setSellerProfileData({ ...sellerProfileData, email_verified: true });
+  };
 
   const handleOtpConfirm = async () => {
     const token = localStorage.getItem("token");
     setShowConfirmation(false);
-      try{
+    try {
       const emailOtpVerifyResponse = await axios.post(
         `${BASE_URL}email-otp-verify/`,
         {
@@ -231,20 +240,19 @@ const SellerProfile = () => {
           },
         }
       );
-      if(emailOtpVerifyResponse.status === 200){
-        setShowConfirmation(false)
-        handleEmailSubmit()
+      if (emailOtpVerifyResponse.status === 200) {
+        setShowConfirmation(false);
+        handleEmailSubmit();
       }
-      } catch (error) {
-        setAlertData("Invalid Otp")
-        setAlertEnable(true)
-        setAlertSeverity("error")
-      }
-
+    } catch (error) {
+      setAlertData("Invalid Otp");
+      setAlertEnable(true);
+      setAlertSeverity("error");
+    }
   };
 
   const handleEmailVerification = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     const token = localStorage.getItem("token");
     setIsEmail(true);
     try {
@@ -264,421 +272,431 @@ const SellerProfile = () => {
       setAlertData("OTP Creation Failed");
       setAlertEnable(true);
       setAlertSeverity("error");
-      console.log(error)
+      console.log(error);
     }
   };
 
   return (
     <>
-      <div className="container-fluid p-5 pb-5 mt-3">
-        <ProfileNav
-          setIsUpdatePassword={setIsUpdatePassword}
-          isVerified={isVerified}
-        />
-        {alertEnable && (
-          <Alert severity={alertSeverity} onClose={handleAlertClose}>
-            <AlertTitle>Error</AlertTitle>
-            {alertData}
-          </Alert>
-        )}
-        <ProfileModal
-          showConfirmation={showConfirmation}
-          setShowConfirmation={setShowConfirmation}
-          phoneOtp={phoneOtp}
-          setPhoneOtp={setPhoneOtp}
-          handleOtpConfirm={handleOtpConfirm}
-          setEmailOtp={setEmailOtp}
-          emailOtp={emailOtp}
-          isEmail={isEmail}
-        />
-        {isUpdatePassword ? (
-          <UpdatePassword setIsUpdatePassword={setIsUpdatePassword}
-            setAlertData={setAlertData}
-            setAlertEnable={setAlertEnable}
-            setAlertSeverity={setAlertSeverity}
-            handleAlertClose={handleAlertClose}
-            url={BASE_URL}
-           />
-        ) : (
-          <div className="row">
-            <div className="col-lg-6">
-              <h4 className="text-center m-3">Profile</h4>
-
-              <form onSubmit={handleBasicSubmit}>
-                <div className="row g-3 p-3 mb-3">
-                  <div className="col-lg-6 mt-3">
-                    {!isBasicEdit && (
-                      <button
-                        className="btn btn-outline-info w-100"
-                        type="button"
-                        onClick={() => setIsBasicEdit(true)}
-                      >
-                        Edit Personal Details
-                      </button>
-                    )}
-                    {isBasicEdit && (
-                      <button
-                        className="btn btn-outline-success w-100"
-                        type="submit"
-                      >
-                        Update
-                      </button>
-                    )}
-                  </div>
-                  <div className="col-lg-6 mt-3">
-                    {isBasicEdit && (
-                      <>
-                        <button
-                          className="btn btn-outline-danger w-100"
+      <div className="container-fluid" style={{ marginTop: "83px" }}>
+        <Item>
+          <ProfileNav
+            setIsUpdatePassword={setIsUpdatePassword}
+            isVerified={isVerified}
+          />
+          {alertEnable && (
+            <Alert severity={alertSeverity} onClose={handleAlertClose}>
+              <AlertTitle>Error</AlertTitle>
+              {alertData}
+            </Alert>
+          )}
+          <ProfileModal
+            showConfirmation={showConfirmation}
+            setShowConfirmation={setShowConfirmation}
+            phoneOtp={phoneOtp}
+            setPhoneOtp={setPhoneOtp}
+            handleOtpConfirm={handleOtpConfirm}
+            setEmailOtp={setEmailOtp}
+            emailOtp={emailOtp}
+            isEmail={isEmail}
+          />
+          {isUpdatePassword ? (
+            <UpdatePassword
+              setIsUpdatePassword={setIsUpdatePassword}
+              setAlertData={setAlertData}
+              setAlertEnable={setAlertEnable}
+              setAlertSeverity={setAlertSeverity}
+              handleAlertClose={handleAlertClose}
+              url={BASE_URL}
+            />
+          ) : (
+            <div className="row">
+              <div className="col-lg-6">
+                <h4 className="text-center text-dark h4 m-3">Profile</h4>
+                <form onSubmit={handleBasicSubmit}>
+                  <div className="row g-3 p-3 mb-3">
+                    <div className="col-lg-6 mt-3">
+                      {!isBasicEdit && (
+                        <Button
                           type="button"
-                          onClick={() => {
-                            setIsBasicEdit(false);
-                            setIsBasicChanged(false);
-                          }}
+                          style={{ color: "#3E3232" }}
+                          onClick={() => setIsBasicEdit(true)}
                         >
-                          Cancel
-                        </button>
-                      </>
-                    )}
-                  </div>
-                  <div className="col-sm-6">
-                    <label className="form-label">First Name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={
-                        isBasicChanged
-                          ? sellerUpdatedBasicData.user.first_name
-                          : sellerProfileData.user.first_name
-                      }
-                      name="first_name"
-                      required
-                      readOnly={!isBasicEdit}
-                      onChange={(e) => {
-                        handleBasicChange(e);
-                        setIsBasicChanged(true);
-                      }}
-                    />
-                  </div>
-
-                  <div className="col-sm-6">
-                    <label className="form-label">Last Name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder=""
-                      name="last_name"
-                      required
-                      readOnly={!isBasicEdit}
-                      value={
-                        isBasicChanged
-                          ? sellerUpdatedBasicData.user.last_name
-                          : sellerProfileData.user.last_name
-                      }
-                      onChange={(e) => {
-                        handleBasicChange(e);
-                        setIsBasicChanged(true);
-                      }}
-                    />
-                  </div>
-
-                  <div className="col-12">
-                    <label className="form-label">Business Name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder=""
-                      name="bussiness_name"
-                      required
-                      readOnly={!isBasicEdit}
-                      value={
-                        isBasicChanged
-                          ? sellerUpdatedBasicData.bussiness_name
-                          : sellerProfileData.bussiness_name
-                      }
-                      onChange={(e) => {
-                        handleBasicChange(e);
-                        setIsBasicChanged(true);
-                      }}
-                    />
-                  </div>
-                </div>
-              </form>
-
-              <form onSubmit={handleEmailVerification}>
-                <div className="row p-3 mt-3">
-                  <div className="col-lg-6 mb-3">
-                    {!isEmailEdit && (
-                      <button
-                        className="btn btn-outline-info w-100"
-                        type="button"
-                        onClick={() => setIsEmailEdit(true)}
-                      >
-                        {sellerProfileData.email === ""
-                          ? "Add Email"
-                          : "Edit Email"}
-                      </button>
-                    )}
-                    {isEmailEdit && (
-                      <button
-                        className="btn btn-outline-success w-100"
-                        type="submit"
-                      >
-                        {sellerProfileData.email === "" ? "Submit" : "Update"}
-                      </button>
-                    )}
-                  </div>
-                  <div className="col-lg-6 mb-3">
-                    {isEmailEdit && (
-                      <>
-                        <button
-                          className="btn btn-outline-danger w-100"
-                          type="button"
-                          onClick={() => {
-                            setIsEmailEdit(false);
-                            setIsEmailChanged(false);
-                          }}
-                        >
-                          Cancel
-                        </button>
-                      </>
-                    )}
-                  </div>
-                  <div className="col-12">
-                    <div className="row">
-                      <div className="col-lg-12">
-                        <label className="form-label">Email</label>
-                      </div>
-                      <div className="col-lg-8">
-                        <div className="input-group has-validation">
-                          <input
-                            type="text"
-                            className="form-control"
-                            placeholder=""
-                            name="email"
-                            required
-                            readOnly={!isEmailEdit}
-                            value={
-                              isEmailChanged
-                                ? sellerUpdatedEmailData.user.email
-                                : sellerProfileData.user.email
-                            }
-                            onChange={(e) => {
-                              handleEmailChange(e);
-                              setIsEmailChanged(true);
-                            }}
-                          />
-                        </div>
-                      </div>
+                          Edit Personal Details
+                        </Button>
+                      )}
+                      {isBasicEdit && (
+                        <Button style={{ color: "#3E3232" }} type="submit">
+                          Update
+                        </Button>
+                      )}
                     </div>
-                  </div>
-                </div>
-              </form>
-
-              <form onSubmit={handleNumberSubmit}>
-                <div className="row p-3 mb-3">
-                  <div className="col-lg-12">
-                    <div className="row">
-                      <div className="col-lg-6 mb-3">
-                        {!isPhoneEdit && (
-                          <button
-                            className="btn btn-outline-info w-100"
+                    <div className="col-lg-6 mt-3">
+                      {isBasicEdit && (
+                        <>
+                          <Button
+                            style={{ color: "#3E3232" }}
                             type="button"
-                            onClick={() => setIsPhoneEdit(true)}
+                            onClick={() => {
+                              setIsBasicEdit(false);
+                              setIsBasicChanged(false);
+                            }}
                           >
-                            Edit Number
-                          </button>
-                        )}
-                        {isPhoneEdit && (
-                          <button
-                            className="btn btn-outline-success w-100"
-                            type="submit"
-                          >
-                            Update
-                          </button>
-                        )}
-                      </div>
-                      <div className="col-lg-6 mb-3">
-                        {isPhoneEdit && (
-                          <>
-                            <button
-                              className="btn btn-outline-danger w-100"
-                              type="button"
-                              onClick={() => {
-                                setIsPhoneEdit(false);
-                                setIsPhoneChanged(false);
-                              }}
-                            >
-                              Cancel
-                            </button>
-                          </>
-                        )}
-                      </div>
+                            Cancel
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                    <div className="col-sm-6">
+                      <label className="form-label text-dark">First Name</label>
+                      <TextField
+                        type="text"
+                        className="form-control"
+                        value={
+                          isBasicChanged
+                            ? sellerUpdatedBasicData.user.first_name
+                            : sellerProfileData.user.first_name
+                        }
+                        name="first_name"
+                        required
+                        readOnly={!isBasicEdit}
+                        onChange={(e) => {
+                          handleBasicChange(e);
+                          setIsBasicChanged(true);
+                        }}
+                      />
+                    </div>
+
+                    <div className="col-sm-6">
+                      <label className="form-label text-dark">Last Name</label>
+                      <TextField
+                        type="text"
+                        className="form-control"
+                        placeholder=""
+                        name="last_name"
+                        required
+                        readOnly={!isBasicEdit}
+                        value={
+                          isBasicChanged
+                            ? sellerUpdatedBasicData.user.last_name
+                            : sellerProfileData.user.last_name
+                        }
+                        onChange={(e) => {
+                          handleBasicChange(e);
+                          setIsBasicChanged(true);
+                        }}
+                      />
+                    </div>
+
+                    <div className="col-12">
+                      <label className="form-label text-dark">
+                        Business Name
+                      </label>
+                      <TextField
+                        type="text"
+                        className="form-control"
+                        placeholder=""
+                        name="bussiness_name"
+                        required
+                        readOnly={!isBasicEdit}
+                        value={
+                          isBasicChanged
+                            ? sellerUpdatedBasicData.bussiness_name
+                            : sellerProfileData.bussiness_name
+                        }
+                        onChange={(e) => {
+                          handleBasicChange(e);
+                          setIsBasicChanged(true);
+                        }}
+                      />
                     </div>
                   </div>
-                  <div className="col-12">
-                    <div className="row">
-                      <div className="col-lg-12">
-                        <label className="form-label">Phone</label>
-                      </div>
-                      <div className="col-lg-8">
-                        <div className="input-group has-validation">
-                          <span className="input-group-text">+91</span>
-                          <input
-                            type="tel"
-                            className="form-control"
-                            placeholder=""
-                            name="phone"
-                            required
-                            readOnly={!isPhoneEdit}
-                            value={
-                              isPhoneChanged
-                                ? sellerUpdatedPhoneData.user.phone
-                                : sellerProfileData.user.phone
-                            }
-                            onChange={(e) => {
-                              setIsPhoneChanged(true);
-                              handleNumberChange(e);
+                </form>
+
+                <form onSubmit={handleEmailVerification}>
+                  <div className="row p-3 mt-3">
+                    <div className="col-lg-6 mb-3">
+                      {!isEmailEdit && (
+                        <Button
+                          style={{ color: "#3E3232" }}
+                          type="button"
+                          onClick={() => setIsEmailEdit(true)}
+                        >
+                          {sellerProfileData.email === ""
+                            ? "Add Email"
+                            : "Edit Email"}
+                        </Button>
+                      )}
+                      {isEmailEdit && (
+                        <Button style={{ color: "#3E3232" }} type="submit">
+                          {sellerProfileData.email === "" ? "Submit" : "Update"}
+                        </Button>
+                      )}
+                    </div>
+                    <div className="col-lg-6 mb-3">
+                      {isEmailEdit && (
+                        <>
+                          <Button
+                            className="btn btn-outline-danger w-100"
+                            type="button"
+                            onClick={() => {
+                              setIsEmailEdit(false);
+                              setIsEmailChanged(false);
                             }}
-                          />
+                          >
+                            Cancel
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                    <div className="col-12">
+                      <div className="row">
+                        <div className="col-lg-12">
+                          <label className="form-label text-dark">Email</label>
+                        </div>
+                        <div className="col-lg-8">
+                          <div className="input-group has-validation">
+                            <TextField
+                              type="text"
+                              className="form-control"
+                              placeholder=""
+                              name="email"
+                              required
+                              readOnly={!isEmailEdit}
+                              value={
+                                isEmailChanged
+                                  ? sellerUpdatedEmailData.user.email
+                                  : sellerProfileData.user.email
+                              }
+                              onChange={(e) => {
+                                handleEmailChange(e);
+                                setIsEmailChanged(true);
+                              }}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </form>
-            </div>
+                </form>
 
-            <div className="col-lg-6">
-              <div className="row">
-                <div className="col-lg-12 p-3">
-                  <div className="row">
-                    <div className="col-lg-9">
-                      <label className="form-label display-6">
-                        Address Verification
-                      </label>
+                <form onSubmit={handleNumberSubmit}>
+                  <div className="row p-3 mb-3">
+                    <div className="col-lg-12">
+                      <div className="row">
+                        <div className="col-lg-6 mb-3">
+                          {!isPhoneEdit && (
+                            <Button
+                              style={{ color: "#3E3232" }}
+                              type="button"
+                              onClick={() => setIsPhoneEdit(true)}
+                            >
+                              Edit Number
+                            </Button>
+                          )}
+                          {isPhoneEdit && (
+                            <Button style={{ color: "#3E3232" }} type="submit">
+                              Update
+                            </Button>
+                          )}
+                        </div>
+                        <div className="col-lg-6 mb-3">
+                          {isPhoneEdit && (
+                            <>
+                              <Button
+                                style={{ color: "#3E3232" }}
+                                type="button"
+                                onClick={() => {
+                                  setIsPhoneEdit(false);
+                                  setIsPhoneChanged(false);
+                                }}
+                              >
+                                Cancel
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                    <div
-                      className="col-lg-3 form-check form-switch d-flex align-items-center"
-                      style={{ fontSize: "1.5rem" }}
-                    >
-                      <input
-                        type="checkbox"
-                        className="form-check-input"
-                        placeholder=""
-                        name="landmark"
-                        disabled
-                        checked={sellerProfileData.address_verified}
-                      />
-                    </div>
-                  </div>
-                  {!sellerProfileData.address_verified && (
-                    <Link
-                      to="/seller/verify"
-                      className="btn btn-info"
-                      type="button"
-                    >
-                      Verify Now
-                    </Link>
-                  )}
-                </div>
-                <div className="col-lg-12 p-3">
-                  <div className="row">
-                    <div className="col-lg-9">
-                      <label className="form-label display-6">
-                        Pan Verification
-                      </label>
-                    </div>
-                    <div
-                      className="col-lg-3 form-check form-switch d-flex align-items-center"
-                      style={{ fontSize: "1.5rem" }}
-                    >
-                      <input
-                        type="checkbox"
-                        className="form-check-input"
-                        placeholder=""
-                        name="landmark"
-                        disabled
-                        checked={sellerProfileData.pan_verified}
-                      />
-                    </div>
-                  </div>
-                  {!sellerProfileData.pan_verified && (
-                    <Link
-                      to="/seller/verify"
-                      className="btn btn-info"
-                      type="button"
-                    >
-                      Verify Now
-                    </Link>
-                  )}
-                </div>
-                <div className="col-lg-12 p-3">
-                  <div className="row">
-                    <div className="col-lg-9">
-                      <label className="form-label display-6">
-                        GSTIN Verification
-                      </label>
-                    </div>
-                    <div
-                      className="col-lg-3 form-check form-switch d-flex align-items-center"
-                      style={{ fontSize: "1.5rem" }}
-                    >
-                      <input
-                        type="checkbox"
-                        className="form-check-input"
-                        placeholder=""
-                        name="landmark"
-                        disabled
-                        checked={sellerProfileData.gstin_verified}
-                      />
+                    <div className="col-12">
+                      <div className="row">
+                        <div className="col-lg-12">
+                          <label className="form-label text-dark">Phone</label>
+                        </div>
+                        <div className="col-lg-8">
+                          <div className="input-group has-validation">
+                            <span className="input-group-text text-dark">
+                              +91
+                            </span>
+                            <TextField
+                              type="tel"
+                              className="form-control"
+                              placeholder=""
+                              name="phone"
+                              required
+                              readOnly={!isPhoneEdit}
+                              value={
+                                isPhoneChanged
+                                  ? sellerUpdatedPhoneData.user.phone
+                                  : sellerProfileData.user.phone
+                              }
+                              onChange={(e) => {
+                                setIsPhoneChanged(true);
+                                handleNumberChange(e);
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  {!sellerProfileData.gstin_verified && (
-                    <Link
-                      to="/seller/verify"
-                      className="btn btn-info"
-                      type="button"
-                    >
-                      Verify Now
-                    </Link>
-                  )}
-                </div>
-                <div className="col-lg-12 p-3">
-                  <div className="row">
-                    <div className="col-lg-9">
-                      <label className="form-label display-6">
-                        Bank Verification
-                      </label>
+                </form>
+              </div>
+
+              <div className="col-lg-6">
+                <div className="row">
+                  <div className="col-lg-12 p-3">
+                    <div className="row">
+                      <div className="col-lg-9">
+                        <label className="form-label display-6 text-dark">
+                          Address Verified
+                        </label>
+                      </div>
+                      <div className="col-lg-3 d-flex align-items-center">
+                        {sellerProfileData.pan_verified ? (
+                          <CheckCircleOutlineIcon
+                            style={{ fontSize: "2rem", color: "green" }}
+                          />
+                        ) : (
+                          <CancelIcon
+                            style={{ fontSize: "2rem", color: "red" }}
+                          />
+                        )}
+                      </div>
                     </div>
-                    <div
-                      className="col-lg-3 form-check form-switch d-flex align-items-center"
-                      style={{ fontSize: "1.5rem" }}
-                    >
-                      <input
-                        type="checkbox"
-                        className="form-check-input"
-                        placeholder=""
-                        name="landmark"
-                        disabled
-                        checked={sellerProfileData.bank_account_verified}
-                      />
-                    </div>
+                    {!sellerProfileData.address_verified && (
+                      <Button
+                        variant="contained"
+                        style={{ backgroundColor: "#3E3232" }}
+                      >
+                        <Link
+                          to="/seller/verify"
+                          style={{ color: "white" }}
+                          type="button"
+                        >
+                          Verify Now
+                        </Link>
+                      </Button>
+                      
+                    )}
                   </div>
-                  {!sellerProfileData.bank_account_verified && (
-                    <Link
-                      to="/seller/verify"
-                      className="btn btn-info"
-                      type="button"
-                    >
-                      Verify Now
-                    </Link>
-                  )}
+                  <div className="col-lg-12 p-3">
+                    <div className="row">
+                      <div className="col-lg-9">
+                        <label className="form-label display-6 text-dark">
+                          Pan Verified
+                        </label>
+                      </div>
+                      <div className="col-lg-3 d-flex align-items-center">
+                        {sellerProfileData.pan_verified ? (
+                          <CheckCircleOutlineIcon
+                            style={{ fontSize: "2rem", color: "green" }}
+                          />
+                        ) : (
+                          <CancelIcon
+                            style={{ fontSize: "2rem", color: "red" }}
+                          />
+                        )}
+                      </div>
+                    </div>
+                    {!sellerProfileData.pan_verified && (
+                      <Button
+                        variant="contained"
+                        style={{ backgroundColor: "#3E3232" }}
+                      >
+                        <Link
+                          to="/seller/verify"
+                          style={{ color: "white" }}
+                          type="button"
+                        >
+                          Verify Now
+                        </Link>
+                      </Button>
+                    )}
+                  </div>
+                  <div className="col-lg-12 p-3">
+                    <div className="row">
+                      <div className="col-lg-9">
+                        <label className="form-label display-6 text-dark">
+                          GSTIN Verified
+                        </label>
+                      </div>
+                      <div className="col-lg-3 d-flex align-items-center">
+                        {sellerProfileData.gstin_verified ? (
+                          <CheckCircleOutlineIcon
+                            style={{ fontSize: "2rem", color: "green" }}
+                          />
+                        ) : (
+                          <CancelIcon
+                            style={{ fontSize: "2rem", color: "red" }}
+                          />
+                        )}
+                      </div>
+                    </div>
+                    {!sellerProfileData.gstin_verified && (
+                      <Button
+                        variant="contained"
+                        style={{ backgroundColor: "#3E3232" }}
+                      >
+                        <Link
+                          to="/seller/verify"
+                          style={{ color: "white" }}
+                          type="button"
+                        >
+                          Verify Now
+                        </Link>
+                      </Button>
+                    )}
+                  </div>
+                  <div className="col-lg-12 p-3">
+                    <div className="row">
+                      <div className="col-lg-9">
+                        <label className="form-label display-6 text-dark">
+                          Bank Verified
+                        </label>
+                      </div>
+                      <div className="col-lg-3  d-flex align-items-center">
+                        {sellerProfileData.bank_account_verified ? (
+                          <CheckCircleOutlineIcon
+                            style={{ fontSize: "2rem", color: "green" }}
+                          />
+                        ) : (
+                          <CancelIcon
+                            style={{ fontSize: "2rem", color: "red" }}
+                          />
+                        )}
+                      </div>
+                    </div>
+                    {!sellerProfileData.bank_account_verified && (
+                      <Button
+                        variant="contained"
+                        style={{ backgroundColor: "#3E3232" }}
+                      >
+                        <Link
+                          to="/seller/verify"
+                          style={{ color: "white" }}
+                          type="button"
+                        >
+                          Verify Now
+                        </Link>
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </Item>
       </div>
     </>
   );

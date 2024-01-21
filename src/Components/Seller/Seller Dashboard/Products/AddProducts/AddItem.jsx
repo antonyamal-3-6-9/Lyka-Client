@@ -6,6 +6,15 @@ import ItemNav from "./ItemNav";
 import axios from "axios";
 import LykaItemList from "./LykaItemList";
 import FloatingAlert from "../../../../FloatingAlert/FloatingAlert";
+import { Button, Paper, styled } from "@mui/material";
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(3),
+  marginBottom: theme.spacing(3),
+  color: theme.palette.text.secondary,
+}));
 
 const AddItem = () => {
   const BASE_URL = "http://127.0.0.1:8000/product/";
@@ -132,8 +141,10 @@ const AddItem = () => {
 
   return (
     <>
+      <div className="container-fluid" style={{marginTop: "20px"}}>
+      <Item>
       <ItemNav />
-      <div className="container-fluid mt-5 p-5">
+      <h4 className="h4 text-dark text-center mb-5">Select and add Variants and Colors you have</h4>
         <FloatingAlert
           message={alertData}
           severity={alertSeverity}
@@ -142,18 +153,20 @@ const AddItem = () => {
         />
         <div className="row">
           <div className="col-lg-4">
-            <div className="card p-3">
-              <h6>Product Id: {productData.productId}</h6>
+            <div>
+              <h6 className="h6 text-dark">Product Id: {productData.productId}</h6>
             </div>
           </div>
           <div className="col-lg-4">
-            <div className="card p-3">Product Name: {productData.name}</div>
+            <div><h6 className="h6 text-dark">Product Name: {productData.name}</h6></div>
           </div>
           <div className="col-lg-4">
             <div className="card">
-              <Link className="btn btn-outline-info" to="/seller/check-product">
+            <Button variant="contained" style={{backgroundColor: "#3E3232"}} fullWidth>
+              <Link to="/seller/check-product" style={{color: "white"}}>
                 Change Product
               </Link>
+              </Button>
             </div>
           </div>
         </div>
@@ -170,7 +183,6 @@ const AddItem = () => {
             />
           </form>
         </div>
-
         <LykaItemList
           lykaItemData={lykaItemData}
           handleRemoveVariant={handleRemoveVariant}
@@ -179,6 +191,7 @@ const AddItem = () => {
           finalSubmission={finalSubmission}
           store={pickupStore}
         />
+        </Item>
       </div>
     </>
   );

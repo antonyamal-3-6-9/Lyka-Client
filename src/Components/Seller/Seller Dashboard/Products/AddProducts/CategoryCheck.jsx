@@ -35,7 +35,7 @@ const CheckCategory = (props) => {
   return (
     <>
           <div className="col-lg-2">
-            <label htmlFor="root-category" className="d-inline">
+            <label htmlFor="root-category" className="d-inline text-dark">
               Root Category
             </label>
             <select
@@ -61,7 +61,7 @@ const CheckCategory = (props) => {
           </div>
 
           <div className="col-lg-2">
-            <label htmlFor="main-category" className="d-inline">
+            <label htmlFor="main-category" className="d-inline text-dark">
               Main Category
             </label>
             <select
@@ -87,7 +87,7 @@ const CheckCategory = (props) => {
           </div>
 
           <div className="col-lg-2">
-            <label htmlFor="sub-category" className="d-inline">
+            <label htmlFor="sub-category" className="d-inline text-dark">
               Sub Category
             </label>
             <select

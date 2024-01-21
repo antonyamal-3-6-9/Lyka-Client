@@ -7,6 +7,7 @@ export const NOTIFICATION_SINGLE = "NOTIFICATION_SINGLE";
 export const NOTIFICATION_SIGNAL = "NOTIFICATION_SIGNAL";
 export const ENABLE_SOCKET = "ENABLE_SOCKET";
 export const DISABLE_SOCKET = "DISABLE_SOCKET";
+export const BUSINESS_NAME_SET = "BUSINESS_NAME_SET"
 
 export const enableSocket = (socketRoot) => ({
   type: ENABLE_SOCKET,
@@ -45,6 +46,12 @@ export const Notifications = (notification = []) => ({
   type: NOTIFICATION,
   notification: notification,
 });
+
+export const SetBusinessName = (name) => ({
+  type: BUSINESS_NAME_SET,
+  name: name
+})
+
 
 export const WebSocketConnect = (userId) => {
   return async (dispatch) => {
@@ -120,6 +127,20 @@ export const initialAction = () => {
           )
         );
         dispatch(WebSocketConnect(isActiveResponse.data.user.id))
+        if (isActiveResponse.data.user.role === "seller"){
+          try{
+          const businessNameResponse = await axios.get(`http://localhost:8000/seller/get-business-name/`,
+          {
+            headers: {
+              "content-Type": "Application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          dispatch(SetBusinessName(businessNameResponse.data.business_name))
+        } catch (error) {
+          console.log(error)
+        }
+        }
       }
     } catch (error) {
       console.log("user is not logged in");

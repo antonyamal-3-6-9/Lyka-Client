@@ -10,7 +10,7 @@ const SellerOrder = () => {
   return (
     <>
       {orderExists ? (
-        <div className="container-fluid mt-5 pt-3 p-3">
+        <div className="container-fluid" style={{marginTop: "83px"}}>
           <div className="card m-0 p-0">
             <SellerOrderTable setExists={setOrderExists} />
           </div>

@@ -258,7 +258,7 @@ const SellerLogin = () => {
                 <Typography component="h1" variant="h5">
                   sign In
                 </Typography>
-                <Box component="form" noValidate sx={{ mt: 1 }}>
+                <Box noValidate sx={{ mt: 1 }}>
                   {!isSend && (
                     <TextField
                       margin="normal"

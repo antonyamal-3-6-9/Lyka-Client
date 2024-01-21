@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "@mui/material";
 
 const AdditemForm = (props) => {
   const handleChange = (e) => {
@@ -19,7 +20,7 @@ const AdditemForm = (props) => {
     <>
       <div className="row mt-5">
         <div className="col-lg-2">
-          <label htmlFor="color-select">Variant</label>
+          <label htmlFor="color-select" className="text-dark">Variant</label>
           <select
             className="form-select form-select-sm"
             id="color-select"
@@ -37,7 +38,7 @@ const AdditemForm = (props) => {
           </select>
         </div>
         <div className="col-lg-1">
-          <label htmlFor="variant-select">Color</label>
+          <label htmlFor="variant-select" className="text-dark">Color</label>
           <select
             className="form-select form-select-sm"
             id="variant-select"
@@ -56,7 +57,7 @@ const AdditemForm = (props) => {
         </div>
 
         <div className="col-lg-2">
-          <label htmlFor="launch-date">Stock</label>
+          <label htmlFor="launch-date" className="text-dark">Stock</label>
           <input
             type="number"
             className="form-control"
@@ -72,7 +73,7 @@ const AdditemForm = (props) => {
         </div>
 
         <div className="col-lg-1">
-        <label htmlFor="color-select">warehouse</label>
+        <label htmlFor="color-select" className="text-dark">warehouse</label>
           <select
             className="form-select form-select-sm"
             id="wareshouse-select"
@@ -91,7 +92,7 @@ const AdditemForm = (props) => {
         </div>
 
         <div className="col-lg-2">
-          <label htmlFor="original-price">Original Price</label>
+          <label htmlFor="original-price" className="text-dark">Original Price</label>
           <input
             type="number"
             className="form-control"
@@ -106,7 +107,7 @@ const AdditemForm = (props) => {
           </div>
         </div>
         <div className="col-lg-2">
-          <label htmlFor="selling-price">Selling Price</label>
+          <label htmlFor="selling-price" className="text-dark">Selling Price</label>
           <input
             type="number"
             className="form-control"
@@ -121,7 +122,7 @@ const AdditemForm = (props) => {
           </div>
         </div>
         <div className="col-lg-2">
-          <label htmlFor="offer-price">Offer Price</label>
+          <label htmlFor="offer-price" className="text-dark">Offer Price</label>
           <input
             type="number"
             className="form-control"
@@ -136,9 +137,9 @@ const AdditemForm = (props) => {
           </div>
         </div>
         <div className="col-lg-12 d-flex align-items-center justify-content-center">
-          <button className="btn btn-danger mt-5" type="submit">
+          <Button variant="contained"  style={{backgroundColor: "#3E3232"}} sx={{mt: 3}} type="submit">
             Add
-          </button>
+          </Button>
         </div>
       </div>
     </>

@@ -2,10 +2,19 @@ import "./product.css";
 import { useState, React, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import SellerProductNav from "./SellerProductNav";
 import ConfirmationModal from "./ConfirmationModal";
 import { Alert, AlertTitle } from "@mui/material";
 import Modal from "react-modal";
+import { Button, Paper, styled } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(3),
+  marginBottom: theme.spacing(3),
+  color: theme.palette.text.secondary,
+}));
 
 const SellerProducts = () => {
   const [productData, setProductData] = useState([]);
@@ -292,7 +301,7 @@ const SellerProducts = () => {
 
   return (
     <>
-      <div className="container-fluid mt-5 pt-5">
+      <div className="container-fluid" style={{ marginTop: "83px" }}>
         {alertEnable && (
           <Alert
             severity={alertSeverity}
@@ -349,30 +358,33 @@ const SellerProducts = () => {
           </div>
         </Modal>
         {productExists && productData.length !== 0 ? (
-          <SellerProductNav />
+          <Button startIcon={<AddIcon />} style={{ color: "#3E3232" }}>
+            <Link
+              variant="contained"
+              to="/seller/check-product"
+              style={{ color: "#3E3232" }}
+            >
+              Add New Product
+            </Link>
+          </Button>
         ) : (
           <div className="container-fluid w-75 h-100">
-            <div className="row h-100 d-flex align-items-center justify-content-center">
-              <h4 className="text-center">
-                You haven't added any products yet, add new product now
-              </h4>
-              <Link
-                onClick={isVerified}
-                className="btn btn-outline-dark w-25 text-center"
-              >
-                Add Now
-              </Link>
-            </div>
+            <Item>
+              <div className="row h-100 d-flex align-items-center justify-content-center">
+                <h4 className="text-center">
+                  You haven't added any products yet, add new product now
+                </h4>
+                <Button onClick={isVerified} variant="contained" style={{ backgroundColor: "#3E3232" }}>
+                  Add Now
+                </Button>
+              </div>
+            </Item>
           </div>
         )}
         {productData.map((item) => (
-          <div className="row" key={item.unit_id}>
+          <div className="row mb-4" key={item.unit_id}>
             <div className="col-lg-12">
-              <div
-                className={`product-content product-wrap clearfix border border-1 ${
-                  item.is_active ? "border-success" : "border-danger"
-                }`}
-              >
+            <Item style={{border: item.is_active && item.stock > 0 ? "2px dotted green" : "2px dashed red"}}>
                 <div className="row">
                   <div className="col-md-4 col-sm-12 col-xs-12 d-flex align-items-center justify-content-center">
                     <div className="">
@@ -391,37 +403,46 @@ const SellerProducts = () => {
                               <div className="row">
                                 <div className="col-lg-12">
                                   <h5 className="h4 text-dark">
-                                      {item.product.brand} {item.product.name}{" "}
+                                    {item.product.brand} {item.product.name}{" "}
                                   </h5>
                                   <h5 className="h6 text-dark">
-                                  {item.variant.variation}{" "}
+                                    {item.variant.variation}{" "}
                                   </h5>
-                                  <h5 className="h6" style={{color: item.color_code.color}}>
-                                  {item.color_code.color}
+                                  <h5
+                                    className="h6"
+                                    style={{ color: item.color_code.color }}
+                                  >
+                                    {item.color_code.color}
                                   </h5>
                                   <p className="text-dark">
-                                        {item.product.root_category.name}/
-                                        {item.product.main_category.name}/
-                                        {item.product.sub_category.name}
-                                      </p>
+                                    {item.product.root_category.name}/
+                                    {item.product.main_category.name}/
+                                    {item.product.sub_category.name}
+                                  </p>
+                                  <span className="text-dark h6">
+                                    Inventory:{" "}
+                                  </span>
+                                  <span className="h5 text-dark">
+                                    {item.warehouse.store_name}
+                                  </span>
                                 </div>
                                 <div className="col-lg-4 mt-2">
-                                  <p className="m-0 p-0 mt-3">
+                                  <p className="m-0 p-0 mt-3 text-dark">
                                     Original Price:
                                   </p>
-                                  <p className="price-container m-0 p-0">
+                                  <p className="price-container m-0 p-0 text-dark">
                                     <span>{item.original_price}</span>
                                   </p>
                                 </div>
                                 <div className="col-lg-4 mt-2">
-                                  <p className="m-0 p-0 mt-3">Selling Price:</p>
-                                  <p className="price-container m-0 p-0">
+                                  <p className="m-0 p-0 mt-3 text-dark">Selling Price:</p>
+                                  <p className="price-container m-0 p-0 text-dark">
                                     <span>{item.selling_price}</span>
                                   </p>
                                 </div>
                                 <div className="col-lg-4 mt-2">
-                                  <p className="m-0 p-0 mt-3">Offer Price:</p>
-                                  <p className="price-container m-0 p-0">
+                                  <p className="m-0 p-0 mt-3 text-dark">Offer Price:</p>
+                                  <p className="price-container m-0 p-0 text-dark">
                                     <span>{item.offer_price}</span>
                                   </p>
                                 </div>
@@ -430,7 +451,7 @@ const SellerProducts = () => {
                           </div>
                           <div className="col-lg-6">
                             <div className="description">
-                              <p>{item.product.description} </p>
+                              <p className="text-dark">{item.product.description} </p>
                             </div>
                           </div>
                         </div>
@@ -438,45 +459,49 @@ const SellerProducts = () => {
                       <div className="col-lg-12">
                         <div className="row">
                           <div className="col-3 mb-3">
-                            <button
+                            <Button
                               type="button"
-                              className="btn btn-outline-danger"
+                              variant="contained"
+                              style={{ backgroundColor: "red" }}
                               onClick={() => handleDelete(item.unit_id)}
                             >
                               Delete
-                            </button>
+                            </Button>
                           </div>
                           <div className="col-3 mb-3">
                             <div className="form-check">
-                              <button
-                                className={`btn ${
-                                  item.is_active
-                                    ? "btn-outline-success"
-                                    : "btn-outline-danger"
-                                }`}
+                              <Button
+                                style={{
+                                  backgroundColor: item.is_active && item.stock > 0
+                                    ? "green"
+                                    : "red",
+                                    color: "white"
+                                }}
                                 disabled={item.stock <= 0}
                                 checked={item.is_active || item.stock <= 0}
                                 onClick={() => makeLive(item.unit_id)}
                               >
-                                {item.is_active
+                                {item.is_active && item.stock > 0
                                   ? "Live"
-                                  : "Dead" || (item.stock <= 0 && "Dead")}
-                              </button>
+                                  : "Dead"}
+                              </Button>
                               <label for="stock-live"></label>
                             </div>
                           </div>
                           <div className="col-3 mb-3">
-                            <button
-                              className="btn btn-outline-dark"
+                            <Button
+                              variant="contained"
                               type="button"
+                              style={{ backgroundColor: "green" }}
                               onClick={() => handleStockClick(item.unit_id)}
                             >
                               Add More Stock
-                            </button>
+                            </Button>
                           </div>
                           <div className="col-3 mb-3">
-                            <button
-                              className="btn btn-outline-dark"
+                            <Button
+                              variant="contained"
+                              style={{ backgroundColor: "black" }}
                               type="button"
                               onClick={() => {
                                 handleAddVariants(
@@ -486,34 +511,37 @@ const SellerProducts = () => {
                               }}
                             >
                               Add More Variants
-                            </button>
+                            </Button>
                           </div>
                           <div className="col-3 mb-3">
                             <p>
-                              <span>Added On: {formatDate(item.added_on)}</span>
+                              <span className="text-dark">Added On: {formatDate(item.added_on)}</span>
                             </p>
                           </div>
                           <div className="col-3 mb-3">
                             <p>
-                              <span>Launched on: {item.product.launch_date}</span>
+                              <span className="text-dark">
+                                Launched on: {item.product.launch_date}
+                              </span>
                             </p>
                           </div>
                           <div className="col-3 mb-3">
                             <p>
-                              <span>Units Sold: {item.units_sold}</span>
+                              <span className="text-dark">Units Sold: {item.units_sold}</span>
                             </p>
                           </div>
                           <div className="col-3 mb-3">
                             <p>
-                              <span>stock: {item.stock}</span>
+                              <span className="text-dark">stock: {item.stock}</span>
                             </p>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                
               </div>
+              </Item>
             </div>
           </div>
         ))}

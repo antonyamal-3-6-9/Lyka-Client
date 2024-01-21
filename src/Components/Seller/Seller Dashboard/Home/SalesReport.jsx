@@ -1,6 +1,8 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Paper, styled, Button, TextField } from "@mui/material";
+import { Paper, styled, Button} from "@mui/material";
+import { Backdrop } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -18,9 +20,11 @@ const SalesReport = () => {
     start_date: "",
     end_date: "",
   });
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true)
       try {
         const salesReportResponse = await axios.get(
           `${BASE_URL}get-sales-report/`,
@@ -33,8 +37,10 @@ const SalesReport = () => {
         );
         console.log(salesReportResponse.data);
         setSalesReport(salesReportResponse.data);
+        setLoading(false)
       } catch (error) {
         console.log(error);
+        setLoading(false)
       }
     };
     fetchData();
@@ -47,6 +53,7 @@ const SalesReport = () => {
   const handleReportSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true)
       const salesReportTimeLineResponse = await axios.post(
         `${BASE_URL}get-sales-report/time-line/`,
         {
@@ -61,8 +68,10 @@ const SalesReport = () => {
         }
       );
       setSalesReport(salesReportTimeLineResponse.data);
+      setLoading(false)
     } catch (error) {
       console.log(error);
+      setLoading(false)
     }
   };
 
@@ -86,6 +95,9 @@ const SalesReport = () => {
 
   return (
     <>
+    <Backdrop open={loading}>
+      <CircularProgress/>
+    </Backdrop>
       <Item>
         <div className="row">
           <form onSubmit={handleReportSubmit}>
@@ -112,7 +124,7 @@ const SalesReport = () => {
               />
             </div>
             <div className="col-lg-12">
-              <Button type="submit" variant="contained" sx={{ mt: 2, mb: 2 }}>
+              <Button type="submit" variant="contained" sx={{ mt: 2, mb: 2 }} style={{ backgroundColor: "#3E3232" }}>
                 Get
               </Button>
             </div>

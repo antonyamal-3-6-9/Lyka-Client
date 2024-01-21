@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import FloatingAlert from "../../../FloatingAlert/FloatingAlert";
 import { Link } from "react-router-dom";
-import { Button } from "@mui/material";
+import { Backdrop, Button, CircularProgress } from "@mui/material";
 import OrderModal from "./OrderModal";
 
 const SellerOrderTable = ({ setExists }) => {
@@ -18,15 +18,19 @@ const SellerOrderTable = ({ setExists }) => {
   const [alertEnable, setAlertEnable] = useState(false);
   const [alertSeverity, setAlertSeverity] = useState("");
 
+  const [loading, setLoading] = useState(false)
+
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true)
         const orderResponse = await axios.get(`${BASE_URL}get-seller-orders/`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
+        setLoading(false)
         if (orderResponse.data.length === 0) {
           setExists(false);
         }
@@ -34,6 +38,7 @@ const SellerOrderTable = ({ setExists }) => {
         setExists(true);
         setOrders(orderResponse.data);
       } catch (error) {
+        setLoading(false)
         setExists(false);
       }
     };
@@ -64,7 +69,7 @@ const SellerOrderTable = ({ setExists }) => {
     }
   };
 
-  const handleAccept = async (order_id, status) => {
+  const handleAccept = async (order_id) => {
     try {
       const orderUpdateResponse = await axios.patch(
         `${BASE_URL}order-accept-or-reject/`,
@@ -144,6 +149,9 @@ const SellerOrderTable = ({ setExists }) => {
         setEnable={setAlertEnable}
         severity={alertSeverity}
       />
+      <Backdrop>
+        <CircularProgress/>
+      </Backdrop>
       <div className="table-responsive">
         <table className="table table-striped table-light table-hover table-borderless border-dark m-0 p-0">
           <thead className="table-success">
@@ -152,10 +160,10 @@ const SellerOrderTable = ({ setExists }) => {
                 Product Name
               </th>
               <th scope="col" className="h5 text-center">
-                Customer Name
+                Customer
               </th>
               <th scope="col" className="h5 text-center">
-                Shipping Location
+                Destination
               </th>
               <th scope="col" className="h5 text-center">
                 Placed On

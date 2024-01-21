@@ -1,15 +1,11 @@
 import * as React from "react";
-import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import InputBase from "@mui/material/InputBase";
 import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
-import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
@@ -20,66 +16,29 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import axios from "axios";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import CategoryIcon from '@mui/icons-material/Category';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { Backdrop } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(3),
-    width: "auto",
-  },
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "20ch",
-    },
-  },
-}));
 
 export default function SellerHomeNavbar({ setOption }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-  const [socket, setSocket] = useState(null);
 
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   const navigate = useNavigate();
 
-  const handleProfileMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const [loading, setLoading] = useState(false)
 
   const userName = useSelector((state) => state.userAuth.name);
   const userRole = useSelector((state) => state.userAuth.role)
+  const businessName = useSelector((state) => state.userAuth.businessName)
 
 
   const isLoggedIn = useSelector(
@@ -87,10 +46,11 @@ export default function SellerHomeNavbar({ setOption }) {
   );
   const dispatch = useDispatch();
 
-  const BASE_URL = "http://127.0.0.1:8000/customer/";
+  const BASE_URL = "http://127.0.0.1:8000/seller/";
   const token = localStorage.getItem("token");
   const handleLogout = async () => {
     try {
+      setLoading(true)
       const logoutResponse = await axios.post(
         `${BASE_URL}logout/`,
         {},
@@ -101,11 +61,17 @@ export default function SellerHomeNavbar({ setOption }) {
           },
         }
       );
+      setLoading(false)
+      localStorage.clear("token");
+      dispatch(Logout());
+      navigate("/")
     } catch (error) {
+      setLoading(false)
+      localStorage.clear("token");
+      dispatch(Logout());
+      navigate("/")
       console.log(error);
     }
-    localStorage.clear("token");
-    dispatch(Logout());
   };
 
   const handleMobileMenuClose = () => {
@@ -225,6 +191,9 @@ export default function SellerHomeNavbar({ setOption }) {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
+    <Backdrop open={loading}>
+      <CircularProgress/>
+    </Backdrop>
       <AppBar position="fixed" style={{ backgroundColor: "#3E3232" }}>
         <Toolbar>
           <Typography
@@ -237,7 +206,7 @@ export default function SellerHomeNavbar({ setOption }) {
               navigateLink("/seller/home");
             }}
           >
-            <a>LYKA</a>
+            <a>{businessName.toUpperCase()}</a>
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           <Box
@@ -265,10 +234,10 @@ export default function SellerHomeNavbar({ setOption }) {
               }}
             >
               <IconButton edge="end" size="large" color="inherit">
-                <AddBusinessIcon />
+                <CategoryIcon />
               </IconButton>
               <Typography>
-                <a>SKUs</a>
+                <a>SKU</a>
               </Typography>
             </Box>
             <Box
@@ -285,7 +254,7 @@ export default function SellerHomeNavbar({ setOption }) {
               }}
             >
               <IconButton edge="end" size="large" color="inherit">
-                <ShoppingCartIcon />
+                <InventoryIcon />
               </IconButton>
               <Typography>
                 <a>Inventory</a>
@@ -305,30 +274,10 @@ export default function SellerHomeNavbar({ setOption }) {
               }}
             >
               <IconButton edge="end" size="large" color="inherit">
-                <ShoppingCartIcon />
+                <ShoppingBagIcon />
               </IconButton>
               <Typography>
                 <a>Order</a>
-              </Typography>
-            </Box>
-            <Box
-              onClick={() => {
-                navigateLink("/seller/profile");
-              }}
-              sx={{
-                display: {
-                  xs: "none",
-                  md: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                },
-              }}
-            >
-              <IconButton edge="end" size="large" color="inherit">
-                <ShoppingCartIcon />
-              </IconButton>
-              <Typography>
-                <a>Profile</a>
               </Typography>
             </Box>
             <Box
@@ -345,7 +294,7 @@ export default function SellerHomeNavbar({ setOption }) {
               }}
             >
               <IconButton edge="end" size="large" color="inherit">
-                <ShoppingCartIcon />
+                <CheckCircleIcon />
               </IconButton>
               <Typography>
                 <a>Verify</a>
@@ -353,10 +302,10 @@ export default function SellerHomeNavbar({ setOption }) {
             </Box>
             <Box
               onClick={() => {
-                if (isLoggedIn && userRole === "customer") {
-                  navigateLink("/account");
+                if (isLoggedIn && userRole === "seller") {
+                  navigateLink("/seller/profile");
                 } else {
-                  navigateLink("/customer-login");
+                  navigateLink("/seller-login");
                 }
               }}
               sx={{
@@ -372,10 +321,10 @@ export default function SellerHomeNavbar({ setOption }) {
                 <AccountCircle />
               </IconButton>
               <Typography>
-                <a>{isLoggedIn && userRole === "customer" ? userName : "Login"}</a>
+                <a>{isLoggedIn && userRole === "seller" ? userName : "Login"}</a>
               </Typography>
             </Box>
-            {isLoggedIn && userRole === "Customer" ? (
+            {isLoggedIn && userRole === "seller" ? (
               <Box
                 onClick={() => {
                   handleLogout();

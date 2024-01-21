@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Alert, AlertTitle } from "@mui/material";
+import { Alert, AlertTitle, Button, TextField } from "@mui/material";
 
 const SellerIdVerification = (props) => {
   const [addressData, setaddressData] = useState({
@@ -88,16 +88,17 @@ const SellerIdVerification = (props) => {
       <form onSubmit={handleSubmit} noValidate className="needs-validation">
         <div className="row d-flex-justify-content-center align-items-center h-100">
           <div className="col-lg-12 mb-4">
-            <label htmlFor="id-num">Id-Proof Number</label>
-            <input
+            <TextField
               type="text"
-              className="form-control"
               id="id-num"
               name="id_num"
-              placeholder="Id-Proof Number"
+              label="Id-Proof Number"
+              autoComplete="id_num"
+              autoFocus="id_num"
               value={addressData.id_num}
               onChange={handleChange}
               required
+              fullWidth
             />
             <div className="invalid-feedback">
               Please enter the Id-Proof number.
@@ -106,39 +107,41 @@ const SellerIdVerification = (props) => {
           <div className="col-lg-12 align-items-center mt-0 mb-4 w-100">
             <div className="row">
               <div className="col-lg-6">
-                <label htmlFor="id-name">Name on ID</label>
-                <input
+                <TextField
                   type="text"
-                  className="form-control"
                   id="id-name"
                   name="id_name"
-                  placeholder="Name on ID"
+                  label="Name on ID"
+                  autoComplete="id_name"
+                  autoFocus="id_name"
                   value={addressData.id_name}
                   onChange={handleChange}
                   required
+                  fullWidth
                 />
                 <div className="invalid-feedback">
                   Please enter the Name on ID.
                 </div>
               </div>
               <div className="col-lg-6">
-                <label htmlFor="id-dob">DOB</label>
-                <input
+                <TextField
                   type="date"
                   className="form-control"
                   id="id-dob"
                   name="id_dob"
-                  placeholder="DOB"
+                  label="DOB"
+                  autoComplete="id_dob"
+                  autoFocus="id_dob"
                   value={addressData.id_dob}
                   onChange={handleChange}
                   required
+                  fullWidth
                 />
                 <div className="invalid-feedback">
                   Please enter a valid DOB.
                 </div>
               </div>
               <div className="col-lg-6 mt-4">
-                <label htmlFor="id-type">Id Type</label>
                 <select
                   className="form-select form-select-sm"
                   id="id-type"
@@ -160,12 +163,14 @@ const SellerIdVerification = (props) => {
           </div>
           <div className="col-lg-12">
             <div className="id-verify-button">
-              <button
+              <Button
                 type="submit"
-                className="btn btn-lg btn-danger w-100 mt-4"
+                fullWidth
+                variant="contained"
+                style={{ backgroundColor: "#3E3232" }}
               >
                 Verify
-              </button>
+              </Button>
             </div>
           </div>
         </div>

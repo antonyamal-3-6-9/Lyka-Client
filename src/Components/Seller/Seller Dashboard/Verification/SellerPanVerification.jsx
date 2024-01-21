@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { Alert, AlertTitle } from "@mui/material";
+import { Alert, AlertTitle, Button, TextField } from "@mui/material";
 
 const SellerPanVerification = (props) => {
   const [panData, setPanData] = useState({
@@ -78,15 +78,17 @@ const SellerPanVerification = (props) => {
       )}
       <form onSubmit={handleSubmit} noValidate className="needs-validation">
         <div className="row d-flex-justify-content-center align-items-center h-100">
-          <div className="col-lg-12 mb-0">
+          <div className="col-lg-12 mb-3">
             <div className="pan-number">
-              <input
+              <TextField
                 type="text"
-                className="form-control"
+                autoComplete="pan_number"
+                autoFocus="pan_number"
+                fullWidth
                 name="pan_number"
                 value={panData.pan_number}
                 onChange={handleChange}
-                placeholder="Pan Number"
+                label="Pan Number"
                 required
               />
               <div className="invalid-feedback">
@@ -96,9 +98,9 @@ const SellerPanVerification = (props) => {
           </div>
           <div className="col-lg-12">
             <div className="id-verify-button">
-              <button className="btn btn-lg btn-danger w-100 mt-5">
+              <Button variant="contained" fullWidth style={{ backgroundColor: "#3E3232" }}>
                 Verify
-              </button>
+              </Button>
             </div>
           </div>
         </div>

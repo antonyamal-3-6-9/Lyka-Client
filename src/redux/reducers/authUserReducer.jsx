@@ -1,5 +1,5 @@
 import { LOGIN, LOGOUT, CREDENTIAL, NOTIFICATION_SINGLE, NOTIFICATION, NOTIFICATION_SIGNAL } from "../actions/authUserActions";
-import { DISABLE_SOCKET, ENABLE_SOCKET } from "../actions/authUserActions";
+import { DISABLE_SOCKET, ENABLE_SOCKET, BUSINESS_NAME_SET } from "../actions/authUserActions";
 
 
 const initialState = {
@@ -9,7 +9,8 @@ const initialState = {
     role: "",
     Notifications: [{}],
     notificationSignal: false,
-    socket: null
+    socket: null,
+    businessName: ""
   };
   
   const authUserReducer = (state = initialState, action) => {
@@ -62,6 +63,11 @@ const initialState = {
         ...state,
         socket: null
       }
+      case BUSINESS_NAME_SET:
+        return {
+          ...state,
+          businessName: action.name
+        }
       default:
         return state;
     }
