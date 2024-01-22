@@ -260,6 +260,7 @@ const SellerBasicRegistration = (props) => {
                       variant="text"
                       onClick={handleOtpCreationClick}
                       disabled={disableSendButton}
+                      style={{ color: "#3E3232" }}
                     >
                       Send OTP
                     </Button>
@@ -291,6 +292,7 @@ const SellerBasicRegistration = (props) => {
                     disabled={!otpVerified}
                     variant="contained"
                     fullWidth
+                    style={{ backgroundColor: "#3E3232" }}
                   >
                     Register
                   </Button>

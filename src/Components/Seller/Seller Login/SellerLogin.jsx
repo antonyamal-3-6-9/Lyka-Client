@@ -252,11 +252,11 @@ const SellerLogin = () => {
                   alignItems: "center",
                 }}
               >
-                <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+                <Avatar sx={{ m: 1, bgcolor: "#3E3232" }}>
                   <AssignmentIndIcon />
                 </Avatar>
-                <Typography component="h1" variant="h5">
-                  sign In
+                <Typography component="h1" variant="h5" className="text-dark">
+                  sign In as Seller
                 </Typography>
                 <Box noValidate sx={{ mt: 1 }}>
                   {!isSend && (
@@ -292,7 +292,7 @@ const SellerLogin = () => {
                       onClick={() => {
                         resendOtp();
                       }}
-                      style={{color:"#16213E"}}
+                      style={{color:"#3E3232"}}
                     >
                       Resend OTP
                     </Button>
@@ -302,7 +302,7 @@ const SellerLogin = () => {
                     variant="contained"
                     sx={{ mt: 3, mb: 2 }}
                     onClick={loggingIn}
-                    style={{backgroundColor:"#16213E"}}
+                    style={{ backgroundColor: "#3E3232" }}
                   >
                     {loginData.type === "otp" ? "Continue" : "Sign In"}
                   </Button>

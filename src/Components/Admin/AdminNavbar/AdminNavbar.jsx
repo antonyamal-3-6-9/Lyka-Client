@@ -3,6 +3,7 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
 import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
@@ -11,21 +12,19 @@ import MoreIcon from "@mui/icons-material/MoreVert";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import { useSelector } from "react-redux";
-import { Logout, NotificationSignal } from "../../../../redux/actions/authUserActions";
+import {
+  Logout,
+  NotificationSignal,
+} from "../../../redux/actions/authUserActions";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
-import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
-import InventoryIcon from '@mui/icons-material/Inventory';
-import CategoryIcon from '@mui/icons-material/Category';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { CircularProgress, Typography, Backdrop } from "@mui/material";
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 
 
-export default function SellerHomeNavbar({ setOption }) {
+export default function AdminNavBar({ setOption }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -33,23 +32,20 @@ export default function SellerHomeNavbar({ setOption }) {
 
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false)
+  const handleProfileMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
   const userName = useSelector((state) => state.userAuth.name);
-  const userRole = useSelector((state) => state.userAuth.role)
-  const businessName = useSelector((state) => state.userAuth.businessName)
+  const userRole = useSelector((state) => state.userAuth.role);
 
-
-  const isLoggedIn = useSelector(
-    (state) => state.userAuth.isLoggedIn
-  );
+  const isLoggedIn = useSelector((state) => state.userAuth.isLoggedIn);
   const dispatch = useDispatch();
 
-  const BASE_URL = "http://127.0.0.1:8000/seller/";
+  const BASE_URL = "http://127.0.0.1:8000/customer/";
   const token = localStorage.getItem("token");
   const handleLogout = async () => {
     try {
-      setLoading(true)
       const logoutResponse = await axios.post(
         `${BASE_URL}logout/`,
         {},
@@ -60,17 +56,11 @@ export default function SellerHomeNavbar({ setOption }) {
           },
         }
       );
-      setLoading(false)
-      localStorage.clear("token");
-      dispatch(Logout());
-      navigate("/")
     } catch (error) {
-      setLoading(false)
-      localStorage.clear("token");
-      dispatch(Logout());
-      navigate("/")
       console.log(error);
     }
+    localStorage.clear("token");
+    dispatch(Logout());
   };
 
   const handleMobileMenuClose = () => {
@@ -123,7 +113,7 @@ export default function SellerHomeNavbar({ setOption }) {
           aria-haspopup="true"
           color="inherit"
           onClick={() => {
-            dispatch(NotificationSignal())
+            dispatch(NotificationSignal());
           }}
         >
           <NotificationsActiveIcon />
@@ -164,7 +154,7 @@ export default function SellerHomeNavbar({ setOption }) {
         </IconButton>
         <p>{isLoggedIn ? userName : "Login"}</p>
       </MenuItem>
-      {isLoggedIn ?  (
+      {isLoggedIn ? (
         <MenuItem>
           <IconButton
             size="large"
@@ -190,10 +180,7 @@ export default function SellerHomeNavbar({ setOption }) {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-    <Backdrop open={loading}>
-      <CircularProgress/>
-    </Backdrop>
-      <AppBar position="fixed" style={{ backgroundColor: "#3E3232" }}>
+      <AppBar position="fixed" style={{ backgroundColor: "#294B29" }}>
         <Toolbar>
           <Typography
             variant="h6"
@@ -202,11 +189,12 @@ export default function SellerHomeNavbar({ setOption }) {
             sx={{ display: { xs: "none", sm: "block" } }}
             style={{ paddingLeft: "100px" }}
             onClick={() => {
-              navigateLink("/seller/home");
+              navigateLink("/");
             }}
           >
-            <a>{businessName.toUpperCase()}</a>
+            <a>LYKA ADMIN</a>
           </Typography>
+
           <Box sx={{ flexGrow: 1 }} />
           <Box
             sx={{
@@ -220,9 +208,6 @@ export default function SellerHomeNavbar({ setOption }) {
             style={{ paddingRight: "100px" }}
           >
             <Box
-              onClick={() => {
-                navigateLink("/seller/products");
-              }}
               sx={{
                 display: {
                   xs: "none",
@@ -233,16 +218,13 @@ export default function SellerHomeNavbar({ setOption }) {
               }}
             >
               <IconButton edge="end" size="large" color="inherit">
-                <CategoryIcon />
+                <AddBusinessIcon />
               </IconButton>
               <Typography>
-                <a>SKU</a>
+                <a>Login as Seller</a>
               </Typography>
             </Box>
             <Box
-              onClick={() => {
-                navigateLink("/seller/store");
-              }}
               sx={{
                 display: {
                   xs: "none",
@@ -253,16 +235,13 @@ export default function SellerHomeNavbar({ setOption }) {
               }}
             >
               <IconButton edge="end" size="large" color="inherit">
-                <InventoryIcon />
+                <AddBusinessIcon />
               </IconButton>
               <Typography>
-                <a>Inventory</a>
+                <a>Login as Customer</a>
               </Typography>
             </Box>
             <Box
-              onClick={() => {
-                navigateLink("/seller/orders");
-              }}
               sx={{
                 display: {
                   xs: "none",
@@ -272,41 +251,16 @@ export default function SellerHomeNavbar({ setOption }) {
                 },
               }}
             >
-              <IconButton edge="end" size="large" color="inherit">
-                <ShoppingBagIcon />
+              <IconButton size="large" edge="end" color="inherit">
+                
+                
+                <AccountCircle />
               </IconButton>
               <Typography>
-                <a>Order</a>
+                <a>Coupons</a>
               </Typography>
             </Box>
             <Box
-              onClick={() => {
-                navigateLink("/seller/verify");
-              }}
-              sx={{
-                display: {
-                  xs: "none",
-                  md: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                },
-              }}
-            >
-              <IconButton edge="end" size="large" color="inherit">
-                <CheckCircleIcon />
-              </IconButton>
-              <Typography>
-                <a>Verify</a>
-              </Typography>
-            </Box>
-            <Box
-              onClick={() => {
-                if (isLoggedIn && userRole === "seller") {
-                  navigateLink("/seller/profile");
-                } else {
-                  navigateLink("/seller-login");
-                }
-              }}
               sx={{
                 display: {
                   xs: "none",
@@ -320,14 +274,29 @@ export default function SellerHomeNavbar({ setOption }) {
                 <AccountCircle />
               </IconButton>
               <Typography>
-                <a>{isLoggedIn && userRole === "seller" ? userName : "Login"}</a>
+                <a>Products</a>
               </Typography>
             </Box>
-            {isLoggedIn && userRole === "seller" ? (
+            <Box
+              sx={{
+                display: {
+                  xs: "none",
+                  md: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+              }}
+            >
+              <IconButton size="large" edge="end" color="inherit">
+                <AccountCircle />
+              </IconButton>
+              <Typography>
+                <a>Users</a>
+              </Typography>
+            </Box>
+
+            {isLoggedIn && userRole === "Admin" ? (
               <Box
-                onClick={() => {
-                  handleLogout();
-                }}
                 sx={{
                   display: {
                     xs: "none",
@@ -345,28 +314,6 @@ export default function SellerHomeNavbar({ setOption }) {
                 </Typography>
               </Box>
             ) : null}
-            <Box
-              sx={{
-                display: {
-                  xs: "none",
-                  md: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                },
-              }}
-              onClick={() => {
-                dispatch(NotificationSignal())
-              }}
-            >
-              <IconButton edge="end" size="large" color="inherit">
-              <Badge>
-                <NotificationsActiveIcon />
-                </Badge>
-              </IconButton>
-              <Typography>
-                <a></a>
-              </Typography>
-            </Box>
           </Box>
           <Box sx={{ display: { xs: "flex", md: "none" } }}>
             <IconButton

@@ -30,21 +30,16 @@ import ResponsiveAppBar from "./Components/Navbar/MuiNavBar.jsx";
 import ProductByCategory from "./Components/Product/ProductByCategory.jsx";
 import Category from "./Components/Home/categories/Category.jsx";
 import CustomerVerify from "./Components/Customer/Login and Register/CustomerVerify.jsx";
+import AdminHome from "../src/Components/Admin/AdminDashBoard/AdminHome.jsx";
 import { useSelector, useDispatch } from "react-redux";
-import { initialAction, logOutAction } from "./redux/actions/authUserActions.jsx";
+import {
+  initialAction,
+  logOutAction,
+} from "./redux/actions/authUserActions.jsx";
 import Notification from "./Components/Notification/Notification.jsx";
 
 function App() {
-
   const signal = useSelector((state) => state.userAuth.notificationSignal);
-  const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   dispatch(initialAction());
-  //   return () => {
-  //     dispatch(logOutAction())
-  //   }
-  // }, [])
 
   return (
     <>
@@ -173,8 +168,8 @@ function App() {
             path="seller/home"
             element={
               <>
-              <SellerHomeNavbar/>
-                <SellerHome/>
+                <SellerHomeNavbar />
+                <SellerHome />
               </>
             }
           />
@@ -210,6 +205,8 @@ function App() {
           <Route path="seller/check-product" element={<CheckProduct />} />
           <Route path="seller/add-item" element={<AddItem />} />
           <Route path="seller/add-store" element={<AddPickupStore />} />
+          //Admin Route
+          <Route path="admin/home" element={<AdminHome />} />
         </Routes>
       </Router>
     </>

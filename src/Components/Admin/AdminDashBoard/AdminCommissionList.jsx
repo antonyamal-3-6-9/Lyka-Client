@@ -4,10 +4,10 @@ import { Backdrop } from "@mui/material";
 import { CircularProgress } from "@mui/material";
 
 
-const Sales = () => {
+const Commissions = () => {
   const [sales, setSales] = useState([]);
   const token = localStorage.getItem("token");
-  const BASE_URL = "http://127.0.0.1:8000/payments/seller/";
+  const BASE_URL = "http://127.0.0.1:8000/lyka-admin/";
 
   const [loading, setLoading] = useState(false)
 
@@ -15,7 +15,7 @@ const Sales = () => {
     const fetchData = async () => {
       setLoading(true)
       try {
-        const salesResponse = await axios.get(`${BASE_URL}get-sales/`, {
+        const salesResponse = await axios.get(`${BASE_URL}commission/retrive/`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -86,12 +86,9 @@ const Sales = () => {
           <tbody>
             {sales.map((sale) => (
               <tr key={sale.ref_no}>
-                <td>{sale.ref_no}</td>
-                <td>{convertISOToReadable(sale.time)}</td>
-                <td>{sale.order}</td>
-                <td>{formatAmountWithRupeeSymbol(sale.amount)}</td>
-                <td>{formatAmountWithRupeeSymbol(sale.profit)}</td>
-                <td>{sale.entry}</td>
+                <td className="text-dark">{sale.ref_no}</td>
+                <td className="text-dark">{convertISOToReadable(sale.time)}</td>
+                <td className="text-dark">{formatAmountWithRupeeSymbol(sale.amount)}</td>
               </tr>
             ))}
           </tbody>
@@ -100,4 +97,4 @@ const Sales = () => {
   );
 };
 
-export default Sales;
+export default Commissions;

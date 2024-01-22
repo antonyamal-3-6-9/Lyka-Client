@@ -253,11 +253,11 @@ const LoginForm = () => {
                   alignItems: "center",
                 }}
               >
-                <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+                <Avatar sx={{ m: 1, bgcolor: "black"}}>
                   <AssignmentIndIcon />
                 </Avatar>
-                <Typography component="h1" variant="h5">
-                  sign In
+                <Typography component="h1" variant="h5" className="text-dark">
+                  Sign In as Customer
                 </Typography>
                 <Box component="form" noValidate sx={{ mt: 1 }}>
                   {!isSend && (

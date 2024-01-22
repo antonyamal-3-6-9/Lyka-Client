@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Line, Pie, PolarArea } from "react-chartjs-2";
-import SalesReport from "./SalesReport";
-import Sales from "./Sales";
 import axios from "axios";
 import {
   Chart as ChartJS,
@@ -18,6 +16,8 @@ import {
 import { Paper, styled } from "@mui/material";
 import { Backdrop } from "@mui/material";
 import { CircularProgress, Button } from "@mui/material";
+import CommissionReport from "./AdminCommissionReport";
+import Commissions from "./AdminCommissionList";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -27,7 +27,7 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const SalesChart = () => {
+const AdminDashboard = () => {
   ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -48,7 +48,7 @@ const SalesChart = () => {
     setSelectedTimeframe(timeframe);
   };
 
-  const BASE_URL = "http://127.0.0.1:8000/payments/seller/";
+  const BASE_URL = "http://127.0.0.1:8000/lyka-admin/";
   const token = localStorage.getItem("token");
   const [earningsData, setEarningsData] = useState([]);
   const [labels, setLabels] = useState([]);
@@ -97,7 +97,7 @@ const SalesChart = () => {
     try {
       setLoading(true);
       const sales = await axios.post(
-        `${BASE_URL}get-sales/day/`,
+        `${BASE_URL}commissions/day/`,
         {
           days: getLabelsBasedOnTimeframe(selectedTimeframe),
         },
@@ -120,7 +120,7 @@ const SalesChart = () => {
     try {
       setLoading(true);
       const weekSales = await axios.post(
-        `${BASE_URL}get-sales/week/`,
+        `${BASE_URL}commissions/week/`,
         {
           weeks: getLabelsBasedOnTimeframe(selectedTimeframe),
         },
@@ -143,7 +143,7 @@ const SalesChart = () => {
     try {
       setLoading(true);
       const monthsData = await axios.post(
-        `${BASE_URL}get-sales/month/`,
+        `${BASE_URL}commissions/month/`,
         {
           months: getLabelsBasedOnTimeframe(selectedTimeframe),
         },
@@ -166,7 +166,7 @@ const SalesChart = () => {
     try {
       setLoading(true);
       const yearSales = await axios.post(
-        `${BASE_URL}get-sales/year/`,
+        `${BASE_URL}commissions/year/`,
         {
           years: getLabelsBasedOnTimeframe(selectedTimeframe),
         },
@@ -407,7 +407,7 @@ const { borderColor, backgroundColor } = createRandomColorArrays();
         </div>
         <div className="row">
           <div className="col-lg-4">
-            <SalesReport />
+             <CommissionReport/>
           </div>
           <div className="col-lg-8">
             <Line data={earningsChartData} options={earningsChartOptions} />
@@ -422,7 +422,7 @@ const { borderColor, backgroundColor } = createRandomColorArrays();
             />
           </div>
           <div className="col-lg-12 mt-4">
-            <Sales />
+            <Commissions/>
           </div>
         </div>
       </Item>
@@ -430,4 +430,4 @@ const { borderColor, backgroundColor } = createRandomColorArrays();
   );
 };
 
-export default SalesChart;
+export default AdminDashboard;

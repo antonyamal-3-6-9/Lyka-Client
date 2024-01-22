@@ -1,16 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Paper, styled, Button} from "@mui/material";
+import { Button} from "@mui/material";
 import { Backdrop } from "@mui/material";
 import { CircularProgress } from "@mui/material";
 
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(3),
-  marginBottom: theme.spacing(3),
-  color: theme.palette.text.secondary,
-}));
 
 const SalesReport = () => {
   const token = localStorage.getItem("token");
@@ -98,7 +91,6 @@ const SalesReport = () => {
     <Backdrop open={loading}>
       <CircularProgress/>
     </Backdrop>
-      <Item>
         <div className="row">
           <form onSubmit={handleReportSubmit}>
             <div className="col-lg-6">
@@ -146,7 +138,6 @@ const SalesReport = () => {
         <h3 className="h4 text-dark mb-2">
           {salesReport.total_profit ? formatAmountWithRupeeSymbol(salesReport.total_profit) : 0}
         </h3>
-      </Item>
     </>
   );
 };

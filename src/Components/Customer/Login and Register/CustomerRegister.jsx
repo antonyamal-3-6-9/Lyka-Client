@@ -99,7 +99,7 @@ const RegisterForm = () => {
 
   return (
     <>
-        <div className="container-fluid login-container">
+        <div className="container-fluid login-container" style={{marginTop: "20px"}}>
         <Page>
           <FloatingAlert
             message={alertData}
@@ -130,11 +130,11 @@ const RegisterForm = () => {
                     alignItems: "center",
                   }}
                 >
-                  <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+                  <Avatar sx={{ m: 1, bgcolor: "black" }}>
                     <LockOutlinedIcon />
                   </Avatar>
-                  <Typography component="h1" variant="h5">
-                    Sign UP
+                  <Typography component="h1" variant="h5" className="text-dark">
+                    Sign Up as Customer
                   </Typography>
                   <Box component="form" noValidate sx={{ mt: 1 }}>
                     <TextField
@@ -151,6 +151,7 @@ const RegisterForm = () => {
                       variant="contained"
                       fullWidth
                       onClick={onEmailSubmit}
+                      style={{backgroundColor:"#16213E"}}
                     >
                       Continue
                     </Button>

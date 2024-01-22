@@ -49,7 +49,13 @@ const AddPassword = ({ password, setPassword, submit }) => {
           value={password.pass2}
           onChange={handleChange}
         />
-        <Button variant="contained" onClick={submit}  style={{backgroundColor:"#16213E"}}>Submit</Button>
+        <Button
+          variant="contained"
+          onClick={submit}
+          style={{ backgroundColor: "#16213E" }}
+        >
+          Submit
+        </Button>
       </Box>
     </>
   );
@@ -69,7 +75,7 @@ const Failed = () => {
 };
 
 const CustomerVerify = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const { email, token } = useParams();
   const [isVerified, setIsVerified] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -122,7 +128,7 @@ const CustomerVerify = () => {
       });
       if (passwordResponse.status === 200) {
         localStorage.setItem("token", passwordResponse.data.token);
-        dispatch(initialAction())
+        dispatch(initialAction());
         navigate("/");
       }
     } catch (error) {
@@ -139,18 +145,21 @@ const CustomerVerify = () => {
 
   return (
     <>
-      <Page>
-        <FloatingAlert
-          message={alertData}
-          enable={alertEnable}
-          setEnable={setAlertEnable}
-          severity={alertSeverity}
-        />
-        <Backdrop open={isLoading}>
-          <CircularProgress />
-        </Backdrop>
+      <FloatingAlert
+        message={alertData}
+        enable={alertEnable}
+        setEnable={setAlertEnable}
+        severity={alertSeverity}
+      />
+      <Backdrop open={isLoading}>
+        <CircularProgress />
+      </Backdrop>
 
-        <div className="container-fluid login-container" style={{marginTop: "84px"}}>
+      <div
+        className="container-fluid login-container"
+        style={{ marginTop: "84px" }}
+      >
+        <Page>
           <h5>Lyka Verification</h5>
           {isVerified ? (
             <AddPassword
@@ -161,8 +170,8 @@ const CustomerVerify = () => {
           ) : (
             <Failed />
           )}
-        </div>
-      </Page>
+        </Page>
+      </div>
     </>
   );
 };
