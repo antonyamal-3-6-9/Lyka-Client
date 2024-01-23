@@ -85,9 +85,8 @@ const AdminDashboard = () => {
     } else {
       keys = Object.keys(earnings);
     }
-    console.log(labels);
     for (let i = 0; i < values.length; i++) {
-      if (values[i] > 0) {
+      if (values[i] > 0 || i === values.length - 1) {
         return [values.splice(i), keys.splice(i)];
       }
     }
@@ -97,7 +96,7 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
       const sales = await axios.post(
-        `${BASE_URL}commissions/day/`,
+        `${BASE_URL}commissions/days/`,
         {
           days: getLabelsBasedOnTimeframe(selectedTimeframe),
         },
@@ -109,6 +108,7 @@ const AdminDashboard = () => {
         }
       );
       setLoading(false);
+      console.log(sales.data)
       return sales.data;
     } catch (error) {
       console.log(error);
@@ -120,7 +120,7 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
       const weekSales = await axios.post(
-        `${BASE_URL}commissions/week/`,
+        `${BASE_URL}commissions/weeks/`,
         {
           weeks: getLabelsBasedOnTimeframe(selectedTimeframe),
         },
@@ -143,7 +143,7 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
       const monthsData = await axios.post(
-        `${BASE_URL}commissions/month/`,
+        `${BASE_URL}commissions/months/`,
         {
           months: getLabelsBasedOnTimeframe(selectedTimeframe),
         },
@@ -166,7 +166,7 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
       const yearSales = await axios.post(
-        `${BASE_URL}commissions/year/`,
+        `${BASE_URL}commissions/years/`,
         {
           years: getLabelsBasedOnTimeframe(selectedTimeframe),
         },

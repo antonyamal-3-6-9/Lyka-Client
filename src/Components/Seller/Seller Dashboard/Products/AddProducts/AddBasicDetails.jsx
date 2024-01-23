@@ -48,7 +48,7 @@ const AddBasicDetails = (props) => {
   const handleVariantRemove = (index) => {
     const newVariations = [...props.details.variations];
     newVariations.splice(index, 1);
-    props.setDetails({ ...props.details, variantions: newVariations });
+    props.setDetails({ ...props.details, variations: newVariations });
   };
 
   return (
@@ -154,14 +154,14 @@ const AddBasicDetails = (props) => {
           <div className="col-lg-12">
             <div className="row">
               {props.details.colors.map((item, index) => (
-                <div>
-                  <h6>{item}</h6>
+                <div className="col-lg-2">
+                  <h6 className="h6 text-dark">{item}</h6>
                   <Button
                     type="button"
                     style={{color: "#3E3232"}} 
                     onClick={() => handleColorRemove(index)}
                   >
-                    Remove Color
+                    Remove
                   </Button>
                 </div>
               ))}
@@ -187,14 +187,15 @@ const AddBasicDetails = (props) => {
           <div className="col-lg-12">
             <div className="row">
               {props.details.variations.map((item, index) => (
-                <div>
-                  <h6>{item}</h6>
+                <div className="col-lg-2">
+                  <h6 className="text-dark h6">{item}</h6>
                   <Button
                     type="button"
-                    cstyle={{color: "#3E3232"}} 
-                    onClick={() => handleColorRemove(index)}
+                    cstyle={{color: "#3E3232"}}
+                    size="small"
+                    onClick={() => handleVariantRemove(index)}
                   >
-                    Remove Variant
+                    Remove 
                   </Button>
                 </div>
               ))}

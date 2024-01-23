@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Modal from "react-modal";
 import { Button } from "@mui/material";
 
-const AddProductNav = (props) => {
+const AddProductNav = ({toAdmin}) => {
   Modal.setAppElement("#root");
 
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -15,7 +15,11 @@ const AddProductNav = (props) => {
 
   const handleConfirm = async () => {
     setShowConfirmation(false);
+    if (toAdmin){
+      navigate("/admin/catalog/")
+    } else {
     navigate("/seller/products");
+    }
   };
 
   const handleCancelDelete = () => {

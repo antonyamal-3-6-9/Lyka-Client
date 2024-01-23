@@ -13,7 +13,6 @@ const AddCategory = (props) => {
     axios
       .get("http://localhost:8000/product/" + "get-details/", payload)
       .then((response) => {
-        console.log(response)
         props.setDetails({
           ...props.details,
           details: {
@@ -28,14 +27,18 @@ const AddCategory = (props) => {
             },
           },
         });
-        console.log(props.details)
+        console.log(props.details);
       })
       .catch((error) => console.log(error));
   };
 
   const handleChange = (e) => {
     if (e.target.name === "main_category") {
+      setSelectedMain(e.target.value);
       fetchDetails(e.target.value);
+    }
+    if (e.target.name === "root_category") {
+      setSelectedRoot(e.target.value);
     }
     props.setDetails({ ...props.details, [e.target.name]: e.target.value });
   };
@@ -44,6 +47,8 @@ const AddCategory = (props) => {
   const [mainData, setMain] = useState([]);
   const [subData, setSub] = useState([]);
 
+  const [selectedRoot, setSelectedRoot] = useState(null);
+  const [selectedMain, setSelectedMain] = useState(null);
 
   useEffect(() => {
     axios
@@ -62,7 +67,6 @@ const AddCategory = (props) => {
       .catch((error) => console.error(error));
   }, []);
 
-
   return (
     <>
       <div className="col-lg-12 mt-3 mb-3">
@@ -74,7 +78,6 @@ const AddCategory = (props) => {
             <select
               className="form-select form-select-sm"
               id="root-category"
-              aria-label=".form-select-sm example"
               name="root_category"
               onChange={handleChange}
               required
@@ -100,18 +103,19 @@ const AddCategory = (props) => {
             <select
               className="form-select form-select-sm"
               id="main-category"
-              aria-label=".form-select-sm example"
               name="main_category"
-              onChange={(e) => {handleChange(e);}}
+              onChange={handleChange}
               required
             >
               <option value="">Open this select menu</option>
               {mainData.map((item) => {
-                return (
-                  <option key={item.main_id} value={item.main_id}>
-                    {item.name}
-                  </option>
-                );
+                if (item.root === selectedRoot) {
+                  return (
+                    <option key={item.main_id} value={item.main_id}>
+                      {item.name}
+                    </option>
+                  );
+                }
               })}
             </select>
             <div className="invalid-feedback">
@@ -126,18 +130,19 @@ const AddCategory = (props) => {
             <select
               className="form-select form-select-sm"
               id="sub-category"
-              aria-label=".form-select-sm example"
               name="sub_category"
               onChange={handleChange}
               required
             >
               <option value="">Open this select menu</option>
               {subData.map((item) => {
-                return (
-                  <option key={item.sub_id} value={item.sub_id}>
-                    {item.name}
-                  </option>
-                );
+                if (item.main === selectedMain) {
+                  return (
+                    <option key={item.sub_id} value={item.sub_id}>
+                      {item.name}
+                    </option>
+                  );
+                }
               })}
             </select>
             <div className="invalid-feedback">

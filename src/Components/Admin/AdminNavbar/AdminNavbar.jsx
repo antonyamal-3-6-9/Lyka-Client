@@ -269,12 +269,15 @@ export default function AdminNavBar({ setOption }) {
                   justifyContent: "center",
                 },
               }}
+              onClick={() => {
+                navigateLink('/admin/catalog')
+              }}
             >
               <IconButton size="large" edge="end" color="inherit">
                 <AccountCircle />
               </IconButton>
               <Typography>
-                <a>Products</a>
+                <a>Catalog</a>
               </Typography>
             </Box>
             <Box
@@ -295,7 +298,7 @@ export default function AdminNavBar({ setOption }) {
               </Typography>
             </Box>
 
-            {isLoggedIn && userRole === "Admin" ? (
+            {isLoggedIn && userRole === "ADMIN" ? (
               <Box
                 sx={{
                   display: {

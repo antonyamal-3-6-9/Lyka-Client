@@ -10,16 +10,15 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Button, Paper, styled } from "@mui/material";
 
-
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(3),
-  marginBottom: theme.spacing(3),
+  margin: theme.spacing(0),
   color: theme.palette.text.secondary,
 }));
 
-const AddProduct = () => {
+const AddProduct = ({ isAdmin = false }) => {
   const API_ENDPOINT = "http://127.0.0.1:8000/product/";
 
   const navigate = useNavigate();
@@ -71,7 +70,6 @@ const AddProduct = () => {
       return;
     }
 
-    console.log("going");
     const token = localStorage.getItem("token");
 
     try {
@@ -107,12 +105,16 @@ const AddProduct = () => {
 
       if (response.status === 201) {
         setAlertEnable(true);
-        setAlertData("Product has created successfully");
+        setAlertData("Product has added successfully");
         setAlertSeverity("success");
-        localStorage.setItem("product_id", response.data.product.productId);
-        const name = `${response.data.product.brand} ${response.data.product.name}`;
-        localStorage.setItem("product_name", name);
-        navigate("/seller/add-item");
+        if (!isAdmin) {
+          localStorage.setItem("product_id", response.data.product.productId);
+          const name = `${response.data.product.brand} ${response.data.product.name}`;
+          localStorage.setItem("product_name", name);
+          navigate("/seller/add-item");
+        } else {
+          navigate("/admin/catalog");
+        }
       }
     } catch (error) {
       setAlertData(error.data.message);
@@ -127,9 +129,14 @@ const AddProduct = () => {
 
   return (
     <>
-      <div className="container-fluid w-75" style={{ marginTop: "20px" }}>
+      <div
+        className="container-fluid w-75"
+        style={{
+          marginTop: "20px",
+        }}
+      >
         <Item>
-          <AddProductNav />
+          <AddProductNav toAdmin={isAdmin} />
           {alertEnable && (
             <Alert severity={alertSeverity} onClose={handleAlertClose}>
               <AlertTitle>Error</AlertTitle>
@@ -181,7 +188,11 @@ const AddProduct = () => {
                   </div>
                 </div>
                 <div className="col-lg-12 mt-3 mb-3 d-flex align-items-center justify-content-center">
-                  <Button type="submit" variant="contained" style={{backgroundColor: "#3E3232"}} >
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    style={{ backgroundColor: "#3E3232" }}
+                  >
                     Submit
                   </Button>
                 </div>

@@ -1,5 +1,7 @@
-import { React, useEffect } from "react";
-import axios from "axios";
+import { React } from "react";
+import AdminLogin from "./Components/Admin/AdminLogin/AdminLogin.jsx";
+import AdminNavBar from "./Components/Admin/AdminNavbar/AdminNavbar.jsx";
+import AdminCatalog from "./Components/Admin/AdminCatalog/AdminCatalog.jsx";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./Components/Home/Home.jsx";
 import AddProduct from "./Components/Seller/Seller Dashboard/Products/AddProducts/AddProduct.jsx";
@@ -31,11 +33,7 @@ import ProductByCategory from "./Components/Product/ProductByCategory.jsx";
 import Category from "./Components/Home/categories/Category.jsx";
 import CustomerVerify from "./Components/Customer/Login and Register/CustomerVerify.jsx";
 import AdminHome from "../src/Components/Admin/AdminDashBoard/AdminHome.jsx";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  initialAction,
-  logOutAction,
-} from "./redux/actions/authUserActions.jsx";
+import { useSelector } from "react-redux";
 import Notification from "./Components/Notification/Notification.jsx";
 
 function App() {
@@ -206,7 +204,10 @@ function App() {
           <Route path="seller/add-item" element={<AddItem />} />
           <Route path="seller/add-store" element={<AddPickupStore />} />
           //Admin Route
+          <Route path="admin/login" element={<AdminLogin/>} />
           <Route path="admin/home" element={<AdminHome />} />
+          <Route path="admin/catalog" element={<AdminCatalog/>} />
+          <Route path="admin/add/product/" element={<AddProduct isAdmin={true}/>}/>
         </Routes>
       </Router>
     </>

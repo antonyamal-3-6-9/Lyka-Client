@@ -15,7 +15,7 @@ const Commissions = () => {
     const fetchData = async () => {
       setLoading(true)
       try {
-        const salesResponse = await axios.get(`${BASE_URL}commission/retrive/`, {
+        const salesResponse = await axios.get(`${BASE_URL}commission/retrieve/`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
