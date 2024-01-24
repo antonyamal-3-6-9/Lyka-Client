@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Button, TextField, Paper, styled, Modal } from "@mui/material";
+import axios from "axios";
 
 const Page = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -8,7 +9,8 @@ const Page = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const AddRootCategory = ({ openRoot, setOpenRoot }) => {
+const AddRootCategory = ({ openRoot, setOpenRoot, setLoading, BASE_URL, category, setCategory }) => {
+
   const [root, setRoot] = useState("");
 
   const handleChange = (e) => {
@@ -18,6 +20,42 @@ const AddRootCategory = ({ openRoot, setOpenRoot }) => {
   const handleClose = () => {
     setOpenRoot(false);
   };
+
+  const handleSubmit = async () => {
+
+    if(root.length <= 5){
+      alert("must be greater than five")
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        `${BASE_URL}lyka-admin/root/add/`,
+        {
+          name: root,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      let tempRoot = [...category.root]
+      tempRoot.push(response.data);
+      console.log(response)
+      setCategory({...category, root: [...tempRoot]})
+      setOpenRoot(false)
+    } catch (error) {
+
+      console.error("Error submitting data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   const style = {
     position: "absolute",
@@ -55,6 +93,7 @@ const AddRootCategory = ({ openRoot, setOpenRoot }) => {
             variant="contained"
             fullWidth
             style={{ backgroundColor: "#294B29" }}
+            onClick={handleSubmit}
           >
             Add
           </Button>

@@ -3,7 +3,7 @@ import axios from "axios";
 import { Backdrop, CircularProgress, Button } from "@mui/material";
 import AddMainCategory from "./AdminAddCategory/AddMainCategory";
 import AddRootCategory from "./AdminAddCategory/AddRootCategory";
-
+import AddSubCategory from "./AdminAddCategory/AddSubCategory";
 
 const AdminCategory = () => {
   const BASE_URL = "http://127.0.0.1:8000/category/";
@@ -13,9 +13,9 @@ const AdminCategory = () => {
     sub: [],
   });
   const [loading, setLoading] = useState(false);
-
-  const [openRoot, setOpenRoot] = useState(false)
-  const [openMain, setOpenMain] = useState(false)
+  const [openRoot, setOpenRoot] = useState(false);
+  const [openMain, setOpenMain] = useState(false);
+  const [openSub, setOpenSub] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -47,14 +47,29 @@ const AdminCategory = () => {
       <Backdrop open={loading}>
         <CircularProgress />
       </Backdrop>
-      <AddMainCategory
-        roots={category.root}
-        openMain={openMain}
-        setOpenMain={setOpenMain}
-      />
       <AddRootCategory
         openRoot={openRoot}
         setOpenRoot={setOpenRoot}
+        category={category}
+        setCategory={setCategory}
+        BASE_URL={BASE_URL}
+        setLoading={setLoading}
+      />{" "}
+      <AddMainCategory
+        category={category}
+        setCategory={setCategory}
+        openMain={openMain}
+        setOpenMain={setOpenMain}
+        BASE_URL={BASE_URL}
+        setLoading={setLoading}
+      />
+      <AddSubCategory
+        openSub={openSub}
+        setOpenSub={setOpenSub}
+        category={category}
+        setCategory={setCategory}
+        BASE_URL={BASE_URL}
+        setLoading={setLoading}
       />
       <h5 className="h5 text-center text-dark mb-3">Categories</h5>
       <div className="row">
@@ -67,7 +82,10 @@ const AdminCategory = () => {
                 </h6>
                 <div className="d-flex flex-wrap justify-content-evenly">
                   {category.root.map((r) => (
-                    <p className="text-dark text-center m-0 p-0" key={r.root_id}>
+                    <p
+                      className="text-dark text-center m-0 p-0"
+                      key={r.root_id}
+                    >
                       {r.name}
                     </p>
                   ))}
@@ -84,7 +102,14 @@ const AdminCategory = () => {
             </>
           )}
           <div className="d-flex justify-content-center mt-3">
-            <Button style={{color: "#294B29"}} onClick={() => {setOpenRoot(true)}}>Add New</Button>
+            <Button
+              style={{ color: "#294B29" }}
+              onClick={() => {
+                setOpenRoot(true);
+              }}
+            >
+              Add New
+            </Button>
           </div>
         </div>
         <div className="col-lg-4">
@@ -116,7 +141,12 @@ const AdminCategory = () => {
             </>
           )}
           <div className="d-flex justify-content-center mt-3">
-            <Button style={{color: "#294B29"}} onClick={() => setOpenMain(true)}>Add New</Button>
+            <Button
+              style={{ color: "#294B29" }}
+              onClick={() => setOpenMain(true)}
+            >
+              Add New
+            </Button>
           </div>
         </div>
         <div className="col-lg-4">
@@ -145,7 +175,7 @@ const AdminCategory = () => {
             </>
           )}
           <div className="d-flex justify-content-center mt-3">
-            <Button style={{color: "#294B29"}}>Add New</Button>
+            <Button style={{ color: "#294B29" }}>Add New</Button>
           </div>
         </div>
       </div>

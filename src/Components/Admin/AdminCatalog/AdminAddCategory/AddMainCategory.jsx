@@ -20,7 +20,7 @@ const Page = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const AddMainCategory = ({ openMain, setOpenMain, roots }) => {
+const AddMainCategory = ({ openMain, setOpenMain, category, setCategory, BASE_URL, setLoading }) => {
   const [mainData, setMainData] = useState({
     rootId: "",
     name: "",
@@ -111,7 +111,7 @@ const AddMainCategory = ({ openMain, setOpenMain, roots }) => {
                 fullWidth
                 readOnly={isAdded}
               >
-                {roots.map((root) => (
+                {category.root.map((root) => (
                   <MenuItem value={root.root_id}>{root.name}</MenuItem>
                 ))}
               </Select>

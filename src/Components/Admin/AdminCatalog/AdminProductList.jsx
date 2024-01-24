@@ -3,12 +3,24 @@ import { Backdrop, CircularProgress, Button } from "@mui/material";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const AdminProductList = () => {
-  const [products, setProducts] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const BASE_URL = "http://127.0.0.1:8000/product/lyka-admin/";
+import Products from "./Adminproducts";
 
-  const [openAddProduct, setOpenAddProduct] = useState(false);
+const AdminProductList = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const [filterData, setFilterData] = useState({
+    rootId: "",
+    mainId: "",
+    subId: "",
+  });
+  const [searchData, setSearchData] = useState("");
+  const [productBackup, setProductBackup] = useState({
+    backup: [],
+    active: false
+})
+
+  const BASE_URL = "http://127.0.0.1:8000/product/lyka-admin/";
 
   const fetchData = async () => {
     const token = localStorage.getItem("token");
@@ -21,7 +33,6 @@ const AdminProductList = () => {
         },
       });
       if (productResponse.status === 200) {
-        console.log(productResponse.data);
         setProducts(productResponse.data);
       }
       setLoading(false);
@@ -35,6 +46,104 @@ const AdminProductList = () => {
     fetchData();
   }, []);
 
+  const handleFilter = () => {
+    if (
+      filterData.rootId.length <= 10 &&
+      filterData.mainId.length <= 10 &&
+      filterData.subId.length <= 10
+    ) {
+      alert("category is a must");
+      return;
+    }
+
+    let tempProducts = [...products];
+    const newProducts = tempProducts.filter((product) => {
+      if (
+        product.main_category.main_id === filterData.mainId &&
+        product.root_category.root_id === filterData.rootId &&
+        product.sub_category.sub_id === filterData.subId
+      ) {
+        return product;
+      }
+    });
+    setProducts(newProducts);
+  };
+
+  const handleSort = (option) => {
+    let tempProducts = [...products];
+    if (option === "alphabetical"){
+      tempProducts.sort((productOne, productTwo) =>
+        productOne.brand.localeCompare(productTwo.brand)
+      );
+    } else if (option === "oldest") {
+      tempProducts.sort((a, b) => new Date(b.added_on) - new Date(a.added_on));
+    }
+    setProducts(tempProducts)
+  };
+
+  const binarySearch = (data, keyword) => {
+    console.log(data);
+    let l = 0;
+    let r = data.length - 1;
+    let m;
+
+    let k = keyword.length;
+
+    while (l <= r) {
+      m = Math.floor((r + l) / 2);
+
+      if (data[m].brand.length >= k) {
+        console.log(data[m].brand.slice(0, k).toLowerCase());
+        if (data[m].brand.slice(0, k).toLowerCase() === keyword) {
+          return data[m];
+        }
+      }
+
+      console.log(data[m].brand.localeCompare(keyword));
+      if (data[m].brand.localeCompare(keyword) === -1) {
+        l = m + 1;
+        console.log(l);
+      } else {
+        console.log(r);
+        r = m - 1;
+      }
+    }
+
+    return -1;
+  };
+
+  const handleSearch = () => {
+    if (searchData.length <= 0) {
+      alert("more length");
+      return;
+    }
+
+    
+    let tempProducts = null;
+    if (productBackup.active){
+      tempProducts = [...productBackup.backup]
+    } else {
+      tempProducts = [...products]
+    }
+
+  
+    tempProducts.sort((productOne, productTwo) =>
+      productOne.brand.localeCompare(productTwo.brand)
+    );
+
+    const result =  binarySearch(tempProducts, searchData);
+    if (result !== -1){
+      if (!productBackup.active){
+        setProductBackup({...productBackup, active: true, backup: [...products]})
+      }
+      setProducts([result])
+    }
+  };
+
+  const handleRevert = () => {
+    fetchData();
+  };
+
   if (!products) {
     return null;
   }
@@ -44,71 +153,17 @@ const AdminProductList = () => {
       <Backdrop open={loading}>
         <CircularProgress />
       </Backdrop>
-      <h4 className="h5 text-dark text-center">Products</h4>
-      <div className="d-flex">
-        <Button>
-          <Link to="/admin/add/product/" style={{ color: "#294B29" }}>
-            Add New Product
-          </Link>
-        </Button>
-      </div>
-      {products.length !== 0 ? (
-        <div className="row">
-          {products.map((product) => (
-            <div
-              className="col-lg-6 col-md-12 col-xs-12"
-              key={product.productId}
-            >
-              <div className="card m-2" style={{ height: "50vh" }}>
-                <div className="row p-3">
-                  <div className="col-lg-4">
-                    <img
-                      src={`http://127.0.0.1:8000${product.thumbnail}`}
-                      width="150px"
-                    />
-                  </div>
-                  <div className="col-lg-8">
-                    <div>
-                      <h5 className="h5 text-dark">
-                        {product.brand} {product.name}
-                      </h5>
-                    </div>
-                    <div className="d-flex justify-content-start">
-                      <div className="me-5">
-                        <h6 className="h6 text-dark">Variants</h6>
-                        {product.variations.map((variant) => (
-                          <p key={variant.id} className="text-dark m-0 p-0">
-                            {variant.variation}
-                          </p>
-                        ))}
-                      </div>
-                      <div>
-                        <h6 className="h6 text-dark">Colors</h6>
-                        {product.colors.map((color) => (
-                          <p key={color.id} className="text-dark m-0 p-0">
-                            {color.color}
-                          </p>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <h6 className="h6 text-dark mt-2">Category</h6>
-                      <p className="text-dark">
-                        {product.root_category.name}/
-                        {product.main_category.name}/{product.sub_category.name}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="d-flex p-5 m-5">
-          <h4 className="h4 text-dark text-center">No Products found</h4>
-        </div>
-      )}
+      <Products
+        revert={handleRevert}
+        products={products}
+        filterData={filterData}
+        setFilterData={setFilterData}
+        initiateFilter={handleFilter}
+        initiateSort={handleSort}
+        searchData={searchData}
+        setSearchData={setSearchData}
+        initiateSearch={handleSearch}
+      />
     </>
   );
 };
