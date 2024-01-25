@@ -190,10 +190,6 @@ function App() {
             }
           />
           <Route
-            path="seller/edit-product/:product_id"
-            element={<EditProduct />}
-          />
-          <Route
             path="seller/edit-address/:address_id"
             element={<EditStore />}
           />
@@ -208,6 +204,7 @@ function App() {
           <Route path="admin/home" element={<AdminHome />} />
           <Route path="admin/catalog" element={<AdminCatalog/>} />
           <Route path="admin/add/product/" element={<AddProduct isAdmin={true}/>}/>
+          <Route path="admin/edit/product/:product-id" element={<EditProduct/>}/> 
         </Routes>
       </Router>
     </>

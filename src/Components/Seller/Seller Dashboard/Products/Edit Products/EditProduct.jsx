@@ -165,7 +165,9 @@ const EditProduct = () => {
 
   return (
     <>
-      <EditProductNav />
+      <EditProductNav 
+       
+      />
       <div className="container-fluid w-75 mt-5 pt-5">
       <div           className="row border border-5 rounded-3 p-2"
           style={{ backgroundColor: "#F5F5F5" }}>

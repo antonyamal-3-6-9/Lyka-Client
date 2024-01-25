@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Backdrop, CircularProgress, Button } from "@mui/material";
+import { Backdrop, CircularProgress, Button, IconButton } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
 import AddMainCategory from "./AdminAddCategory/AddMainCategory";
 import AddRootCategory from "./AdminAddCategory/AddRootCategory";
 import AddSubCategory from "./AdminAddCategory/AddSubCategory";
+import AdminEditMain from "./AdminEditCategory/AdminEditMain";
+import AdminEditRoot from "./AdminEditCategory/AdminEditRoot";
+import AdminEditSub from "./AdminEditCategory/AdminEditSub";
+import axios from "axios";
 
 const AdminCategory = () => {
   const BASE_URL = "http://127.0.0.1:8000/category/";
@@ -13,9 +19,31 @@ const AdminCategory = () => {
     sub: [],
   });
   const [loading, setLoading] = useState(false);
+
   const [openRoot, setOpenRoot] = useState(false);
   const [openMain, setOpenMain] = useState(false);
   const [openSub, setOpenSub] = useState(false);
+
+  const [editRoot, setEditRoot] = useState(false);
+  const [editMain, setEditMain] = useState(false);
+  const [editSub, setEditSub] = useState(false);
+
+  const [editData, setEditData] = useState({
+    root: {
+      rootId: "",
+      name: ""
+    },
+    main: {
+      name: "",
+      mainId: "",
+      rootId: "",
+    },
+    sub: {
+      name: "",
+      mainId: "",
+      subId: "",
+    },
+  });
 
   const fetchData = async () => {
     try {
@@ -38,6 +66,33 @@ const AdminCategory = () => {
     }
   };
 
+
+  const handleOpenEdit = (
+    name = "",
+    id = "",
+    parent_id = "",
+    type = "root"
+  ) => {
+    if (type === "main") {
+      setEditData({
+        ...editData,
+        main: { ...editData.main, name: name, mainId: id, rootId: parent_id },
+      });
+      setEditMain(true);
+    } else if (type === "root") {
+      setEditData({ ...editData, root: {...editData.root, name: name, rootId: id} });
+      setEditRoot(true);
+    } else if (type === "sub") {
+      setEditData({
+        ...editData,
+        sub: { ...editData.sub, subId: id, mainId: parent_id, name: name },
+      });
+      setEditSub(true);
+    } else {
+      return;
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -47,30 +102,70 @@ const AdminCategory = () => {
       <Backdrop open={loading}>
         <CircularProgress />
       </Backdrop>
-      <AddRootCategory
-        openRoot={openRoot}
-        setOpenRoot={setOpenRoot}
-        category={category}
-        setCategory={setCategory}
-        BASE_URL={BASE_URL}
-        setLoading={setLoading}
-      />{" "}
-      <AddMainCategory
-        category={category}
-        setCategory={setCategory}
-        openMain={openMain}
-        setOpenMain={setOpenMain}
-        BASE_URL={BASE_URL}
-        setLoading={setLoading}
-      />
-      <AddSubCategory
-        openSub={openSub}
-        setOpenSub={setOpenSub}
-        category={category}
-        setCategory={setCategory}
-        BASE_URL={BASE_URL}
-        setLoading={setLoading}
-      />
+      {openRoot && (
+        <AddRootCategory
+          openRoot={openRoot}
+          setOpenRoot={setOpenRoot}
+          category={category}
+          setCategory={setCategory}
+          BASE_URL={BASE_URL}
+          setLoading={setLoading}
+        />
+      )}
+      {openMain && (
+        <AddMainCategory
+          category={category}
+          setCategory={setCategory}
+          openMain={openMain}
+          setOpenMain={setOpenMain}
+          BASE_URL={BASE_URL}
+          setLoading={setLoading}
+        />
+      )}
+      {openSub && (
+        <AddSubCategory
+          openSub={openSub}
+          setOpenSub={setOpenSub}
+          category={category}
+          setCategory={setCategory}
+          BASE_URL={BASE_URL}
+          setLoading={setLoading}
+        />
+      )}
+      {editRoot && (
+        <AdminEditRoot
+          openRoot={editRoot}
+          setOpenRoot={setEditRoot}
+          category={category}
+          setCategory={setCategory}
+          BASE_URL={BASE_URL}
+          setLoading={setLoading}
+          root={editData.root.name}
+          rootId={editData.root.rootId}
+        />
+      )}
+      {editMain && (
+        <AdminEditMain
+          openMain={editMain}
+          setOpenMain={setEditMain}
+          category={category}
+          setCategory={setCategory}
+          BASE_URL={BASE_URL}
+          setLoading={setLoading}
+          main={editData.main}
+        />
+      )}
+      {editSub && (
+        <AdminEditSub
+          openSub={editSub}
+          setOpenSub={setEditSub}
+          category={category}
+          setCategory={setCategory}
+          BASE_URL={BASE_URL}
+          setLoading={setLoading}
+          sub={editData.sub}
+        />
+      )}
       <h5 className="h5 text-center text-dark mb-3">Categories</h5>
       <div className="row">
         <div className="col-lg-4">
@@ -80,14 +175,51 @@ const AdminCategory = () => {
                 <h6 className="h6 text-dark text-center mb-3">
                   Root Categories
                 </h6>
+                <div className="d-flex justify-content-center mt-3">
+                  <Button
+                    style={{ color: "#294B29" }}
+                    onClick={() => {
+                      setOpenRoot(true);
+                    }}
+                    startIcon={<AddIcon />}
+                  >
+                    Add New
+                  </Button>
+                </div>
                 <div className="d-flex flex-wrap justify-content-evenly">
                   {category.root.map((r) => (
-                    <p
-                      className="text-dark text-center m-0 p-0"
-                      key={r.root_id}
+                    <div
+                      style={{ border: ".5px solid #E1F0DA" }}
+                      className="p-2 mb-2"
                     >
-                      {r.name}
-                    </p>
+                      <IconButton>
+                        <CloseIcon
+                          style={{
+                            fontSize: ".75rem",
+                            margin: "0",
+                            padding: "0",
+                            color: "red",
+                          }}
+                        />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => {
+                          handleOpenEdit(r.name, r.root_id);
+                        }}
+                      >
+                        <EditIcon
+                          style={{
+                            fontSize: ".75rem",
+                            margin: "0",
+                            padding: "0",
+                            color: "blue",
+                          }}
+                        />
+                      </IconButton>
+                      <p key={r.root_id} className="text-dark m-0 p-0">
+                        {r.name}
+                      </p>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -101,16 +233,6 @@ const AdminCategory = () => {
               </div>
             </>
           )}
-          <div className="d-flex justify-content-center mt-3">
-            <Button
-              style={{ color: "#294B29" }}
-              onClick={() => {
-                setOpenRoot(true);
-              }}
-            >
-              Add New
-            </Button>
-          </div>
         </div>
         <div className="col-lg-4">
           {category.main.length !== 0 ? (
@@ -119,14 +241,49 @@ const AdminCategory = () => {
                 <h6 className="h6 text-dark text-center mb-3">
                   Main Categories
                 </h6>
+                <div className="d-flex justify-content-center mt-3">
+                  <Button
+                    style={{ color: "#294B29" }}
+                    onClick={() => setOpenMain(true)}
+                    startIcon={<AddIcon />}
+                  >
+                    Add New
+                  </Button>
+                </div>
                 <div className="d-flex flex-wrap justify-content-evenly">
                   {category.main.map((m) => (
-                    <p
-                      className="text-dark text-center m-0 p-0"
-                      key={m.main_id}
+                    <div
+                      style={{ border: "1px solid #E1F0DA" }}
+                      className="p-2 mb-2"
                     >
-                      {m.name}
-                    </p>
+                      <IconButton>
+                        <CloseIcon
+                          style={{
+                            fontSize: ".75rem",
+                            margin: "0",
+                            padding: "0",
+                            color: "red",
+                          }}
+                        />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => {
+                          handleOpenEdit(m.name, m.main_id, m.root, "main");
+                        }}
+                      >
+                        <EditIcon
+                          style={{
+                            fontSize: ".75rem",
+                            margin: "0",
+                            padding: "0",
+                            color: "blue",
+                          }}
+                        />
+                      </IconButton>
+                      <p key={m.main_id} className="text-dark m-0 p-0">
+                        {m.name}
+                      </p>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -140,14 +297,6 @@ const AdminCategory = () => {
               </div>
             </>
           )}
-          <div className="d-flex justify-content-center mt-3">
-            <Button
-              style={{ color: "#294B29" }}
-              onClick={() => setOpenMain(true)}
-            >
-              Add New
-            </Button>
-          </div>
         </div>
         <div className="col-lg-4">
           {category.sub.length !== 0 ? (
@@ -156,11 +305,45 @@ const AdminCategory = () => {
                 <h6 className="h6 text-dark text-center mb-3">
                   Sub Categories
                 </h6>
+                <div className="d-flex justify-content-center mt-3">
+                  <Button style={{ color: "#294B29" }} startIcon={<AddIcon />} onClick={() => setOpenSub(true)}>
+                    Add New
+                  </Button>
+                </div>
                 <div className="d-flex flex-wrap justify-content-evenly">
                   {category.sub.map((s) => (
-                    <p className="text-dark text-center m-0 p-0" key={s.sub_id}>
-                      {s.name}
-                    </p>
+                    <div
+                      style={{ border: "1px solid #E1F0DA" }}
+                      className="p-2 mb-2"
+                    >
+                      <IconButton>
+                        <CloseIcon
+                          style={{
+                            fontSize: ".75rem",
+                            margin: "0",
+                            padding: "0",
+                            color: "red",
+                          }}
+                        />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => {
+                          handleOpenEdit(s.name, s.sub_id, s.main, "sub");
+                        }}
+                      >
+                        <EditIcon
+                          style={{
+                            fontSize: ".75rem",
+                            margin: "0",
+                            padding: "0",
+                            color: "blue",
+                          }}
+                        />
+                      </IconButton>
+                      <p key={s.sub_id} className="text-dark m-0 p-0">
+                        {s.name}
+                      </p>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -174,9 +357,6 @@ const AdminCategory = () => {
               </div>
             </>
           )}
-          <div className="d-flex justify-content-center mt-3">
-            <Button style={{ color: "#294B29" }}>Add New</Button>
-          </div>
         </div>
       </div>
     </>

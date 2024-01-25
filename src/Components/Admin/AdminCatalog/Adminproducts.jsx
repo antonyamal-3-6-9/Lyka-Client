@@ -12,10 +12,11 @@ const Products = ({
   revert,
   searchData,
   setSearchData,
-  initiateSearch
+  initiateSearch,
 }) => {
   return (
-    <><h4 className="h5 text-dark text-center">Products</h4>
+    <>
+      <h4 className="h5 text-dark text-center">Products</h4>
       <div className="row">
         <ProductListMenu
           revert={revert}
@@ -29,7 +30,14 @@ const Products = ({
         />
         <div className="d-flex">
           <Button>
-            <Link to="/admin/add/product/" style={{ color: "#294B29", marginBottom: "20px", marginTop: "20px" }}>
+            <Link
+              to="/admin/add/product/"
+              style={{
+                color: "#294B29",
+                marginBottom: "20px",
+                marginTop: "20px",
+              }}
+            >
               Add New Product
             </Link>
           </Button>
@@ -42,10 +50,9 @@ const Products = ({
             >
               <div
                 style={{
-
                   border: "1px solid #50623A",
                   marginBottom: "40px",
-                  padding: "20px"
+                  padding: "20px",
                 }}
               >
                 <div className="row">
@@ -60,6 +67,30 @@ const Products = ({
                       <h5 className="h5 text-dark">
                         {product.brand} {product.name}
                       </h5>
+                    </div>
+                    <div className="d-flex justify-content-start">
+                      <Button>
+                        <Link
+                          to={`/admin/edit/product/${product.productId}/`}
+                          style={{
+                            color: "#294B29",
+                            marginBottom: "20px",
+                            marginTop: "20px",
+                            marginRight: "30px"
+                          }}
+                        >
+                          Edit
+                        </Link>
+                      </Button>
+                      <Button
+                        style={{
+                          color: "#294B29",
+                          marginBottom: "20px",
+                          marginTop: "20px",
+                        }}
+                      >
+                        Delete
+                      </Button>
                     </div>
                     <div className="d-flex justify-content-start">
                       <div className="me-5">

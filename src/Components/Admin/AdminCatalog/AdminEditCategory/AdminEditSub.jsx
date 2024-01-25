@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   TextField,
@@ -18,21 +18,34 @@ const Page = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const AddSubCategory = ({
+const AdminEditSub = ({
   openSub,
   setOpenSub,
   category,
   setCategory,
   BASE_URL,
   setLoading,
+  sub,
 }) => {
-  const [subData, setSubData] = useState({
+  const [newSubData, setNewSubData] = useState({
     name: "",
     main: "",
   });
 
+  useEffect(() => {
+    setNewSubData({...newSubData, name: sub.name, main: sub.mainId})
+  }, [])
+
+  const [isInputChanged, setIsInputChanged] = useState(false);
+  const [isMainChanged, setIsMainChanged] = useState(false);
+
   const handleChange = (e) => {
-    setSubData({ ...subData, [e.target.name]: e.target.value });
+    if (e.target.name === "name") {
+      setIsInputChanged(true);
+    } else {
+      setIsMainChanged(true);
+    }
+    setNewSubData({ ...newSubData, [e.target.name]: e.target.value });
   };
 
   const handleClose = () => {
@@ -40,12 +53,17 @@ const AddSubCategory = ({
   };
 
   const handleSubmit = async () => {
-    if (subData.main.length < 5) {
+    if (!isInputChanged && !isMainChanged) {
+      alert("something has to be changed");
+      return;
+    }
+
+    if (newSubData.main.length < 5) {
       alert("main id must be at least five characters");
       return;
     }
 
-    if (subData.name.length < 5) {
+    if (newSubData.name.length < 5) {
       alert("name must be at least five characters");
       return;
     }
@@ -53,11 +71,12 @@ const AddSubCategory = ({
     const token = localStorage.getItem("token");
     try {
       setLoading(true);
-      const subResponse = await axios.post(
-        `${BASE_URL}lyka-admin/sub/add/`,
+      const subResponse = await axios.patch(
+        `${BASE_URL}lyka-admin/sub/update/`,
         {
-          name: subData.name,
-          main: subData.main,
+          sub_id: sub.subId,
+          name: isInputChanged ? newSubData.name : sub.name,
+          main_id: isMainChanged ? newSubData.main : "",
         },
         {
           headers: {
@@ -67,14 +86,24 @@ const AddSubCategory = ({
         }
       );
       let tempSub = [...category.sub];
-      tempSub.push(subResponse.data);
-      console.log(subResponse);
+      const id = sub.subId
+      tempSub = tempSub.map((sub) => {
+        if (sub.sub_id === id) {
+          if (isMainChanged) {
+            sub.name = newSubData.name;
+            sub.main = newSubData.main;
+          } else {
+            sub.name = newSubData.name;
+          }
+        }
+        return sub;
+      });
       setCategory({ ...category, sub: [...tempSub] });
-      setLoading(false)
-      setOpenSub(false)
+      setLoading(false);
+      setOpenSub(false);
     } catch (error) {
-      setOpenSub(false)
-      setLoading(false)
+      setOpenSub(false);
+      setLoading(false);
     }
   };
 
@@ -96,21 +125,22 @@ const AddSubCategory = ({
         <Page sx={style}>
           <h5 className="text-center text-dark h5">Sub Category</h5>
           <p>A Sub Category is the third level of category.</p>
-          <InputLabel>Select Main</InputLabel>
-          <Select
+          <TextField
             label="Select Main"
-            value={subData.main}
+            value={isMainChanged ? newSubData.main : sub.mainId}
             name="main"
+            select
+            variant="standard"
             onChange={handleChange}
           >
             {category.main.map((main) => (
               <MenuItem value={main.main_id}>{main.name}</MenuItem>
             ))}
-          </Select>
+          </TextField>
           <TextField
             fullWidth
             name="name"
-            value={subData.name}
+            value={isInputChanged ? newSubData.name : sub.name}
             autoComplete="name"
             autoFocus="name"
             onChange={handleChange}
@@ -131,4 +161,4 @@ const AddSubCategory = ({
   );
 };
 
-export default AddSubCategory;
+export default AdminEditSub;

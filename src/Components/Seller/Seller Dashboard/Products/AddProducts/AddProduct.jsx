@@ -46,6 +46,9 @@ const AddProduct = ({ isAdmin = false }) => {
   const [alertData, setAlertData] = React.useState("");
   const [alertSeverity, setAlertSeverity] = React.useState("");
 
+  const [catAdded, setCatAdded] = useState(false);
+  const [basicAdded, setBasicAdded] = useState(false);
+
   const handleSubmitBasic = async (e) => {
     e.preventDefault();
     const inputFields = document.querySelectorAll(
@@ -69,6 +72,8 @@ const AddProduct = ({ isAdmin = false }) => {
     if (isEmpty) {
       return;
     }
+
+    console.log(productBasicDetails);
 
     const token = localStorage.getItem("token");
 
@@ -117,7 +122,8 @@ const AddProduct = ({ isAdmin = false }) => {
         }
       }
     } catch (error) {
-      setAlertData(error.data.message);
+      console.log(error);
+      setAlertData(error.response.data.message);
       setAlertEnable(true);
       setAlertSeverity("error");
     }
@@ -130,7 +136,7 @@ const AddProduct = ({ isAdmin = false }) => {
   return (
     <>
       <div
-        className="container-fluid w-75"
+        className="container-fluid"
         style={{
           marginTop: "20px",
         }}
@@ -143,51 +149,58 @@ const AddProduct = ({ isAdmin = false }) => {
               {alertData}
             </Alert>
           )}
-          <div>
+          <div className="row">
             <form
               onSubmit={handleSubmitBasic}
               encType="multipart/form-data"
               className="needs-validation"
               noValidate
             >
-              <>
-                <div id="basic-information">
-                  <div className="row">
-                    <div className="col-lg-12">
-                      <AddCategory
-                        details={productBasicDetails}
-                        setDetails={setProductBasicDetails}
-                      />
-                      <AddBasicDetails
-                        details={productBasicDetails}
-                        setDetails={setProductBasicDetails}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </>
-              <div id="features">
-                <div className="row mt-5">
-                  <div className="col-lg-12">
-                    <AddFeatures
-                      main_id={productBasicDetails.main_category}
-                      url={API_ENDPOINT}
-                      setData={setProductBasicDetails}
-                      data={productBasicDetails}
-                    />
-                  </div>
-                </div>
-              </div>
-              <>
-                <div id="product-images">
-                  <div className="row">
-                    <AddImages
-                      setImage={setProductBasicDetails}
-                      images={productBasicDetails}
-                    />
-                  </div>
-                </div>
-                <div className="col-lg-12 mt-3 mb-3 d-flex align-items-center justify-content-center">
+              <h6 className="text-dark text-center h6">Select Categories</h6>
+              <p className="text-dark text-center">
+                Select all categories and click confirm button to continue
+              </p>
+
+              <AddCategory
+                details={productBasicDetails}
+                setDetails={setProductBasicDetails}
+                setCatAdded={setCatAdded}
+              />
+              {catAdded && (
+                <>
+                  <h6 className="h6 text-dark text-center">
+                    Now add some primary details about product
+                  </h6>
+                  <p className="text-dark text-center">
+                    Available colors and variants can also be added
+                  </p>
+                  <AddBasicDetails
+                    details={productBasicDetails}
+                    setDetails={setProductBasicDetails}
+                    basicAdded={basicAdded}
+                    setBasicAdded={setBasicAdded}
+                  />
+                </>
+              )}
+              {basicAdded && (
+                <>
+                <h6 className="text-dark text-center h6">Add Key Features, specs and images</h6>
+                <p className="text-center text-dark">Keys of specs will be automatically selected depends on the main category</p>
+                  <AddFeatures
+                    main_id={productBasicDetails.main_category}
+                    url={API_ENDPOINT}
+                    setData={setProductBasicDetails}
+                    data={productBasicDetails}
+                  />
+                  <AddImages
+                    setImage={setProductBasicDetails}
+                    images={productBasicDetails}
+                  />
+                </>
+              )}
+
+              <div className="col-lg-12 mt-3 mb-3 d-flex align-items-center justify-content-center">
+                {catAdded && basicAdded && (
                   <Button
                     type="submit"
                     variant="contained"
@@ -195,8 +208,8 @@ const AddProduct = ({ isAdmin = false }) => {
                   >
                     Submit
                   </Button>
-                </div>
-              </>
+                )}
+              </div>
             </form>
           </div>
         </Item>

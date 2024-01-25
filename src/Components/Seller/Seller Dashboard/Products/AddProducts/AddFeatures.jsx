@@ -51,7 +51,7 @@ const AddFeatures = (props) => {
       <div className="row">
         {Object.keys(props.data.details.key_features).map((key) => {
           return (
-            <div className="col-lg-4 mt-2 mb-2" key={key}>
+            <div className="col-lg-2 mt-2 mb-2" key={key}>
               <label className="d-inline">{key}</label>
               <input
                 type="text"
@@ -63,11 +63,10 @@ const AddFeatures = (props) => {
             </div>
           );
         })}
-      </div>
-      <div className="row">
+
         {Object.keys(props.data.details.all_details).map((key) => {
           return (
-            <div className="col-lg-4" key={key}>
+            <div className="col-lg-2" key={key}>
               <label className="d-inline">{key}</label>
               <input
                 type="text"

@@ -1,7 +1,11 @@
-import { Button } from "@mui/material";
+import { Button, Icon, IconButton } from "@mui/material";
 import React, { useState } from "react";
+import CloseIcon from "@mui/icons-material/Close";
 
 const AddBasicDetails = (props) => {
+  const [colorAdded, setColorAdded] = useState(false);
+  const [variantAdded, setVariantAdded] = useState(false);
+
   const handleChange = (e) => {
     if (e.target.name === "thumbnail") {
       const file = e.target.files[0];
@@ -11,13 +15,9 @@ const AddBasicDetails = (props) => {
     }
   };
 
-  function isValidHexColor(color) {
-    const hexColorPattern = /^#(?:[0-9a-fA-F]{3}){1,2}$/;
-    return hexColorPattern.test(color);
-  }
-
   const handleColorsChange = (e) => {
-    const inputValue = document.getElementById("color").value
+    setColorAdded(true);
+    const inputValue = document.getElementById("color").value;
     if (inputValue !== "") {
       props.setDetails({
         ...props.details,
@@ -29,7 +29,8 @@ const AddBasicDetails = (props) => {
   };
 
   const handleVariationChange = () => {
-    const inputValue = document.getElementById("variant").value
+    setVariantAdded(true);
+    const inputValue = document.getElementById("variant").value;
     if (inputValue !== "") {
       props.setDetails({
         ...props.details,
@@ -51,173 +52,209 @@ const AddBasicDetails = (props) => {
     props.setDetails({ ...props.details, variations: newVariations });
   };
 
+  const handleConfirm = () => {
+    const inputs = document.getElementById('basic-container').querySelectorAll('input:not(#color):not(#variant)');
+  
+    for (const input of inputs) {
+      if (input.value.trim() === '') {
+  
+        console.log('There are inputs left to fill.');
+        return;
+      }
+    }
+
+    console.log('All inputs are filled.');
+    props.setBasicAdded(true);
+  };
+  
+
   return (
     <>
-      <div className="col-lg-12 mt-3 mb-3">
-        <div className="row">
-          <div className="col-lg-4">
-            <label htmlFor="brand">Brand</label>
-            <input
-              type="text"
-              className="form-control"
-              id="brand"
-              placeholder="Eg: Apple, Samsung"
-              name="brand"
-              value={props.details.brand}
-              onChange={handleChange}
-              required
-            />
-            <div className="invalid-feedback" id="brand-feedback">
-              Please enter the brand.
-            </div>
+      <div className="row mt-5 mb-5" id="basic-container">
+        <div className="col-lg-2">
+          <label htmlFor="brand">Brand</label>
+          <input
+            type="text"
+            className="form-control"
+            id="brand"
+            placeholder="Eg: Apple, Samsung"
+            name="brand"
+            value={props.details.brand}
+            onChange={handleChange}
+            required
+          />
+          <div className="invalid-feedback" id="brand-feedback">
+            Please enter the brand.
           </div>
-          <div className="col-lg-4">
-            <label htmlFor="model-name" className="d-inline">
-              Model Name
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="model-name"
-              placeholder="Eg: Iphone 14, Galaxy S23"
-              name="name"
-              value={props.details.name}
-              onChange={handleChange}
-              required
-            />
-            <div className="invalid-feedback" id="name-feedback">
-              Please enter the model name.
-            </div>
+        </div>
+        <div className="col-lg-3">
+          <label htmlFor="model-name" className="d-inline">
+            Model Name
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="model-name"
+            placeholder="Eg: Iphone 14, Galaxy S23"
+            name="name"
+            value={props.details.name}
+            onChange={handleChange}
+            required
+          />
+          <div className="invalid-feedback" id="name-feedback">
+            Please enter the model name.
           </div>
-          <div className="col-lg-4">
-            <label htmlFor="launch-date">Launch Date</label>
-            <input
-              type="date"
-              className="form-control"
-              id="launch-date"
-              placeholder="Date"
-              name="launch_date"
-              value={props.details.launch_date}
-              onChange={handleChange}
-              required
-            />
-            <div className="invalid-feedback" id="launch-date-feedback">
-              Please enter the launch date.
-            </div>
+        </div>
+        <div className="col-lg-2">
+          <label htmlFor="launch-date">Launch Date</label>
+          <input
+            type="date"
+            className="form-control"
+            id="launch-date"
+            placeholder="Date"
+            name="launch_date"
+            value={props.details.launch_date}
+            onChange={handleChange}
+            required
+          />
+          <div className="invalid-feedback" id="launch-date-feedback">
+            Please enter the launch date.
           </div>
-          <div className="col-lg-4 mt-3 mb-3">
-            <label htmlFor="weight">Weight(in gram)</label>
-            <input
-              type="number"
-              className="form-control"
-              id="weight"
-              placeholder="Eg: 200"
-              name="weight"
-              value={props.details.weight}
-              onChange={handleChange}
-              required
-            />
-            <div className="invalid-feedback" id="weight-feedback">
-              Please enter the weight.
-            </div>
+        </div>
+        <div className="col-lg-2">
+          <label htmlFor="weight">Weight(in gram)</label>
+          <input
+            type="number"
+            className="form-control"
+            id="weight"
+            placeholder="Eg: 200"
+            name="weight"
+            value={props.details.weight}
+            onChange={handleChange}
+            required
+          />
+          <div className="invalid-feedback" id="weight-feedback">
+            Please enter the weight.
           </div>
-          <div className="col-lg-6 mt-3 mb-3">
-            <label htmlFor="thumbnail">ThumbNail</label>
-            <input
-              type="file"
-              className="form-control"
-              id="thumbnail"
-              name="thumbnail"
-              onChange={handleChange}
-              required
-            />
-            <div className="invalid-feedback" id="thumbnail-feedback">
-              Please select a thumbnail.
-            </div>
+        </div>
+        <div className="col-lg-3">
+          <label htmlFor="thumbnail">ThumbNail</label>
+          <input
+            type="file"
+            className="form-control"
+            id="thumbnail"
+            name="thumbnail"
+            onChange={handleChange}
+            required
+          />
+          <div className="invalid-feedback" id="thumbnail-feedback">
+            Please select a thumbnail.
           </div>
-          <div className="col-lg-12 mt-3 mb-3">
-            <label htmlFor="description">Description</label>
-            <textarea
-              className="form-control"
-              id="description"
-              name="description"
-              value={props.details.description}
-              onChange={handleChange}
-              rows="3"
-              cols="108"
-              required
-            ></textarea>
-            <div className="invalid-feedback" id="description-feedback">
-              Please enter the description.
-            </div>
+        </div>
+        <div className="col-lg-12 mt-3 mb-3">
+          <label htmlFor="description">Description</label>
+          <textarea
+            className="form-control"
+            id="description"
+            name="description"
+            value={props.details.description}
+            onChange={handleChange}
+            rows="3"
+            cols="108"
+            required
+          ></textarea>
+          <div className="invalid-feedback" id="description-feedback">
+            Please enter the description.
           </div>
-          <div className="col-lg-12">
-            <div className="row">
-              {props.details.colors.map((item, index) => (
-                <div className="col-lg-2">
-                  <h6 className="h6 text-dark">{item}</h6>
-                  <Button
-                    type="button"
-                    style={{color: "#3E3232"}} 
-                    onClick={() => handleColorRemove(index)}
-                  >
-                    Remove
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="col-lg-12 mt-3 mb-3">
-            <div className="row">
-              <div className="col-lg-8">
-                <label>Color</label>
-                <input className="form-control" name="color" id="color" />
+        </div>
+        <div className="col-lg-12">
+          {colorAdded && (
+            <h6 className="text-dark text-center">Added Colors</h6>
+          )}
+          <div className="d-flex justify-content-evenly">
+            {props.details.colors.map((item, index) => (
+              <div>
+                <IconButton onClick={() => handleColorRemove(index)}>
+                  <CloseIcon
+                    style={{
+                      fontSize: "1rem",
+                      margin: "0",
+                      padding: "0",
+                      color: "red",
+                    }}
+                  />
+                </IconButton>
+                <span className="text-dark h6">{item}</span>
               </div>
-              <div className="col-lg-4">
-                <Button
+            ))}
+          </div>
+        </div>
+        <div className="col-lg-12">
+          {variantAdded && (
+            <h6 className="text-dark text-center">Added Variants</h6>
+          )}
+          <div className="d-flex justify-content-evenly">
+            {props.details.variations.map((item, index) => (
+              <div>
+                <IconButton
                   type="button"
-                  onClick={handleColorsChange}
-                  style={{color: "#3E3232"}} 
+                  style={{ color: "red" }}
+                  size="small"
+                  onClick={() => handleVariantRemove(index)}
                 >
-                  Add Color
-                </Button>
+                  <CloseIcon
+                    style={{
+                      fontSize: "1rem",
+                      margin: "0",
+                      padding: "0",
+                      color: "red",
+                    }}
+                  />
+                </IconButton>
+                <span className="text-dark h6">{item}</span>
               </div>
+            ))}
+          </div>
+        </div>
+        <div className="col-lg-4">
+          <div className="d-flex align-items-center justify-content-evenly">
+            <div>
+              <label>Color</label>
+              <input className="form-control" name="color" id="color" />
+            </div>
+            <div>
+              <Button
+                type="button"
+                onClick={handleColorsChange}
+                style={{ color: "#3E3232" }}
+              >
+                Add Color
+              </Button>
             </div>
           </div>
-          <div className="col-lg-12">
-            <div className="row">
-              {props.details.variations.map((item, index) => (
-                <div className="col-lg-2">
-                  <h6 className="text-dark h6">{item}</h6>
-                  <Button
-                    type="button"
-                    cstyle={{color: "#3E3232"}}
-                    size="small"
-                    onClick={() => handleVariantRemove(index)}
-                  >
-                    Remove 
-                  </Button>
-                </div>
-              ))}
+        </div>
+
+        <div className="col-lg-4">
+          <div className="d-flex align-items-center justify-content-evenly">
+            <div>
+              <label>Variant</label>
+              <input className="form-control" name="variant" id="variant" />
+            </div>
+            <div>
+              <Button
+                style={{ color: "#3E3232" }}
+                onClick={handleVariationChange}
+                type="button"
+              >
+                Add Variant
+              </Button>
             </div>
           </div>
-          <div className="col-lg-12 mt-3 mb-3">
-            <div className="row">
-              <div className="col-lg-8">
-                <label>Variant</label>
-                <input className="form-control" name="variant" id="variant" />
-              </div>
-              <div className="col-lg-4">
-                <Button
-                  style={{color: "#3E3232"}} 
-                  onClick={handleVariationChange}
-                  type="button"
-                >
-                  Add Variant
-                </Button>
-              </div>
-            </div>
-          </div>
+        </div>
+        <div className="col-lg-4 d-flex justify-content-center">
+          <Button variant="outlined" type="button" onClick={handleConfirm}>
+            Confirm Primary
+          </Button>
         </div>
       </div>
     </>

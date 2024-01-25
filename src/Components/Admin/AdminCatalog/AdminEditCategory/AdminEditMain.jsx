@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Select,
@@ -21,32 +21,53 @@ const Page = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const AddMainCategory = ({
+const AdminEditMain = ({
   openMain,
   setOpenMain,
   category,
   setCategory,
   BASE_URL,
   setLoading,
+  main,
 }) => {
-  const [mainData, setMainData] = useState({
+  const [newMainData, setNewMainData] = useState({
     rootId: "",
     name: "",
   });
 
-  const [isAdded, setIsAdded] = useState(false);
+  const fetchDetails = async () => {
 
-  const handleAddMain = () => {
-    if (mainData.name.length < 0 || mainData.name.length > 20) {
-      alert("error");
-      return;
+    const token = localStorage.getItem("token");
+    setLoading(true);
+    try {
+      const detailsResponse = await axios.get(
+        `${BASE_URL}lyka-admin/main/details/retrieve/${main.mainId}/`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(detailsResponse.data);
+      setKeyFeatures(detailsResponse.data.key_features);
+      setAllDetails(detailsResponse.data.all_details);
+      setLoading(false)
+    } catch (error) {
+      setLoading(false)
+      alert("couldn't find details");
     }
-    if (mainData.rootId.length === 0) {
-      alert("id cannot be empty");
-      return;
-    }
-    setIsAdded(true);
   };
+
+  useEffect(() => {
+    setNewMainData({ ...newMainData, rootId: main.rootId, name: main.name });
+    fetchDetails();
+  }, []);
+
+  const [isInputChanged, setIsInputChanged] = useState(false);
+  const [isRootChanged, setIsRootChanged] = useState(false);
+  const [isfeaturesChanged, setIsFeaturesChanged] = useState(false);
+  const [isDetailsChanged, setIsDetailsChanged] = useState(false);
 
   const [tempFeature, setTempFeature] = useState("");
   const [tempDetail, setTempDetail] = useState("");
@@ -55,7 +76,12 @@ const AddMainCategory = ({
   const [allDetails, setAllDetails] = useState({});
 
   const handleChange = (e) => {
-    setMainData({ ...mainData, [e.target.name]: e.target.value });
+    if (e.target.name === "name") {
+      setIsInputChanged(true);
+    } else {
+      setIsRootChanged(true);
+    }
+    setNewMainData({ ...newMainData, [e.target.name]: e.target.value });
   };
 
   const handleTempFeatureChange = (e) => {
@@ -67,10 +93,16 @@ const AddMainCategory = ({
   };
 
   const handleFeatureAdd = () => {
+    if (!isfeaturesChanged) {
+      setIsFeaturesChanged(true);
+    }
     setKeyFeatures({ ...keyFeatures, [tempFeature]: null });
   };
 
   const handleDetailAdd = () => {
+    if (!isDetailsChanged) {
+      setIsDetailsChanged(true);
+    }
     setAllDetails({ ...allDetails, [tempDetail]: null });
   };
 
@@ -79,6 +111,9 @@ const AddMainCategory = ({
   };
 
   const handleremoveFeature = (feature) => {
+    if (!isfeaturesChanged) {
+      setIsFeaturesChanged(true);
+    }
     let tempObj = { ...keyFeatures };
     delete tempObj[feature];
     console.log(tempObj);
@@ -86,16 +121,20 @@ const AddMainCategory = ({
   };
 
   const handleremoveDetail = (detail) => {
+    if (!isDetailsChanged) {
+      setIsDetailsChanged(true);
+    }
     let tempObj = { ...allDetails };
     delete tempObj[detail];
     console.log(tempObj);
-    setAllDetails({ ...tempObj });
+    setAllDetails(tempObj);
   };
 
   const handleDetailsSubmit = async (mainId) => {
     const token = localStorage.getItem("token");
     try {
       setLoading(true);
+      console.log(allDetails)
       const detailsResponse = await axios.post(
         `${BASE_URL}lyka-admin/main/details/add/`,
         {
@@ -112,7 +151,6 @@ const AddMainCategory = ({
       );
       setLoading(false);
       setOpenMain(false);
-      alert("success");
     } catch (error) {
       setLoading(false);
       alert("error");
@@ -120,12 +158,22 @@ const AddMainCategory = ({
   };
 
   const handleSubmit = async () => {
-    if (mainData.rootId.length < 5) {
+    if (!isInputChanged && !isRootChanged) {
+      if (isfeaturesChanged || isDetailsChanged) {
+        handleDetailsSubmit(main.mainId);
+        handleClose()
+        return;
+      }
+      alert("no changes has been made");
+      return;
+    }
+
+    if (newMainData.rootId.length < 5) {
       alert("A root category corresponding to main is required");
       return;
     }
 
-    if (mainData.name.length < 5) {
+    if (newMainData.name.length < 5) {
       alert("Name must contain at least five characters");
       return;
     }
@@ -143,11 +191,12 @@ const AddMainCategory = ({
     const token = localStorage.getItem("token");
     try {
       setLoading(true);
-      const mainResponse = await axios.post(
-        `${BASE_URL}lyka-admin/main/add/`,
+      const mainResponse = await axios.patch(
+        `${BASE_URL}lyka-admin/main/update/`,
         {
-          name: mainData.name,
-          root: mainData.rootId,
+          main_id: main.mainId,
+          name: isInputChanged ? newMainData.name : main.name,
+          root_id: isRootChanged ? newMainData.rootId : "",
         },
         {
           headers: {
@@ -157,11 +206,22 @@ const AddMainCategory = ({
         }
       );
       let tempMain = [...category.main];
-      tempMain.push(mainResponse.data);
-      console.log(mainResponse);
-      setCategory({ ...category, main: [...tempMain] });
-      console.log(mainResponse)
-      handleDetailsSubmit(mainResponse.data.main_id);
+      const id = main.mainId
+      tempMain = tempMain.map((main) => {
+        console.log(main)
+        if (main.main_id === id) {
+        
+          if (isRootChanged) {
+            main.name = newMainData.name;
+            main.root = newMainData.rootId;
+          } else {
+            main.name = newMainData.name;
+          }
+        }
+        return main;
+      });
+      setCategory({ ...category, main: tempMain });
+      handleDetailsSubmit(main.mainId);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -187,73 +247,36 @@ const AddMainCategory = ({
         <Page style={style}>
           <div className="row mb-4">
             <div className="col-lg-4">
-              <InputLabel>Select Root</InputLabel>
-              <Select
+              <TextField
                 label="Select Root"
-                value={mainData.rootId}
+                value={isRootChanged ? newMainData.rootId : main.rootId}
                 name="rootId"
                 onChange={handleChange}
                 fullWidth
-                readOnly={isAdded}
+                required
+                select
               >
                 {category.root.map((root) => (
                   <MenuItem value={root.root_id}>{root.name}</MenuItem>
                 ))}
-              </Select>
+              </TextField>
             </div>
             <div className="col-lg-4">
               <TextField
                 name="name"
-                value={mainData.name}
+                value={isInputChanged ? newMainData.name : main.name}
                 onChange={handleChange}
                 label="Name"
                 autoComplete="name"
                 autoFocus="name"
                 fullWidth
-                readOnly={isAdded}
-                sx={{ mt: 3 }}
+                required
+             
               />
-            </div>
-            <div className="col-lg-4">
-              <Button
-                fullWidth
-                variant="contained"
-                sx={{ bgcolor: "#294B29", mt: 4 }}
-                onClick={handleAddMain}
-                disabled={isAdded}
-              >
-                Add
-              </Button>
             </div>
           </div>
           <Divider orientation="horizontal" />
-          {isAdded && (
             <div className="mt-2">
-              <h5 className="text-dark h5">
-                Inorder to complete adding a main category, define common specs
-                keys for that category. For instance, for "Mobiles," specify
-                processor, display, and RAM. Organize eye-catching keys on the
-                left and less relevant ones on the right for easy product
-                addition.
-              </h5>
-              <div className="d-flex justify-content-between">
-                <h6 className="h6 text-dark mb-5">
-                  NB: This is required for adding specs and features to new
-                  products.
-                </h6>
-                <Button
-                  variant="contained"
-                  sx={{
-                    bgcolor: "#294B29",
-                    height: "40px",
-                    marginRight: "30px",
-                  }}
-                  onClick={handleSubmit}
-                >
-                  Submit
-                </Button>
-              </div>
-
               <div className="row">
                 <div className="col-lg-6">
                   <div className="d-flex justify-content-evenly mb-3">
@@ -345,6 +368,7 @@ const AddMainCategory = ({
                               fontSize: "1rem",
                               margin: "0",
                               padding: "0",
+                              color: "#A94438"
                             }}
                           />
                         </IconButton>
@@ -357,11 +381,23 @@ const AddMainCategory = ({
                 </div>
               </div>
             </div>
-          )}
+          <div className="d-flex justify-content-center mt-4">
+            <Button
+              variant="contained"
+              sx={{
+                bgcolor: "#294B29",
+                height: "40px",
+                marginRight: "30px",
+              }}
+              onClick={handleSubmit}
+            >
+              Submit
+            </Button>
+          </div>
         </Page>
       </Modal>
     </>
   );
 };
 
-export default AddMainCategory;
+export default AdminEditMain;

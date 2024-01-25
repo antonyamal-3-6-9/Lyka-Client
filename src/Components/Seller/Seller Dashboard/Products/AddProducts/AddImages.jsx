@@ -1,3 +1,5 @@
+import { IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import React from "react";
 
 const AddImages = (props) => {
@@ -21,7 +23,7 @@ const AddImages = (props) => {
 
   return (
     <>
-      <div className="col-lg-12 p-3">
+      <div className="row">
         <div className="col-lg-4 m-2">
           <input
             type="file"
@@ -31,24 +33,28 @@ const AddImages = (props) => {
             required
           />
         </div>
-        {props.images.images.map((file, index) => (
-          <div className="col-lg-6 m-2" key={index}>
-            <span>{file.name} </span>
-            <br></br>
-            <button
-              className="btn btn-dark me-5"
-              onClick={() => handleRemoveImage(index)}
-            >
-              Remove
-            </button>
-            <img
-              src={URL.createObjectURL(file)}
-              alt={file.name}
-              width="80px"
-              height="200px"
-            />
-          </div>
-        ))}
+        <div className="d-flex flex-wrap justify-content-evenly">
+          {props.images.images.map((file, index) => (
+            <>
+              <div key={index}>
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt={file.name}
+                  width="120px"
+                  style={{
+                    border: "1px grey solid",
+                    padding: "10px",
+                    display: "inline",
+                  }}
+                />
+
+                <IconButton onClick={() => handleRemoveImage(index)}>
+                  <CloseIcon />
+                </IconButton>
+              </div>
+            </>
+          ))}
+        </div>
       </div>
     </>
   );

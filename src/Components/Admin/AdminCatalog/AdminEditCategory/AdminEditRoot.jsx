@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, TextField, Paper, styled, Modal } from "@mui/material";
 import axios from "axios";
 
@@ -9,12 +9,26 @@ const Page = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const AddRootCategory = ({ openRoot, setOpenRoot, setLoading, BASE_URL, category, setCategory }) => {
+const AdminEditRoot = ({
+  openRoot,
+  setOpenRoot,
+  setLoading,
+  BASE_URL,
+  category,
+  setCategory,
+  root,
+  rootId,
+}) => {
+  const [newRoot, setNewRoot] = useState("");
+  const [isInputChanged, setIsInputChanged] = useState(false);
 
-  const [root, setRoot] = useState("");
+  useEffect(() => {
+    setNewRoot(root)
+  }, [])
 
   const handleChange = (e) => {
-    setRoot(e.target.value);
+    setIsInputChanged(true);
+    setNewRoot(e.target.value);
   };
 
   const handleClose = () => {
@@ -22,19 +36,22 @@ const AddRootCategory = ({ openRoot, setOpenRoot, setLoading, BASE_URL, category
   };
 
   const handleSubmit = async () => {
+    if (!isInputChanged) {
+      return;
+    }
 
-    if(root.length <= 5){
-      alert("must be greater than five")
+    if (newRoot.length <= 5) {
       return;
     }
 
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      const response = await axios.post(
-        `${BASE_URL}lyka-admin/root/add/`,
+      const token = localStorage.getItem("token");
+      const response = await axios.patch(
+        `${BASE_URL}lyka-admin/root/update/`,
         {
-          name: root,
+          name: newRoot,
+          root_id: rootId
         },
         {
           headers: {
@@ -43,20 +60,23 @@ const AddRootCategory = ({ openRoot, setOpenRoot, setLoading, BASE_URL, category
           },
         }
       );
-      let tempRoot = [...category.root]
-      tempRoot.push(response.data);
-      console.log(response)
-      setCategory({...category, root: [...tempRoot]})
-      setOpenRoot(false)
-      setLoading(false)
-    } catch (error) {
+      let tempRoot = [...category.root];
+      tempRoot = tempRoot.map((root) => {
+        if (root.root_id === rootId) {
+          root.name = newRoot;
+        }
+        return root;
+      });
 
+      setCategory({ ...category, root: [...tempRoot] });
+      setOpenRoot(false);
+      setLoading(false);
+    } catch (error) {
       console.error("Error submitting data:", error);
     } finally {
       setLoading(false);
     }
   };
-  
 
   const style = {
     position: "absolute",
@@ -82,10 +102,10 @@ const AddRootCategory = ({ openRoot, setOpenRoot, setLoading, BASE_URL, category
           </p>
           <TextField
             fullWidth
-            name="root"
-            value={root}
-            autoComplete="root"
-            autoFocus="root"
+            name={isInputChanged ? "newRoot" : "root"}
+            value={isInputChanged ? newRoot : root}
+            autoComplete={isInputChanged ? "newRoot" : "root"}
+            autoFocus={isInputChanged ? "newRoot" : "root"}
             onChange={handleChange}
             margin="normal"
             label="Enter the Name"
@@ -104,4 +124,4 @@ const AddRootCategory = ({ openRoot, setOpenRoot, setLoading, BASE_URL, category
   );
 };
 
-export default AddRootCategory;
+export default AdminEditRoot;
