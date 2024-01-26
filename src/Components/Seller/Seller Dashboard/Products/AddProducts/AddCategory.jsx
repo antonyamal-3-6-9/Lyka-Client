@@ -1,6 +1,6 @@
 import { React, useState, useEffect } from "react";
 import axios from "axios";
-import Button from "@mui/material/Button";
+import { Button, TextField, MenuItem } from "@mui/material";
 
 const AddCategory = (props) => {
   const API_BASE_URL = "http://localhost:8000/category/";
@@ -62,7 +62,7 @@ const AddCategory = (props) => {
       return;
     }
     setIsSelected(true);
-    props.setCatAdded(true)
+    props.setCatAdded(true);
     fetchDetails(selectedMain);
   };
 
@@ -94,63 +94,61 @@ const AddCategory = (props) => {
     <>
       <div className="row mt-3 mb-4">
         <div className="col-lg-3">
-          <label htmlFor="root-category" className="d-inline">
-            Root Category
-          </label>
-          <select
-            className="form-select form-select-sm"
+          <TextField
+            label="Root Category"
+            fullWidth
+            variant="standard"
             id="root-category"
             name="root_category"
             onChange={handleChange}
             value={props.details.root_category}
             required
             disabled={isSelected}
+            select
           >
-            <option value="">Open this select menu</option>
             {data.map((item) => {
               return (
-                <option key={item.root_id} value={item.root_id}>
+                <MenuItem key={item.root_id} value={item.root_id}>
                   {item.name}
-                </option>
+                </MenuItem>
               );
             })}
-          </select>
+          </TextField>
           <div className="invalid-feedback">Please select a root category.</div>
         </div>
 
         <div className="col-lg-3">
-          <label htmlFor="main-category" className="d-inline">
-            Main Category
-          </label>
-          <select
-            className="form-select form-select-sm"
+          <TextField
+            variant="standard"
             id="main-category"
             name="main_category"
             onChange={handleChange}
             value={props.details.main_category}
             required
+            label="Main Category"
             disabled={isSelected}
+            fullWidth
+            select
           >
-            <option value="">Open this select menu</option>
             {mainData.map((item) => {
               if (item.root === selectedRoot) {
                 return (
-                  <option key={item.main_id} value={item.main_id}>
+                  <MenuItem key={item.main_id} value={item.main_id}>
                     {item.name}
-                  </option>
+                  </MenuItem>
                 );
               }
             })}
-          </select>
+          </TextField>
           <div className="invalid-feedback">Please select a main category.</div>
         </div>
 
         <div className="col-lg-3">
-          <label htmlFor="sub-category" className="d-inline">
-            Sub Category
-          </label>
-          <select
-            className="form-select form-select-sm"
+          <TextField
+            variant="standard"
+            label="Sub Category"
+            fullWidth
+            select
             id="sub-category"
             name="sub_category"
             onChange={handleChange}
@@ -158,17 +156,16 @@ const AddCategory = (props) => {
             required
             disabled={isSelected}
           >
-            <option value="">Open this select menu</option>
             {subData.map((item) => {
               if (item.main === selectedMain) {
                 return (
-                  <option key={item.sub_id} value={item.sub_id}>
+                  <MenuItem key={item.sub_id} value={item.sub_id}>
                     {item.name}
-                  </option>
+                  </MenuItem>
                 );
               }
             })}
-          </select>
+          </TextField>
           <div className="invalid-feedback">Please select a sub category.</div>
         </div>
         <div className="col-lg-3">

@@ -1,5 +1,6 @@
 import axios from "axios";
 import React from "react";
+import { TextField } from "@mui/material";
 
 const AddFeatures = (props) => {
   const [features, setFeatures] = React.useState({});
@@ -49,28 +50,31 @@ const AddFeatures = (props) => {
   return (
     <>
       <div className="row">
+      <h6 className="h6 text-dark text-center">Key Features</h6>
         {Object.keys(props.data.details.key_features).map((key) => {
           return (
             <div className="col-lg-2 mt-2 mb-2" key={key}>
-              <label className="d-inline">{key}</label>
-              <input
+              <TextField
                 type="text"
-                className="form-control"
                 value={props.data.details.key_features[key]}
                 onChange={(e) => handleChangeFeatures(key, e.target.value)}
                 required
+                label={key}
+                fullWidth
+                variant="standard"
               />
             </div>
           );
         })}
-
+<h6 className="h6 text-dark text-center">Specifications</h6>
         {Object.keys(props.data.details.all_details).map((key) => {
           return (
             <div className="col-lg-2" key={key}>
-              <label className="d-inline">{key}</label>
-              <input
+              <TextField
                 type="text"
-                className="form-control"
+                fullWidth
+                label={key}
+                variant="standard"
                 value={props.data.details.all_details[key]}
                 onChange={(e) => handleChangeDetails(key, e.target.value)}
                 required

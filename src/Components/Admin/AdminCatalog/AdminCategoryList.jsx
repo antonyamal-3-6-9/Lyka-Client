@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Backdrop, CircularProgress, Button, IconButton } from "@mui/material";
+import { Backdrop, CircularProgress, Button, IconButton, Divider } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import CloseIcon from "@mui/icons-material/Close";
 import AddMainCategory from "./AdminAddCategory/AddMainCategory";
 import AddRootCategory from "./AdminAddCategory/AddRootCategory";
@@ -31,7 +32,7 @@ const AdminCategory = () => {
   const [editData, setEditData] = useState({
     root: {
       rootId: "",
-      name: ""
+      name: "",
     },
     main: {
       name: "",
@@ -66,7 +67,6 @@ const AdminCategory = () => {
     }
   };
 
-
   const handleOpenEdit = (
     name = "",
     id = "",
@@ -80,7 +80,10 @@ const AdminCategory = () => {
       });
       setEditMain(true);
     } else if (type === "root") {
-      setEditData({ ...editData, root: {...editData.root, name: name, rootId: id} });
+      setEditData({
+        ...editData,
+        root: { ...editData.root, name: name, rootId: id },
+      });
       setEditRoot(true);
     } else if (type === "sub") {
       setEditData({
@@ -90,6 +93,75 @@ const AdminCategory = () => {
       setEditSub(true);
     } else {
       return;
+    }
+  };
+
+  const handleDelete = async (option, id) => {
+    if (option === "root") {
+      const token = localStorage.getItem('token')
+      try {
+        setLoading(true);
+        const rootDeleteResponse = await axios.delete(
+          `${BASE_URL}lyka-admin/root/delete/${id}/`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setLoading(false);
+        let tempRoot = [...category.root];
+        tempRoot = tempRoot.filter((root) => root.root_id !== id);
+        setCategory({ ...category, root: [...tempRoot] });
+      } catch (error) {
+        setLoading(false);
+        alert(error.response.data.message);
+      }
+    } else if (option === "main") {
+      const token = localStorage.getItem('token')
+      try {
+        setLoading(true)
+        const mainDeleteResponse = await axios.delete(
+          `${BASE_URL}lyka-admin/main/delete/${id}/`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setLoading(false)
+        let tempMain = [...category.main];
+        tempMain = tempMain.filter((main) => main.main_id !== id);
+        setCategory({ ...category, main: [...tempMain] });
+      } catch (error) {
+        setLoading(false)
+        alert(error.response.data.message);
+      }
+    } else if (option === "sub") {
+      const token = localStorage.getItem('token')
+      try {
+        setLoading(true)
+        const rootDeleteResponse = await axios.delete(
+          `${BASE_URL}lyka-admin/sub/delete/${id}/`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setLoading(false)
+        let tempSub = [...category.sub];
+        tempSub = tempSub.filter((sub) => sub.sub_id !== id);
+        setCategory({ ...category, sub: [...tempSub] });
+      } catch (error) {
+        setLoading(false)
+        alert(error.response.data.message);
+      }
+    } else {
+      alert("Invalid Option");
     }
   };
 
@@ -172,7 +244,7 @@ const AdminCategory = () => {
           {category.root.length !== 0 ? (
             <>
               <div>
-                <h6 className="h6 text-dark text-center mb-3">
+                <h6 className=" text-dark text-center mb-3">
                   Root Categories
                 </h6>
                 <div className="d-flex justify-content-center mt-3">
@@ -189,16 +261,20 @@ const AdminCategory = () => {
                 <div className="d-flex flex-wrap justify-content-evenly">
                   {category.root.map((r) => (
                     <div
-                      style={{ border: ".5px solid #E1F0DA" }}
-                      className="p-2 mb-2"
+                      style={{ border: "1px solid #789461", borderRadius: "15px", }}
+                      className="p-2 mb-2 shadow"
                     >
-                      <IconButton>
-                        <CloseIcon
+                      <IconButton
+                        onClick={() => {
+                          handleDelete("root", r.root_id);
+                        }}
+                      >
+                        <DeleteForeverIcon
                           style={{
-                            fontSize: ".75rem",
+                            fontSize: "1rem",
                             margin: "0",
                             padding: "0",
-                            color: "red",
+                            color: "#789461",
                           }}
                         />
                       </IconButton>
@@ -209,14 +285,15 @@ const AdminCategory = () => {
                       >
                         <EditIcon
                           style={{
-                            fontSize: ".75rem",
+                            fontSize: "1rem",
                             margin: "0",
                             padding: "0",
-                            color: "blue",
+                            color: "#789461",
                           }}
                         />
                       </IconButton>
-                      <p key={r.root_id} className="text-dark m-0 p-0">
+                      <Divider/>
+                      <p key={r.root_id} className="h6 text-dark text-center m-0 p-0">
                         {r.name}
                       </p>
                     </div>
@@ -238,7 +315,7 @@ const AdminCategory = () => {
           {category.main.length !== 0 ? (
             <>
               <div>
-                <h6 className="h6 text-dark text-center mb-3">
+                <h6 className="text-dark text-center mb-3">
                   Main Categories
                 </h6>
                 <div className="d-flex justify-content-center mt-3">
@@ -253,16 +330,20 @@ const AdminCategory = () => {
                 <div className="d-flex flex-wrap justify-content-evenly">
                   {category.main.map((m) => (
                     <div
-                      style={{ border: "1px solid #E1F0DA" }}
-                      className="p-2 mb-2"
+                      style={{ border: "1px solid #789461", borderRadius: "15px" }}
+                      className="p-2 mb-2 shadow"
                     >
-                      <IconButton>
-                        <CloseIcon
+                      <IconButton
+                        onClick={() => {
+                          handleDelete("main", m.main_id);
+                        }}
+                      >
+                        <DeleteForeverIcon
                           style={{
-                            fontSize: ".75rem",
+                            fontSize: "1rem",
                             margin: "0",
                             padding: "0",
-                            color: "red",
+                            color: "#789461",
                           }}
                         />
                       </IconButton>
@@ -273,14 +354,14 @@ const AdminCategory = () => {
                       >
                         <EditIcon
                           style={{
-                            fontSize: ".75rem",
+                            fontSize: "1rem",
                             margin: "0",
                             padding: "0",
-                            color: "blue",
+                            color: "#789461",
                           }}
                         />
                       </IconButton>
-                      <p key={m.main_id} className="text-dark m-0 p-0">
+                      <p key={m.main_id} className=" h6 text-dark m-0 p-0">
                         {m.name}
                       </p>
                     </div>
@@ -291,7 +372,7 @@ const AdminCategory = () => {
           ) : (
             <>
               <div className="d-flex justify-content-center align-items-center p-5">
-                <h6 className="text-center h6 text-dark">
+                <h6 className="h6 text-center text-dark">
                   No Main Category Found
                 </h6>
               </div>
@@ -302,27 +383,35 @@ const AdminCategory = () => {
           {category.sub.length !== 0 ? (
             <>
               <div>
-                <h6 className="h6 text-dark text-center mb-3">
+                <h6 className="text-dark text-center mb-3">
                   Sub Categories
                 </h6>
                 <div className="d-flex justify-content-center mt-3">
-                  <Button style={{ color: "#294B29" }} startIcon={<AddIcon />} onClick={() => setOpenSub(true)}>
+                  <Button
+                    style={{ color: "#294B29" }}
+                    startIcon={<AddIcon />}
+                    onClick={() => setOpenSub(true)}
+                  >
                     Add New
                   </Button>
                 </div>
                 <div className="d-flex flex-wrap justify-content-evenly">
                   {category.sub.map((s) => (
                     <div
-                      style={{ border: "1px solid #E1F0DA" }}
-                      className="p-2 mb-2"
+                      style={{ border: "1px solid #789461", borderRadius: "15px" }}
+                      className="p-2 mb-2 shadow"
                     >
-                      <IconButton>
-                        <CloseIcon
+                      <IconButton
+                        onClick={() => {
+                          handleDelete("sub", s.sub_id);
+                        }}
+                      >
+                        <DeleteForeverIcon
                           style={{
-                            fontSize: ".75rem",
+                            fontSize: "1rem",
                             margin: "0",
                             padding: "0",
-                            color: "red",
+                            color: "#789461",
                           }}
                         />
                       </IconButton>
@@ -333,14 +422,14 @@ const AdminCategory = () => {
                       >
                         <EditIcon
                           style={{
-                            fontSize: ".75rem",
+                            fontSize: "1rem",
                             margin: "0",
                             padding: "0",
-                            color: "blue",
+                            color: "#789461",
                           }}
                         />
                       </IconButton>
-                      <p key={s.sub_id} className="text-dark m-0 p-0">
+                      <p key={s.sub_id} className="h6 text-dark m-0 p-0">
                         {s.name}
                       </p>
                     </div>

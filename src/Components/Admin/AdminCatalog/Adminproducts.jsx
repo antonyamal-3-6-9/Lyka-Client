@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import ProductListMenu from "./AdminProductMenu";
-import { Button } from "@mui/material";
+import { Button, Divider, IconButton } from "@mui/material";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import AddIcon from "@mui/icons-material/Add";
 
 const Products = ({
   products,
+  setProducts,
   filterData,
   setFilterData,
   initiateFilter,
@@ -14,6 +18,137 @@ const Products = ({
   setSearchData,
   initiateSearch,
 }) => {
+  const BASE_URL = "http://127.0.0.1:8000/product/lyka-admin/";
+
+  const [variation, setVariation] = useState();
+  const [color, setColor] = useState();
+
+  const handleVariationAdd = async (productId, index) => {
+    const token = localStorage.getItem("token");
+    try {
+      const variationAddResponse = await axios.post(
+        `${BASE_URL}variant/add/`,
+        {
+          product_id: productId,
+          variant: variation,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      let tempProducts = [...products];
+      tempProducts[index].variations.push(variationAddResponse.data);
+      setProducts(tempProducts);
+    } catch (error) {
+      alert("failed");
+    }
+  };
+
+  const handleVariationRemove = async (
+    productId,
+    variantId,
+    productIndex,
+    variantIndex
+  ) => {
+    const token = localStorage.getItem("token");
+    try {
+      const variationRemoveResponse = await axios.post(
+        `${BASE_URL}variant/remove/`,
+        {
+          product_id: productId,
+          variant_id: variantId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      let tempProducts = [...products];
+      tempProducts[productIndex].variations.splice(variantIndex, 1);
+      setProducts(tempProducts);
+    } catch (error) {
+      alert("Error removing variant");
+    }
+  };
+
+  const handleColorAdd = async (productId, index) => {
+    const token = localStorage.getItem("token");
+    try {
+      const colorAddResponse = await axios.post(
+        `${BASE_URL}color/add/`,
+        {
+          product_id: productId,
+          color: color,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      let tempProducts = [...products];
+      tempProducts[index].colors.push(colorAddResponse.data);
+      setProducts(tempProducts);
+    } catch (error) {
+      alert("error adding color");
+    }
+  };
+
+  const handleColorRemove = async (
+    productId,
+    colorId,
+    productIndex,
+    colorIndex
+  ) => {
+    const token = localStorage.getItem("token");
+    try {
+      const colorRemoveResponse = await axios.post(
+        `${BASE_URL}color/remove/`,
+        {
+          product_id: productId,
+          color_id: colorId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      let tempProducts = [...products];
+      tempProducts[productIndex].colors.splice(colorIndex, 1);
+      setProducts(tempProducts);
+    } catch (error) {
+      alert("couldn't remove color");
+    }
+  };
+
+  const handleProductsDelete = async (productId, index) => {
+    const token = localStorage.getItem("token");
+    try {
+      const productDeleteResponse = await axios.delete(
+        `${BASE_URL}delete/${productId}/`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      let tempProducts = [...products];
+      tempProducts.splice(index, 1);
+      setProducts(tempProducts);
+    } catch (error) {
+      alert("cannot delete product");
+    }
+  };
+
   return (
     <>
       <h4 className="h5 text-dark text-center">Products</h4>
@@ -57,74 +192,110 @@ const Products = ({
               >
                 <div className="row">
                   <div className="col-lg-4">
-                    <img
-                      src={`http://127.0.0.1:8000${product.thumbnail}`}
-                      width="150px"
-                    />
+                    <div>
+                      <img
+                        src={`http://127.0.0.1:8000${product.thumbnail}`}
+                        width="150px"
+                      />
+                    </div>
                   </div>
                   <div className="col-lg-8">
-                    <div>
+                    <div className="d-flex justify-content-between">
                       <h5 className="h5 text-dark">
                         {product.brand} {product.name}
                       </h5>
-                    </div>
-                    <div className="d-flex justify-content-start">
-                      <Button>
-                        <Link
-                          to={`/admin/edit/product/${product.productId}/`}
+                      <IconButton
+                        onClick={() => handleProductsDelete(product.productId)}
+                      >
+                        <DeleteForeverIcon
                           style={{
                             color: "#294B29",
-                            marginBottom: "20px",
-                            marginTop: "20px",
-                            marginRight: "30px"
                           }}
-                        >
-                          Edit
-                        </Link>
-                      </Button>
-                      <Button
-                        style={{
-                          color: "#294B29",
-                          marginBottom: "20px",
-                          marginTop: "20px",
-                        }}
-                      >
-                        Delete
-                      </Button>
+                        />
+                      </IconButton>
                     </div>
-                    <div className="d-flex justify-content-start">
-                      <div className="me-5">
-                        <h6 className="h6 text-dark">Variants</h6>
-                        {product.variations.map((variant) => (
-                          <p key={variant.id} className="text-dark m-0 p-0">
-                            {variant.variation}
-                          </p>
-                        ))}
-                      </div>
-                      <div>
-                        <h6 className="h6 text-dark">Colors</h6>
-                        {product.colors.map((color) => (
-                          <p key={color.id} className="text-dark m-0 p-0">
-                            {color.color}
-                          </p>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <h6 className="h6 text-dark mt-2">Category</h6>
-                      <p className="text-dark">
+
+                    <div className="mb-2">
+                      <h6 className=" text-dark mt-2">Category</h6>
+                      <p className="h6 text-dark">
                         {product.root_category.name}/
                         {product.main_category.name}/{product.sub_category.name}
                       </p>
                     </div>
                     <div className="d-flex justify-content-start mt-2">
                       <div className="me-5">
-                        <h6 className="h6 text-dark">Added On</h6>
-                        <p className="text-dark">{product.added_on}</p>
+                        <h6 className=" text-dark">weight</h6>
+                        <p className=" h6 text-dark">{product.weight} g</p>
                       </div>
                       <div>
-                        <h6 className="h6 text-dark">weight</h6>
-                        <p className="text-dark">{product.weight} gram</p>
+                        <h6 className=" text-dark">Added On</h6>
+                        <p className=" h6 text-dark">{product.added_on}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-lg-12">
+                    <div className="row mt-3 d-flex justify-content-evenly">
+                      <div className="col-lg-6 d-flex flex-column align-items-start">
+                        <h6 className="text-dark text-center">Variants</h6>
+                        <div className="d-flex flex-column">
+                          {product.variations.map((variant) => (
+                            <div className="d-flex justify-content-center align-items-center">
+                              <p
+                                key={variant.id}
+                                className="text-dark h6 m-0 mb-2 p-0"
+                              >
+                                {variant.variation}
+                              </p>
+                              <IconButton>
+                                <DeleteForeverIcon
+                                  style={{
+                                    fontSize: "1rem",
+                                    marginBottom: "10px",
+                                  }}
+                                />
+                              </IconButton>
+                            </div>
+                          ))}
+                        </div>
+                        <Button
+                          style={{
+                            color: "#294B29",
+                          }}
+                          startIcon={<AddIcon />}
+                        >
+                          Variant
+                        </Button>
+                      </div>
+                      <div className="col-lg-6 d-flex flex-column align-items-start">
+                        <h6 className="text-dark text-center">Colors</h6>
+                        <div className="d-flex flex-column">
+                          {product.colors.map((color) => (
+                            <div className="d-flex justify-content-center align-items-center">
+                              <p
+                                key={color.id}
+                                className="text-dark h6 mb-2 m-0 p-0"
+                              >
+                                {color.color}
+                              </p>
+                              <IconButton>
+                                <DeleteForeverIcon
+                                  style={{
+                                    fontSize: "1rem",
+                                    marginBottom: "10px",
+                                  }}
+                                />
+                              </IconButton>
+                            </div>
+                          ))}
+                        </div>
+                        <Button
+                          style={{
+                            color: "#294B29",
+                          }}
+                          startIcon={<AddIcon />}
+                        >
+                          Color
+                        </Button>
                       </div>
                     </div>
                   </div>

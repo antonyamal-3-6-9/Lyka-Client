@@ -204,7 +204,6 @@ function App() {
           <Route path="admin/home" element={<AdminHome />} />
           <Route path="admin/catalog" element={<AdminCatalog/>} />
           <Route path="admin/add/product/" element={<AddProduct isAdmin={true}/>}/>
-          <Route path="admin/edit/product/:product-id" element={<EditProduct/>}/> 
         </Routes>
       </Router>
     </>
