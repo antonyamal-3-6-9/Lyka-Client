@@ -35,6 +35,8 @@ import CustomerVerify from "./Components/Customer/Login and Register/CustomerVer
 import AdminHome from "../src/Components/Admin/AdminDashBoard/AdminHome.jsx";
 import { useSelector } from "react-redux";
 import Notification from "./Components/Notification/Notification.jsx";
+import CouponCharge from "./Components/Admin/AdminCouponsandCharges/CouponCharge.jsx";
+import AddNewCouponModal from "./Components/Admin/AdminCouponsandCharges/AddNewCoupon.jsx";
 
 function App() {
   const signal = useSelector((state) => state.userAuth.notificationSignal);
@@ -204,6 +206,9 @@ function App() {
           <Route path="admin/home" element={<AdminHome />} />
           <Route path="admin/catalog" element={<AdminCatalog/>} />
           <Route path="admin/add/product/" element={<AddProduct isAdmin={true}/>}/>
+          <Route path="admin/coupons&charges/" element={<CouponCharge/>} />
+
+          <Route path="admin/c/" element={<AddNewCouponModal/>}/>
         </Routes>
       </Router>
     </>

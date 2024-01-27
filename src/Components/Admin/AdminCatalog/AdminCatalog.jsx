@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import AdminProductList from "./AdminProductList";
 import AdminCategory from "./AdminCategoryList";
 import AdminNavBar from "../AdminNavbar/AdminNavbar";
@@ -13,18 +13,21 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const AdminCatalog = () => {
+  const [showProducts, setShowProducts] = useState(false);
+
   return (
     <>
       <AdminNavBar />
       <div className="container-fluid" style={{ marginTop: "83px" }}>
-        <Item>
-          <AdminCategory/>
-          <hr></hr>
-          <AdminProductList />
+        <Item><div className="d-flex justify-content-center">
+          <span className={`${!showProducts ? "h5 m-1 text-dark" : "h6 m-2"}`}><a onClick={() => {setShowProducts(false)}}>Products</a></span>
+          <span className={`${showProducts ? "h5 m-1 text-dark" : "h6 m-2"}`}><a onClick={() => {setShowProducts(true)}}>Categories</a></span>
+          </div>
+          {showProducts ? <AdminCategory /> : <AdminProductList />}
         </Item>
       </div>
     </>
   );
 };
 
-export default AdminCatalog
+export default AdminCatalog;

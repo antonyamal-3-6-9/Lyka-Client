@@ -11,6 +11,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
+import GroupIcon from '@mui/icons-material/Group';
 import { useSelector } from "react-redux";
 import {
   Logout,
@@ -22,6 +23,10 @@ import axios from "axios";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 
 export default function AdminNavBar({ setOption }) {
@@ -42,7 +47,7 @@ export default function AdminNavBar({ setOption }) {
   const isLoggedIn = useSelector((state) => state.userAuth.isLoggedIn);
   const dispatch = useDispatch();
 
-  const BASE_URL = "http://127.0.0.1:8000/customer/";
+  const BASE_URL = "http://127.0.0.1:8000/lyka-admin/logout/";
   const token = localStorage.getItem("token");
   const handleLogout = async () => {
     try {
@@ -56,10 +61,12 @@ export default function AdminNavBar({ setOption }) {
           },
         }
       );
+      navigateLink("/")
     } catch (error) {
       console.log(error);
     }
     localStorage.clear("token");
+    navigateLink("/")
     dispatch(Logout());
   };
 
@@ -69,6 +76,10 @@ export default function AdminNavBar({ setOption }) {
 
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
+  };
+
+  const navigateLink = (option) => {
+    navigate(option);
   };
 
   const menuId = "primary-search-account-menu";
@@ -174,9 +185,7 @@ export default function AdminNavBar({ setOption }) {
     </Menu>
   );
 
-  const navigateLink = (option) => {
-    navigate(option);
-  };
+
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -189,10 +198,15 @@ export default function AdminNavBar({ setOption }) {
             sx={{ display: { xs: "none", sm: "block" } }}
             style={{ paddingLeft: "100px" }}
             onClick={() => {
-              navigateLink("/");
+              navigateLink("/admin/home");
             }}
           >
-            <a>LYKA ADMIN</a>
+            <span>LYKA ADMIN</span>
+            <IconButton>
+              <AdminPanelSettingsIcon
+                style={{color: "white"}}
+              />
+            </IconButton>
           </Typography>
 
           <Box sx={{ flexGrow: 1 }} />
@@ -216,6 +230,9 @@ export default function AdminNavBar({ setOption }) {
                   justifyContent: "center",
                 },
               }}
+              onClick={() => {
+                navigateLink("/seller-login")
+              }}
             >
               <IconButton edge="end" size="large" color="inherit">
                 <AddBusinessIcon />
@@ -233,9 +250,10 @@ export default function AdminNavBar({ setOption }) {
                   justifyContent: "center",
                 },
               }}
+              onClick={() => {navigateLink("/customer-login")}}
             >
               <IconButton edge="end" size="large" color="inherit">
-                <AddBusinessIcon />
+                <AccountCircleIcon />
               </IconButton>
               <Typography>
                 <a>Login as Customer</a>
@@ -250,14 +268,17 @@ export default function AdminNavBar({ setOption }) {
                   justifyContent: "center",
                 },
               }}
+              onClick={() => {
+                navigateLink("/admin/coupons&charges/")
+              }}
             >
               <IconButton size="large" edge="end" color="inherit">
                 
                 
-                <AccountCircle />
+                <MonetizationOnIcon />
               </IconButton>
               <Typography>
-                <a>Coupons</a>
+                <a>Charges & Coupons</a>
               </Typography>
             </Box>
             <Box
@@ -274,7 +295,7 @@ export default function AdminNavBar({ setOption }) {
               }}
             >
               <IconButton size="large" edge="end" color="inherit">
-                <AccountCircle />
+                <InventoryIcon />
               </IconButton>
               <Typography>
                 <a>Catalog</a>
@@ -291,10 +312,10 @@ export default function AdminNavBar({ setOption }) {
               }}
             >
               <IconButton size="large" edge="end" color="inherit">
-                <AccountCircle />
+                <GroupIcon />
               </IconButton>
               <Typography>
-                <a>Users</a>
+                <a>User</a>
               </Typography>
             </Box>
 
@@ -308,6 +329,8 @@ export default function AdminNavBar({ setOption }) {
                     justifyContent: "center",
                   },
                 }}
+
+
               >
                 <IconButton size="large" edge="end" color="inherit">
                   <ArrowOutwardIcon />

@@ -73,6 +73,23 @@ const AddProduct = ({ isAdmin = false }) => {
       return;
     }
 
+    const defaultDate = new Date(productBasicDetails.launch_date)
+    const currentData = new Date()
+
+    if (defaultDate > currentData){
+      setAlertEnable(true);
+      setAlertData("Enter a valid date");
+      setAlertSeverity("success");
+      return
+    }
+
+    if (parseInt(productBasicDetails.weight) > 10000 || productBasicDetails.weight < 10){
+      setAlertEnable(true);
+      setAlertData("Weight must be between 10000 and 10");
+      setAlertSeverity("success");
+      return;
+    }
+
     console.log(productBasicDetails);
 
     const token = localStorage.getItem("token");

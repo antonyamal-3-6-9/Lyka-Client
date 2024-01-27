@@ -9,6 +9,8 @@ const AdminProductList = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const [hasFound, setHasFound] = useState(null);
+
   const [filterData, setFilterData] = useState({
     rootId: "",
     mainId: "",
@@ -17,8 +19,8 @@ const AdminProductList = () => {
   const [searchData, setSearchData] = useState("");
   const [productBackup, setProductBackup] = useState({
     backup: [],
-    active: false
-})
+    active: false,
+  });
 
   const BASE_URL = "http://127.0.0.1:8000/product/lyka-admin/";
 
@@ -34,10 +36,16 @@ const AdminProductList = () => {
       });
       if (productResponse.status === 200) {
         setProducts(productResponse.data);
+        if (productResponse.data.length > 0) {
+          setHasFound(true);
+        } else {
+          setHasFound(false)
+        }
       }
       setLoading(false);
     } catch (error) {
       setLoading(false);
+      setHasFound(false);
       alert("error");
     }
   };
@@ -71,14 +79,14 @@ const AdminProductList = () => {
 
   const handleSort = (option) => {
     let tempProducts = [...products];
-    if (option === "alphabetical"){
+    if (option === "alphabetical") {
       tempProducts.sort((productOne, productTwo) =>
         productOne.brand.localeCompare(productTwo.brand)
       );
     } else if (option === "oldest") {
       tempProducts.sort((a, b) => new Date(b.added_on) - new Date(a.added_on));
     }
-    setProducts(tempProducts)
+    setProducts(tempProducts);
   };
 
   const binarySearch = (data, keyword) => {
@@ -94,13 +102,13 @@ const AdminProductList = () => {
 
       if (data[m].brand.length >= k) {
         console.log(data[m].brand.slice(0, k).toLowerCase());
-        if (data[m].brand.slice(0, k).toLowerCase() === keyword) {
+        if (data[m].brand.slice(0, k).toLowerCase() === keyword.toLowerCase()) {
           return data[m];
         }
       }
 
       console.log(data[m].brand.localeCompare(keyword));
-      if (data[m].brand.localeCompare(keyword) === -1) {
+      if (data[m].brand.localeCompare(keyword) < 0) {
         l = m + 1;
         console.log(l);
       } else {
@@ -118,25 +126,27 @@ const AdminProductList = () => {
       return;
     }
 
-    
     let tempProducts = null;
-    if (productBackup.active){
-      tempProducts = [...productBackup.backup]
+    if (productBackup.active) {
+      tempProducts = [...productBackup.backup];
     } else {
-      tempProducts = [...products]
+      tempProducts = [...products];
     }
 
-  
     tempProducts.sort((productOne, productTwo) =>
       productOne.brand.localeCompare(productTwo.brand)
     );
 
-    const result =  binarySearch(tempProducts, searchData);
-    if (result !== -1){
-      if (!productBackup.active){
-        setProductBackup({...productBackup, active: true, backup: [...products]})
+    const result = binarySearch(tempProducts, searchData);
+    if (result !== -1) {
+      if (!productBackup.active) {
+        setProductBackup({
+          ...productBackup,
+          active: true,
+          backup: [...products],
+        });
       }
-      setProducts([result])
+      setProducts([result]);
     }
   };
 
@@ -144,7 +154,7 @@ const AdminProductList = () => {
     fetchData();
   };
 
-  if (!products) {
+  if (hasFound === null) {
     return null;
   }
 
@@ -163,6 +173,8 @@ const AdminProductList = () => {
         searchData={searchData}
         setSearchData={setSearchData}
         initiateSearch={handleSearch}
+        hasFound={hasFound}
+        setProducts={setProducts}
       />
     </>
   );

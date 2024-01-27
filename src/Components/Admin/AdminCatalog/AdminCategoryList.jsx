@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { Backdrop, CircularProgress, Button, IconButton, Divider } from "@mui/material";
+import {
+  Backdrop,
+  CircularProgress,
+  Button,
+  IconButton,
+  Divider,
+} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import CloseIcon from "@mui/icons-material/Close";
 import AddMainCategory from "./AdminAddCategory/AddMainCategory";
 import AddRootCategory from "./AdminAddCategory/AddRootCategory";
 import AddSubCategory from "./AdminAddCategory/AddSubCategory";
 import AdminEditMain from "./AdminEditCategory/AdminEditMain";
 import AdminEditRoot from "./AdminEditCategory/AdminEditRoot";
 import AdminEditSub from "./AdminEditCategory/AdminEditSub";
+import CategoryActionModal from "./CategoryActionModal";
 import axios from "axios";
 
 const AdminCategory = () => {
@@ -25,9 +31,20 @@ const AdminCategory = () => {
   const [openMain, setOpenMain] = useState(false);
   const [openSub, setOpenSub] = useState(false);
 
+  const [mainNotFound, setMainNotFound] = useState(null);
+  const [rootNotFound, setRootNotFound] = useState(null);
+  const [subNotFound, setSubNotFound] = useState(null);
+
   const [editRoot, setEditRoot] = useState(false);
   const [editMain, setEditMain] = useState(false);
   const [editSub, setEditSub] = useState(false);
+
+  const [enableDelete, setEnableDelete] = useState(false);
+
+  const [x, setX] = useState({
+    id: "",
+    x: "",
+  });
 
   const [editData, setEditData] = useState({
     root: {
@@ -53,6 +70,21 @@ const AdminCategory = () => {
         `${BASE_URL}lyka-admin/list/all/`
       );
       if (categoryResponse.status === 200) {
+        if (categoryResponse.data.root.length > 0) {
+          setRootNotFound(false);
+        } else {
+          setRootNotFound(true);
+        }
+        if (categoryResponse.data.main.length > 0) {
+          setMainNotFound(false);
+        } else {
+          setMainNotFound(true);
+        }
+        if (categoryResponse.data.sub.length > 0) {
+          setSubNotFound(false);
+        } else {
+          setSubNotFound(true);
+        }
         setCategory({
           ...category,
           root: categoryResponse.data.root,
@@ -62,6 +94,9 @@ const AdminCategory = () => {
       }
       setLoading(false);
     } catch (error) {
+      setSubNotFound(true);
+      setMainNotFound(true);
+      setRootNotFound(true);
       setLoading(false);
       console.log(error);
     }
@@ -98,7 +133,7 @@ const AdminCategory = () => {
 
   const handleDelete = async (option, id) => {
     if (option === "root") {
-      const token = localStorage.getItem('token')
+      const token = localStorage.getItem("token");
       try {
         setLoading(true);
         const rootDeleteResponse = await axios.delete(
@@ -119,9 +154,9 @@ const AdminCategory = () => {
         alert(error.response.data.message);
       }
     } else if (option === "main") {
-      const token = localStorage.getItem('token')
+      const token = localStorage.getItem("token");
       try {
-        setLoading(true)
+        setLoading(true);
         const mainDeleteResponse = await axios.delete(
           `${BASE_URL}lyka-admin/main/delete/${id}/`,
           {
@@ -131,19 +166,19 @@ const AdminCategory = () => {
             },
           }
         );
-        setLoading(false)
+        setLoading(false);
         let tempMain = [...category.main];
         tempMain = tempMain.filter((main) => main.main_id !== id);
         setCategory({ ...category, main: [...tempMain] });
       } catch (error) {
-        setLoading(false)
+        setLoading(false);
         alert(error.response.data.message);
       }
     } else if (option === "sub") {
-      const token = localStorage.getItem('token')
+      const token = localStorage.getItem("token");
       try {
-        setLoading(true)
-        const rootDeleteResponse = await axios.delete(
+        setLoading(true);
+        const subDeleteResponse = await axios.delete(
           `${BASE_URL}lyka-admin/sub/delete/${id}/`,
           {
             headers: {
@@ -152,12 +187,12 @@ const AdminCategory = () => {
             },
           }
         );
-        setLoading(false)
+        setLoading(false);
         let tempSub = [...category.sub];
         tempSub = tempSub.filter((sub) => sub.sub_id !== id);
         setCategory({ ...category, sub: [...tempSub] });
       } catch (error) {
-        setLoading(false)
+        setLoading(false);
         alert(error.response.data.message);
       }
     } else {
@@ -165,9 +200,18 @@ const AdminCategory = () => {
     }
   };
 
+  const initiateDelete = (xData, xId) => {
+    setX({ ...x, id: xId, x: xData });
+    setEnableDelete(true);
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
+
+  if (rootNotFound === null || mainNotFound === null || subNotFound === null) {
+    return null;
+  }
 
   return (
     <>
@@ -238,35 +282,44 @@ const AdminCategory = () => {
           sub={editData.sub}
         />
       )}
-      <h5 className="h5 text-center text-dark mb-3">Categories</h5>
+      {enableDelete && (
+        <CategoryActionModal
+          open={enableDelete}
+          setOpen={setEnableDelete}
+          x={x}
+          initiateDeletion={handleDelete}
+        />
+      )}
+
       <div className="row">
         <div className="col-lg-4">
-          {category.root.length !== 0 ? (
-            <>
-              <div>
-                <h6 className=" text-dark text-center mb-3">
-                  Root Categories
-                </h6>
-                <div className="d-flex justify-content-center mt-3">
-                  <Button
-                    style={{ color: "#294B29" }}
-                    onClick={() => {
-                      setOpenRoot(true);
-                    }}
-                    startIcon={<AddIcon />}
-                  >
-                    Add New
-                  </Button>
-                </div>
-                <div className="d-flex flex-wrap justify-content-evenly">
-                  {category.root.map((r) => (
+          <>
+            <div>
+              <h6 className=" text-dark text-center mb-3">Root Categories</h6>
+              <div className="d-flex justify-content-center mt-3">
+                <Button
+                  style={{ color: "#294B29" }}
+                  onClick={() => {
+                    setOpenRoot(true);
+                  }}
+                  startIcon={<AddIcon />}
+                >
+                  Add New
+                </Button>
+              </div>
+              <div className="d-flex flex-wrap justify-content-evenly">
+                {!rootNotFound ? (
+                  category.root.map((r) => (
                     <div
-                      style={{ border: "1px solid #789461", borderRadius: "15px", }}
+                      style={{
+                        border: "1px solid #789461",
+                        borderRadius: "15px",
+                      }}
                       className="p-2 mb-2 shadow"
                     >
                       <IconButton
                         onClick={() => {
-                          handleDelete("root", r.root_id);
+                          initiateDelete("root", r.root_id);
                         }}
                       >
                         <DeleteForeverIcon
@@ -292,50 +345,52 @@ const AdminCategory = () => {
                           }}
                         />
                       </IconButton>
-                      <Divider/>
-                      <p key={r.root_id} className="h6 text-dark text-center m-0 p-0">
+                      <Divider />
+                      <p
+                        key={r.root_id}
+                        className="h6 text-dark text-center m-0 p-0"
+                      >
                         {r.name}
                       </p>
                     </div>
-                  ))}
-                </div>
+                  ))
+                ) : (
+                  <div className="d-flex justify-content-center align-items-center p-5">
+                    <h6 className="text-center h6 text-dark">
+                      No Root Category Found
+                    </h6>
+                  </div>
+                )}
               </div>
-            </>
-          ) : (
-            <>
-              <div className="d-flex justify-content-center align-items-center p-5">
-                <h6 className="text-center h6 text-dark">
-                  No Root Category Found
-                </h6>
-              </div>
-            </>
-          )}
+            </div>
+          </>
         </div>
         <div className="col-lg-4">
-          {category.main.length !== 0 ? (
-            <>
-              <div>
-                <h6 className="text-dark text-center mb-3">
-                  Main Categories
-                </h6>
-                <div className="d-flex justify-content-center mt-3">
-                  <Button
-                    style={{ color: "#294B29" }}
-                    onClick={() => setOpenMain(true)}
-                    startIcon={<AddIcon />}
-                  >
-                    Add New
-                  </Button>
-                </div>
-                <div className="d-flex flex-wrap justify-content-evenly">
-                  {category.main.map((m) => (
+          <>
+            <div>
+              <h6 className="text-dark text-center mb-3">Main Categories</h6>
+              <div className="d-flex justify-content-center mt-3">
+                <Button
+                  style={{ color: "#294B29" }}
+                  onClick={() => setOpenMain(true)}
+                  startIcon={<AddIcon />}
+                >
+                  Add New
+                </Button>
+              </div>
+              <div className="d-flex flex-wrap justify-content-evenly">
+                {!mainNotFound ? (
+                  category.main.map((m) => (
                     <div
-                      style={{ border: "1px solid #789461", borderRadius: "15px" }}
+                      style={{
+                        border: "1px solid #789461",
+                        borderRadius: "15px",
+                      }}
                       className="p-2 mb-2 shadow"
                     >
                       <IconButton
                         onClick={() => {
-                          handleDelete("main", m.main_id);
+                          initiateDelete("main", m.main_id);
                         }}
                       >
                         <DeleteForeverIcon
@@ -365,45 +420,44 @@ const AdminCategory = () => {
                         {m.name}
                       </p>
                     </div>
-                  ))}
-                </div>
+                  ))
+                ) : (
+                  <div className="d-flex justify-content-center align-items-center p-5">
+                    <h6 className="h6 text-center text-dark">
+                      No Main Category Found
+                    </h6>
+                  </div>
+                )}
               </div>
-            </>
-          ) : (
-            <>
-              <div className="d-flex justify-content-center align-items-center p-5">
-                <h6 className="h6 text-center text-dark">
-                  No Main Category Found
-                </h6>
-              </div>
-            </>
-          )}
+            </div>
+          </>
         </div>
         <div className="col-lg-4">
-          {category.sub.length !== 0 ? (
-            <>
-              <div>
-                <h6 className="text-dark text-center mb-3">
-                  Sub Categories
-                </h6>
-                <div className="d-flex justify-content-center mt-3">
-                  <Button
-                    style={{ color: "#294B29" }}
-                    startIcon={<AddIcon />}
-                    onClick={() => setOpenSub(true)}
-                  >
-                    Add New
-                  </Button>
-                </div>
-                <div className="d-flex flex-wrap justify-content-evenly">
-                  {category.sub.map((s) => (
+          <>
+            <div>
+              <h6 className="text-dark text-center mb-3">Sub Categories</h6>
+              <div className="d-flex justify-content-center mt-3">
+                <Button
+                  style={{ color: "#294B29" }}
+                  startIcon={<AddIcon />}
+                  onClick={() => setOpenSub(true)}
+                >
+                  Add New
+                </Button>
+              </div>
+              <div className="d-flex flex-wrap justify-content-evenly">
+                {!subNotFound ? (
+                  category.sub.map((s) => (
                     <div
-                      style={{ border: "1px solid #789461", borderRadius: "15px" }}
+                      style={{
+                        border: "1px solid #789461",
+                        borderRadius: "15px",
+                      }}
                       className="p-2 mb-2 shadow"
                     >
                       <IconButton
                         onClick={() => {
-                          handleDelete("sub", s.sub_id);
+                          initiateDelete("sub", s.sub_id);
                         }}
                       >
                         <DeleteForeverIcon
@@ -433,19 +487,17 @@ const AdminCategory = () => {
                         {s.name}
                       </p>
                     </div>
-                  ))}
-                </div>
+                  ))
+                ) : (
+                  <div className="d-flex justify-content-center align-items-center p-5">
+                    <h6 className="text-center h6 text-dark text-center m-0 p-0">
+                      No Sub Category Found
+                    </h6>
+                  </div>
+                )}
               </div>
-            </>
-          ) : (
-            <>
-              <div className="d-flex justify-content-center align-items-center p-5">
-                <h6 className="text-center h6 text-dark text-center m-0 p-0">
-                  No Sub Category Found
-                </h6>
-              </div>
-            </>
-          )}
+            </div>
+          </>
         </div>
       </div>
     </>
