@@ -50,11 +50,32 @@ export default function AddNewCouponModal({
 
   const handleChange = (e) => {
     if (edit) {
-      setEditCouponData({ ...editCouponData, [e.target.name]: e.target.value });
+      setEditCouponData({
+        ...editCouponData,
+        x: { ...editCouponData.x, [e.target.name]: e.target.value },
+      });
     } else {
       setAddCouponData({ ...addCouponData, [e.target.name]: e.target.value });
     }
   };
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    return date.toLocaleString("en-US", options);
+  }
+
+
+  useEffect(() => {
+    if (edit){
+      const date = formatDate(editCouponData.x.end_date)
+      setEditCouponData({...editCouponData, x :{...editCouponData.x, end_date: date}})
+    }
+  }, [])
 
   const addNewCoupon = async () => {
     if (
@@ -74,8 +95,8 @@ export default function AddNewCouponModal({
     }
 
     if (
-      parseInt(addCouponData.discount_percentage) > 1 ||
-      parseInt(addCouponData.discount_percentage < 99)
+      parseInt(addCouponData.discount_percentage) < 1 ||
+      parseInt(addCouponData.discount_percentage > 99)
     ) {
       alert("Rate must be between one and 99");
       return;
@@ -98,12 +119,14 @@ export default function AddNewCouponModal({
 
     const token = localStorage.getItem("token");
 
+    console.log(addCouponData);
+
     try {
       const addResponse = await axios.post(
         `${BASE_URL}coupon/create/`,
-        {
-          addCouponData,
-        },
+
+        addCouponData,
+
         {
           headers: {
             "Content-Type": "Application/json",
@@ -113,10 +136,16 @@ export default function AddNewCouponModal({
       );
       setOpen(false);
       alert("success");
+      let tempCoupons = [...coupons];
+      tempCoupons.push(addCouponData);
+      setCoupons(tempCoupons);
     } catch (error) {
       alert("error");
+      console.log(error);
     }
   };
+
+
 
   const editCoupon = async () => {
     if (
@@ -136,8 +165,8 @@ export default function AddNewCouponModal({
     }
 
     if (
-      parseInt(editCouponData.x.discount_percentage) > 1 ||
-      parseInt(editCouponData.x.discount_percentage < 99)
+      parseInt(editCouponData.x.discount_percentage) < 1 ||
+      parseInt(editCouponData.x.discount_percentage > 99)
     ) {
       alert("Rate must be between one and 99");
       return;
@@ -154,11 +183,9 @@ export default function AddNewCouponModal({
     const token = localStorage.getItem("token");
 
     try {
-      const editResponse = await axios.post(
-        `${BASE_URL}coupon/update/${editCouponData.x.id}`,
-        {
-          data : editCouponData.x
-        },
+      const editResponse = await axios.patch(
+        `${BASE_URL}coupon/update/${editCouponData.x.id}/`,
+         editCouponData.x,
         {
           headers: {
             "Content-Type": "Application/json",
@@ -168,6 +195,9 @@ export default function AddNewCouponModal({
       );
       setOpen(false);
       alert("success");
+      let tempCoupons = [...coupons];
+      tempCoupons[editCouponData.index] = editResponse.data;
+      setCoupons(tempCoupons);
     } catch (error) {
       alert("error");
     }
@@ -198,6 +228,7 @@ export default function AddNewCouponModal({
                   type="text"
                   name="code"
                   fullWidth
+                  value={edit ? editCouponData.x.code : addCouponData.code}
                   variant="standard"
                   label="Coupon Code"
                   required
@@ -211,7 +242,7 @@ export default function AddNewCouponModal({
                   name="minimum_purchase_amount"
                   value={
                     edit
-                      ? editCouponData.minimum_purchase_amount
+                      ? editCouponData.x.minimum_purchase_amount
                       : addCouponData.minimum_purchase_amount
                   }
                   fullWidth
@@ -227,7 +258,7 @@ export default function AddNewCouponModal({
                   name="maximum_discount_amount"
                   value={
                     edit
-                      ? editCouponData.maximum_discount_amount
+                      ? editCouponData.x.maximum_discount_amount
                       : addCouponData.maximum_discount_amount
                   }
                   fullWidth
@@ -243,7 +274,7 @@ export default function AddNewCouponModal({
                   name="discount_percentage"
                   value={
                     edit
-                      ? editCouponData.discount_percentage
+                      ? editCouponData.x.discount_percentage
                       : addCouponData.discount_percentage
                   }
                   fullWidth
@@ -259,7 +290,7 @@ export default function AddNewCouponModal({
                   name="max_usage_limit"
                   value={
                     edit
-                      ? editCouponData.max_usage_limit
+                      ? editCouponData.x.max_usage_limit
                       : addCouponData.max_usage_limit
                   }
                   fullWidth
@@ -275,7 +306,7 @@ export default function AddNewCouponModal({
                   type="date"
                   name="end_date"
                   value={
-                    edit ? editCouponData.end_date : addCouponData.end_date
+                    edit ? editCouponData.x.end_date : addCouponData.end_date
                   }
                   variant="standard"
                   required
@@ -290,7 +321,7 @@ export default function AddNewCouponModal({
                   name="description"
                   value={
                     edit
-                      ? editCouponData.description
+                      ? editCouponData.x.description
                       : addCouponData.description
                   }
                   variant="standard"

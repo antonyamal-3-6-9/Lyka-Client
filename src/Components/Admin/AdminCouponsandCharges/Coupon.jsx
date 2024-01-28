@@ -10,7 +10,7 @@ import AddNewCouponModal from "./AddNewCoupon";
 import axios from "axios";
 
 export default function Coupon({}) {
-  const BASE_URL = "http://127.0.0.1:8000/payments/lyka-admin";
+  const BASE_URL = "http://127.0.0.1:8000/payments/lyka-admin/";
 
   const [coupons, setCoupons] = useState([]);
   const [exist, setExist] = useState(null);
@@ -26,7 +26,7 @@ export default function Coupon({}) {
   const fetchCoupons = async () => {
     const token = localStorage.getItem("token");
     try {
-      const couponResponse = await axios.get(`${BASE_URL}/coupon/list/`, {
+      const couponResponse = await axios.get(`${BASE_URL}coupon/list/`, {
         headers: {
           "Content-Type": "Application/json",
           Authorization: `Bearer ${token}`,
@@ -72,11 +72,11 @@ export default function Coupon({}) {
     setOpen(true);
   };
 
-  const handleEdit = (index) => {
-      setEditData({...editData, x : {...coupons[index]}})
-      setEdit(true)
-      setOpen(true)
-  }
+  const handleEdit = (i) => {
+    setEditData({ ...editData, x: { ...coupons[i] }, index: i });
+    setEdit(true);
+    setOpen(true);
+  };
 
   if (exist === null) {
     return null;
@@ -85,11 +85,28 @@ export default function Coupon({}) {
   return (
     <>
       <div className="row">
-        <AddNewCouponModal open={openAdd} setOpen={setOpenAdd} />
+        <AddNewCouponModal
+          open={open}
+          setOpen={setOpen}
+          edit={edit}
+          editCouponData={editData}
+          setEditCouponData={setEditData}
+          coupons={coupons}
+          setCoupons={setCoupons}
+          BASE_URL={BASE_URL}
+        />
         <h5 className="h5 text-dark text-center">Coupons</h5>
-        <Button startIcon={<Add />}>Add New Coupon</Button>
+        <div className="mb-2">
+          <Button
+            startIcon={<Add />}
+            style={{ color: "#294B29" }}
+            onClick={handleAdd}
+          >
+            Add New Coupon
+          </Button>
+        </div>
         {exist ? (
-          coupons.map((coupon) => (
+          coupons.map((coupon, index) => (
             <div className="col-lg-4">
               <div
                 style={{
@@ -109,7 +126,12 @@ export default function Coupon({}) {
                   </div>
                   <div className="d-flex justify-content-evenly align-items-start">
                     <IconButton>
-                      <EditIcon style={{ color: "#294B29" }} />
+                      <EditIcon
+                        style={{ color: "#294B29" }}
+                        onClick={() => {
+                          handleEdit(index);
+                        }}
+                      />
                     </IconButton>
                     <IconButton>
                       <DeleteForeverIcon style={{ color: "#294B29" }} />
