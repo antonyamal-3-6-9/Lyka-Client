@@ -8,6 +8,7 @@ import FlashOnIcon from "@mui/icons-material/FlashOn";
 import { Divider } from "@mui/material";
 import AddNewCouponModal from "./AddNewCoupon";
 import axios from "axios";
+import CouponChargeActionModal from "./CouponChargeAction";
 
 export default function Coupon({}) {
   const BASE_URL = "http://127.0.0.1:8000/payments/lyka-admin/";
@@ -17,10 +18,17 @@ export default function Coupon({}) {
 
   const [open, setOpen] = useState(false);
   const [edit, setEdit] = useState(false);
+  const [del, setDel] = useState(false);
 
   const [editData, setEditData] = useState({
     x: {},
     index: 0,
+  });
+
+  const [delData, setDelData] = useState({
+    id: null,
+    index: null,
+    x: null,
   });
 
   const fetchCoupons = async () => {
@@ -78,6 +86,52 @@ export default function Coupon({}) {
     setOpen(true);
   };
 
+  const handleDelete = async (id, index) => {
+    const token = localStorage.getItem("token");
+    try {
+      const deleteResponse = await axios.delete(
+        `${BASE_URL}coupon/delete/${id}/`,
+        {
+          headers: {
+            "Content-Type": "Application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      let tempCoupons = [...coupons];
+      tempCoupons.splice(index, 1);
+      setCoupons(tempCoupons);
+      setDel(false);
+    } catch (error) {
+      alert("Error deleting coupon");
+    }
+  };
+
+  const toggleCoupon = async (id, index) => {
+    const token = localStorage.getItem("token");
+    try {
+      const toggleResponse = await axios.patch(
+        `${BASE_URL}coupon/toggle/${id}/`,
+        {
+          headers: {
+            "Content-Type": "Application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      let tempCoupons = [...coupons];
+      tempCoupons[index].is_active = !tempCoupons[index].is_active;
+      setCoupons(tempCoupons);
+    } catch (error) {
+      alert("error toggling coupons");
+    }
+  };
+
+  const initiateDelete = (id, index, x) => {
+    setDel(true);
+    setDelData({ ...delData, id: id, index: index, x: x });
+  };
+
   if (exist === null) {
     return null;
   }
@@ -85,16 +139,26 @@ export default function Coupon({}) {
   return (
     <>
       <div className="row">
-        <AddNewCouponModal
-          open={open}
-          setOpen={setOpen}
-          edit={edit}
-          editCouponData={editData}
-          setEditCouponData={setEditData}
-          coupons={coupons}
-          setCoupons={setCoupons}
-          BASE_URL={BASE_URL}
-        />
+        {open && (
+          <AddNewCouponModal
+            open={open}
+            setOpen={setOpen}
+            edit={edit}
+            editCouponData={editData}
+            setEditCouponData={setEditData}
+            coupons={coupons}
+            setCoupons={setCoupons}
+            BASE_URL={BASE_URL}
+          />
+        )}
+        {del && (
+          <CouponChargeActionModal
+            open={del}
+            setOpen={setDel}
+            initiateCouponDeletion={handleDelete}
+            x={delData}
+          />
+        )}
         <h5 className="h5 text-dark text-center">Coupons</h5>
         <div className="mb-2">
           <Button
@@ -125,15 +189,18 @@ export default function Coupon({}) {
                     <p className="text-dark">{coupon.description}</p>
                   </div>
                   <div className="d-flex justify-content-evenly align-items-start">
-                    <IconButton>
-                      <EditIcon
-                        style={{ color: "#294B29" }}
-                        onClick={() => {
-                          handleEdit(index);
-                        }}
-                      />
+                    <IconButton
+                      onClick={() => {
+                        handleEdit(index);
+                      }}
+                    >
+                      <EditIcon style={{ color: "#294B29" }} />
                     </IconButton>
-                    <IconButton>
+                    <IconButton
+                      onClick={() => {
+                        initiateDelete(coupon.id, index, "coupon");
+                      }}
+                    >
                       <DeleteForeverIcon style={{ color: "#294B29" }} />
                     </IconButton>
                   </div>
@@ -149,6 +216,9 @@ export default function Coupon({}) {
                   </div>
                   <div className="col-lg-5 mb-2 d-flex justify-content-start align-items-center">
                     <Button
+                      onClick={() => {
+                        toggleCoupon(coupon.id, index);
+                      }}
                       style={{
                         color: coupon.is_active ? "#294B29" : "darkred",
                       }}

@@ -24,7 +24,7 @@ const RazorpayPaymentButton = (props) => {
     };
 
     const token = localStorage.getItem("token");
-
+    console.log(token)
     try {
       setIsLoading(true)
       const orderDetails = await axios.post(BASE_URL + "razorpay-create/", payload, {
@@ -33,7 +33,7 @@ const RazorpayPaymentButton = (props) => {
           Authorization: "Bearer " + token,
         },
       });
-
+      console.log(orderDetails)
       if (orderDetails.status === 200) {
         options.key = orderDetails.data.test_id;
         options.amount = orderDetails.data.order.amount;
@@ -49,6 +49,7 @@ const RazorpayPaymentButton = (props) => {
       setAlertData(error.response.data.message)
       setAlertSeverity('error')
       setIsLoading(false)
+      console.log(error)
       return false;
     }
   };

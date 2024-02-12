@@ -8,6 +8,8 @@ import AddIcon from "@mui/icons-material/Add";
 import ProductActionModal from "./ProductActionModal";
 import VarColDeleteModal from "./VarColDelete";
 import VarColAddModal from "./VarColAdd";
+import FlashOffIcon from "@mui/icons-material/FlashOff";
+import FlashOnIcon from "@mui/icons-material/FlashOn";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -76,7 +78,7 @@ const Products = ({
       let tempProducts = [...products];
       tempProducts[index].variations.push(variationAddResponse.data);
       setProducts(tempProducts);
-      setVarColAdd(false)
+      setVarColAdd(false);
     } catch (error) {
       alert("failed");
     }
@@ -109,7 +111,7 @@ const Products = ({
       setProducts(tempProducts);
     } catch (error) {
       alert("Error removing variant");
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -289,139 +291,168 @@ const Products = ({
                 className="shadow-lg"
               >
                 {/* <Item> */}
-                  <div className="row p-5">
-                    <div className="col-lg-4">
-                      <div>
-                        <img
-                          src={`http://127.0.0.1:8000${product.thumbnail}`}
-                          width="150px"
-                        />
-                      </div>
+                <div className="row p-3">
+                  <div className="col-lg-4">
+                    <div>
+                      <img
+                        src={`http://127.0.0.1:8000${product.thumbnail}`}
+                        width="150px"
+                      />
                     </div>
-                    <div className="col-lg-8">
-                      <div className="d-flex justify-content-between">
-                        <h5 className="h5 text-dark">
-                          {product.brand} {product.name}
-                        </h5>
-                        <IconButton
-                          onClick={() =>
-                            initiateProductDelete(product.productId, index)
-                          }
-                        >
-                          <DeleteForeverIcon
+                  </div>
+                  <div className="col-lg-8">
+                    <div className="d-flex justify-content-evenly">
+                      <h5 className="h5 text-dark">
+                        {product.brand} {product.name}
+                      </h5>
+                      <Button
+                        style={{color: product.availability ? "#294B29" : "red"}}
+                        startIcon={product.availability ? (
+                          <FlashOnIcon
                             style={{
                               color: "#294B29",
                             }}
                           />
-                        </IconButton>
-                      </div>
+                        ) : (
+                          <FlashOffIcon
+                            style={{
+                              color: "red",
+                            }}
+                          />
+                        )}>Active
+                      </Button>
+                      <IconButton
+                        onClick={() =>
+                          initiateProductDelete(product.productId, index)
+                        }
+                      >
+                        <DeleteForeverIcon
+                          style={{
+                            color: "#294B29",
+                          }}
+                        />
+                      </IconButton>
+                    </div>
 
-                      <div className="d-flex justify-content-start mb-2">
-                        <h6 className=" text-dark me-">Category:</h6>
-                        <p className="h6 text-dark">
-                          {product.root_category.name}/
-                          {product.main_category.name}/
-                          {product.sub_category.name}
-                        </p>
-                      </div>
+                    <div className="d-flex justify-content-start mb-2">
+                      <h6 className=" text-dark me-">Category:</h6>
+                      <p className="h6 text-dark">
+                        {product.root_category.name}/
+                        {product.main_category.name}/{product.sub_category.name}
+                      </p>
+                    </div>
 
-                      <div className="d-flex justify-content-start mb-2">
-                        <h6 className=" text-dark me-1">weight:</h6>
-                        <p className=" h6 text-dark">{product.weight} g</p>
-                      </div>
-                      <div className="d-flex justify-content-start mb-2">
-                        <h6 className="me-1 text-dark">Added On:</h6>
-                        <p className=" h6 text-dark">{product.added_on}</p>
-                      </div>
-                      <div className="col-lg-12">
-                        <div className="row mt-3 d-flex justify-content-evenly">
-                          <div className="col-lg-6 d-flex flex-column align-items-start">
-                            <h6 className="text-dark text-center">Variants</h6>
-                            <div className="d-flex flex-column">
-                              {product.variations.map((variant, vIndex) => (
-                                <div className="d-flex justify-content-center align-items-center">
-                                  <p
-                                    key={variant.id}
-                                    className="text-dark h6 m-0 mb-2 p-0"
-                                  >
-                                    {variant.variation}
-                                  </p>
-                                  <IconButton
+                    <div className="d-flex justify-content-start mb-2">
+                      <h6 className=" text-dark me-1">weight:</h6>
+                      <p className=" h6 text-dark">{product.weight} g</p>
+                    </div>
+                    <div className="d-flex justify-content-start mb-2">
+                      <h6 className="me-1 text-dark">Added On:</h6>
+                      <p className=" h6 text-dark">{product.added_on}</p>
+                    </div>
+                    <div className="col-lg-12">
+                      <div className="row mt-3 d-flex justify-content-evenly">
+                        <div className="col-lg-6 d-flex flex-column align-items-start">
+                          <h6 className="text-dark text-center">Variants</h6>
+                          <div className="d-flex flex-column">
+                            {product.variations.map((variant, vIndex) => (
+                              <div className="d-flex justify-content-center align-items-center">
+                                <p
+                                  key={variant.id}
+                                  className="text-dark h6 m-0 mb-2 p-0"
+                                >
+                                  {variant.variation}
+                                </p>
+                                <IconButton
+                                  onClick={() => {
+                                    initiateVarColDelete(
+                                      product.productId,
+                                      index,
+                                      variant.id,
+                                      vIndex,
+                                      "V"
+                                    );
+                                  }}
+                                >
+                                  <DeleteForeverIcon
+                                    style={{
+                                      fontSize: "1rem",
+                                      marginBottom: "10px",
+                                      color: "#789461"
+                                    }}
+                                  />
+                                </IconButton>
+                              </div>
+                            ))}
+                          </div>
+                          <Button
+                            style={{
+                              color: "#294B29",
+                            }}
+                            startIcon={<AddIcon />}
+                            onClick={() => {
+                              initiateVarColAdd(
+                                product.productId,
+                                index,
+                                "Variant"
+                              );
+                            }}
+                          >
+                            Variant
+                          </Button>
+                        </div>
+                        <div className="col-lg-6 d-flex flex-column align-items-start">
+                          <h6 className="text-dark text-center">Colors</h6>
+                          <div className="d-flex flex-column">
+                            {product.colors.map((color, cIndex) => (
+                              <div className="d-flex justify-content-center align-items-center">
+                                <p
+                                  key={color.id}
+                                  className="text-dark h6 mb-2 m-0 p-0"
+                                >
+                                  {color.color}
+                                </p>
+                                <IconButton>
+                                  <DeleteForeverIcon
+                                    style={{
+                                      fontSize: "1rem",
+                                      marginBottom: "10px",
+                                      color: "#789461"
+                                    }}
                                     onClick={() => {
                                       initiateVarColDelete(
                                         product.productId,
                                         index,
-                                        variant.id,
-                                        vIndex,
-                                        "V"
+                                        color.id,
+                                        cIndex,
+                                        "C"
                                       );
                                     }}
-                                  >
-                                    <DeleteForeverIcon
-                                      style={{
-                                        fontSize: "1rem",
-                                        marginBottom: "10px",
-                                      }}
-                                    />
-                                  </IconButton>
-                                </div>
-                              ))}
-                            </div>
-                            <Button
-                              style={{
-                                color: "#294B29",
-                              }}
-                              startIcon={<AddIcon />}
-                              onClick={() => {initiateVarColAdd(product.productId, index, "Variant")}}
-                            >
-                              Variant
-                            </Button>
+                                  />
+                                </IconButton>
+                              </div>
+                            ))}
                           </div>
-                          <div className="col-lg-6 d-flex flex-column align-items-start">
-                            <h6 className="text-dark text-center">Colors</h6>
-                            <div className="d-flex flex-column">
-                              {product.colors.map((color, cIndex) => (
-                                <div className="d-flex justify-content-center align-items-center">
-                                  <p
-                                    key={color.id}
-                                    className="text-dark h6 mb-2 m-0 p-0"
-                                  >
-                                    {color.color}
-                                  </p>
-                                  <IconButton>
-                                    <DeleteForeverIcon
-                                      style={{
-                                        fontSize: "1rem",
-                                        marginBottom: "10px",
-                                      }}
-                                      onClick={() => {
-                                        initiateVarColDelete(
-                                          product.productId,
-                                          index,
-                                          color.id,
-                                          cIndex,
-                                          "C"
-                                        );
-                                      }}
-                                    />
-                                  </IconButton>
-                                </div>
-                              ))}
-                            </div>
-                            <Button
-                              style={{
-                                color: "#294B29",
-                              }}
-                              startIcon={<AddIcon />}
-                              onClick={() => {initiateVarColAdd(product.productId, index, "Color")}}
-                            >
-                              Color
-                            </Button>
-                          </div>
+                          <Button
+                            style={{
+                              color: "#294B29",
+                            }}
+                            startIcon={<AddIcon />}
+                            onClick={() => {
+                              initiateVarColAdd(
+                                product.productId,
+                                index,
+                                "Color"
+                              );
+                            }}
+                          >
+                            Color
+                          </Button>
                         </div>
                       </div>
                     </div>
                   </div>
+                </div>
                 {/* </Item> */}
               </div>
             </div>

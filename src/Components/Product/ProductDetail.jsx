@@ -36,9 +36,7 @@ const ProductDetail = () => {
   const [alertSeverity, setAlertSeverity] = useState("");
   const [alertEnable, setAlertEnable] = useState(false);
 
-  const isLoggedIn = useSelector(
-    (state) => state.customerAuth.isCustomerLoggedIn
-  );
+  const isLoggedIn = useSelector((state) => state.userAuth.isLoggedIn);
 
   const similarProducts = async (mainId) => {
     try {
