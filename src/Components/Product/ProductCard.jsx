@@ -288,7 +288,7 @@ const ProductCard = (props) => {
             </div>
           </div>
           <div className="media-body order-2 order-lg-2 ml-lg-5 ml-md-5">
-            <Link to={`/product/${props.slug}/`} onClick={handleLinkClick}>
+            <Link to={`/product/${props.slug}/`} target="blank" onClick={handleLinkClick}>
               {" "}
               <h5 className="text-dark h5 mb-3">
                 {`${props.name} ${props.variant} ${props.color}`}

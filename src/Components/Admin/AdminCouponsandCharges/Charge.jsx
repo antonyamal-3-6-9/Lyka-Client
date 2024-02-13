@@ -9,7 +9,7 @@ import AddNewChargeModal from "./AddNewCharge";
 import CouponChargeActionModal from "./CouponChargeAction";
 import Add from "@mui/icons-material/Add";
 
-export default function () {
+export default function Charge() {
   const BASE_URL = "http://127.0.0.1:8000/payments/lyka-admin/";
 
   const [charges, setCharges] = useState([]);
@@ -89,7 +89,7 @@ export default function () {
       );
       setDel(false);
       let tempCharges = [...charges];
-      tempCharges.splice(index, 0);
+      tempCharges.splice(index, 1);
       setCharges(tempCharges);
     } catch (error) {
       alert("error deleting");
@@ -101,6 +101,7 @@ export default function () {
     try {
       const toggleResponse = await axios.patch(
         `${BASE_URL}charge/toggle/${id}/`,
+        {},
         {
           headers: {
             "Content-Type": "Application/json",
@@ -148,6 +149,7 @@ export default function () {
             BASE_URL={BASE_URL}
             editChargeData={editChargeData}
             setEditChargeData={setEditChargeData}
+            setEdit={setEdit}
           />
         )}
         {del && (
@@ -158,7 +160,6 @@ export default function () {
             x={delData}
           />
         )}
-        <h5 className="h5 text-dark text-center">Charges</h5>
         <div className="mb-2">
           <Button
             startIcon={<Add />}
@@ -225,7 +226,7 @@ export default function () {
                   <div className="col-lg-12">
                     <span className="text-dark">Added on: </span>
                     <span className="text-dark h6">
-                      {formatDate(charge.added_on)}
+                      {formatDate(charge.added_at)}
                     </span>
                   </div>
                 </div>

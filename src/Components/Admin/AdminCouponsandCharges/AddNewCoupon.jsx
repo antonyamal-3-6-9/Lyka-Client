@@ -21,6 +21,7 @@ export default function AddNewCouponModal({
   open = true,
   setOpen,
   edit = false,
+  setEdit = null,
   editCouponData = null,
   setEditCouponData = null,
   coupons,
@@ -194,6 +195,7 @@ export default function AddNewCouponModal({
         }
       );
       setOpen(false);
+      setEdit(false)
       alert("success");
       let tempCoupons = [...coupons];
       tempCoupons[editCouponData.index] = editResponse.data;
@@ -213,6 +215,9 @@ export default function AddNewCouponModal({
   };
 
   const handleClose = () => {
+    if (edit){
+      setEdit(false)
+    }
     setOpen(false);
   };
 

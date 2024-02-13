@@ -8,6 +8,7 @@ import {
   InputLabel,
 } from "@mui/material";
 import axios from "axios";
+import Edit from "@mui/icons-material/Edit";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -21,6 +22,7 @@ export default function AddNewChargeModal({
   open = true,
   setOpen,
   edit = false,
+  setEdit = null,
   editChargeData = null,
   setEditChargeData = null,
   charges,
@@ -48,17 +50,17 @@ export default function AddNewChargeModal({
     if (edit) {
       setEditChargeData({...editChargeData, x : {...editChargeData.x, [e.target.name] : e.target.value}})
     } else {
-      setAddChargeData({...addChargeData, [e.target.value] : e.target.value})
+      setAddChargeData({...addChargeData, [e.target.name] : e.target.value})
     }
   }
 
   const addNewCharge = async () => {
 
-    if (addChargeData.name.length <= 0 && addChargeData.name.length > 25){
+    if (addChargeData.name.length <= 0 || addChargeData.name.length > 25){
       return;
     }
 
-    if (parseFloat(addChargeData.rate) >= 25 && parseFloat(addChargeData.rate) <= 0){
+    if (parseFloat(addChargeData.rate) >= 25 || parseFloat(addChargeData.rate) <= 0){
       return;
     }
 
@@ -68,14 +70,21 @@ export default function AddNewChargeModal({
 
     const token = localStorage.getItem('token')
     try{
-      const addNewResponse = await axios.post(`${BASE_URL}charge/create/`, {
+      const addNewResponse = await axios.post(`${BASE_URL}charge/create/`,
+      {
+        name: addChargeData.name,
+        rate: addChargeData.rate,
+        limit: addChargeData.limit,
+      },
+      {
         headers: {
           "Content-Type": "Application/json",
           Authorization: `Bearer ${token}`,
         },
       })
+      console.log(addNewResponse.data)
       let tempCharges = [...charges]
-      tempCharges.push(addChargeData)
+      tempCharges.push(addNewResponse.data)
       setCharges(tempCharges)
       setOpen(false)
     } catch (error) {
@@ -100,7 +109,9 @@ export default function AddNewChargeModal({
 
     const token = localStorage.getItem('token')
     try{
-      const editChargeResponse = await axios.update(`${BASE_URL}charge/update/${editChargeData.x.id}/`,  {
+      const editChargeResponse = await axios.patch(`${BASE_URL}charge/update/${editChargeData.x.id}/`,  
+      editChargeData.x,
+      {
         headers: {
           "Content-Type": "Application/json",
           Authorization: `Bearer ${token}`,
@@ -110,20 +121,25 @@ export default function AddNewChargeModal({
       tempCharges[editChargeData.index] = editChargeResponse.data;
       setCharges(tempCharges)
       setOpen(false)
+      setEdit(false)
     } catch (error) {
       alert("error editing charge")
     }
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault()
     if (edit){
-      editChargeData()
+      editCharge()
     } else {
-      addChargeData()
+      addNewCharge()
     }
   }
 
   const handleClose = () => {
+    if (edit) {
+      setEdit(false)
+    }
     setOpen(false)
   }
 

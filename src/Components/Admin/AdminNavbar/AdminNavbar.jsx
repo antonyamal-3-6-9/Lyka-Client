@@ -11,23 +11,22 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
-import GroupIcon from '@mui/icons-material/Group';
+import GroupIcon from "@mui/icons-material/Group";
 import { useSelector } from "react-redux";
 import {
   Logout,
   NotificationSignal,
 } from "../../../redux/actions/authUserActions";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import InventoryIcon from '@mui/icons-material/Inventory';
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 
 export default function AdminNavBar({ setOption }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -61,12 +60,12 @@ export default function AdminNavBar({ setOption }) {
           },
         }
       );
-      navigateLink("/")
+      navigateLink("/");
     } catch (error) {
       console.log(error);
     }
     localStorage.clear("token");
-    navigateLink("/")
+    navigateLink("/");
     dispatch(Logout());
   };
 
@@ -185,8 +184,6 @@ export default function AdminNavBar({ setOption }) {
     </Menu>
   );
 
-
-
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed" style={{ backgroundColor: "#294B29" }}>
@@ -197,15 +194,12 @@ export default function AdminNavBar({ setOption }) {
             component="div"
             sx={{ display: { xs: "none", sm: "block" } }}
             style={{ paddingLeft: "100px" }}
-            onClick={() => {
-              navigateLink("/admin/home");
-            }}
           >
-            <span>LYKA ADMIN</span>
+            <Link to={"/admin/home"} style={{ color: "white" }}>
+              LYKA ADMIN
+            </Link>
             <IconButton>
-              <AdminPanelSettingsIcon
-                style={{color: "white"}}
-              />
+              <AdminPanelSettingsIcon style={{ color: "white" }} />
             </IconButton>
           </Typography>
 
@@ -230,15 +224,14 @@ export default function AdminNavBar({ setOption }) {
                   justifyContent: "center",
                 },
               }}
-              onClick={() => {
-                navigateLink("/seller-login")
-              }}
             >
               <IconButton edge="end" size="large" color="inherit">
                 <AddBusinessIcon />
               </IconButton>
               <Typography>
-                <a>Login as Seller</a>
+                <Link to={"/seller-login"} style={{ color: "white" }}>
+                  Login as Seller
+                </Link>
               </Typography>
             </Box>
             <Box
@@ -250,13 +243,14 @@ export default function AdminNavBar({ setOption }) {
                   justifyContent: "center",
                 },
               }}
-              onClick={() => {navigateLink("/customer-login")}}
             >
               <IconButton edge="end" size="large" color="inherit">
                 <AccountCircleIcon />
               </IconButton>
               <Typography>
-                <a>Login as Customer</a>
+                <Link to={"/customer-login"} style={{ color: "white" }}>
+                  Login as Customer
+                </Link>
               </Typography>
             </Box>
             <Box
@@ -267,18 +261,15 @@ export default function AdminNavBar({ setOption }) {
                   alignItems: "center",
                   justifyContent: "center",
                 },
-              }}
-              onClick={() => {
-                navigateLink("/admin/coupons&charges/")
               }}
             >
               <IconButton size="large" edge="end" color="inherit">
-                
-                
                 <MonetizationOnIcon />
               </IconButton>
               <Typography>
-                <a>Charges & Coupons</a>
+                <Link to={"/admin/coupons&charges/"} style={{ color: "white" }}>
+                  Charges & Coupons
+                </Link>
               </Typography>
             </Box>
             <Box
@@ -289,36 +280,17 @@ export default function AdminNavBar({ setOption }) {
                   alignItems: "center",
                   justifyContent: "center",
                 },
-              }}
-              onClick={() => {
-                navigateLink('/admin/catalog')
               }}
             >
               <IconButton size="large" edge="end" color="inherit">
                 <InventoryIcon />
               </IconButton>
               <Typography>
-                <a>Catalog</a>
+                <Link to={"/admin/catalog"} style={{ color: "white" }}>
+                  Catalog
+                </Link>
               </Typography>
             </Box>
-            <Box
-              sx={{
-                display: {
-                  xs: "none",
-                  md: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                },
-              }}
-            >
-              <IconButton size="large" edge="end" color="inherit">
-                <GroupIcon />
-              </IconButton>
-              <Typography>
-                <a>User</a>
-              </Typography>
-            </Box>
-
             {isLoggedIn && userRole === "ADMIN" ? (
               <Box
                 sx={{
@@ -329,14 +301,14 @@ export default function AdminNavBar({ setOption }) {
                     justifyContent: "center",
                   },
                 }}
-
-
               >
                 <IconButton size="large" edge="end" color="inherit">
                   <ArrowOutwardIcon />
                 </IconButton>
                 <Typography>
-                  <a>Logout</a>
+                  <Link to={"/"} style={{ color: "white" }}>
+                    Logout
+                  </Link>
                 </Typography>
               </Box>
             ) : null}

@@ -112,6 +112,7 @@ export default function Coupon({}) {
     try {
       const toggleResponse = await axios.patch(
         `${BASE_URL}coupon/toggle/${id}/`,
+        {},
         {
           headers: {
             "Content-Type": "Application/json",
@@ -123,6 +124,7 @@ export default function Coupon({}) {
       tempCoupons[index].is_active = !tempCoupons[index].is_active;
       setCoupons(tempCoupons);
     } catch (error) {
+      console.log(error)
       alert("error toggling coupons");
     }
   };
@@ -149,6 +151,7 @@ export default function Coupon({}) {
             coupons={coupons}
             setCoupons={setCoupons}
             BASE_URL={BASE_URL}
+            setEdit={setEdit}
           />
         )}
         {del && (
@@ -159,7 +162,6 @@ export default function Coupon({}) {
             x={delData}
           />
         )}
-        <h5 className="h5 text-dark text-center">Coupons</h5>
         <div className="mb-2">
           <Button
             startIcon={<Add />}
