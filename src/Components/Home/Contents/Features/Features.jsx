@@ -9,39 +9,23 @@ const Features = () => {
   return (
     <>
       <div>
-        <div className="container-fluid">
+        <div className="container-fluid" style={{ backgroundColor: "#E2F1F6", height: "100%" }}>
           <div className="row" id="feature-container">
             <div className="col-lg-3 p-1 pt-0 pb-0 ps-0">
-              <div className="card h-100 rounded-0 border-0">
-              <FeatureCard 
-                ficon = {faWandMagicSparkles}
-                text = {"Wonderous Offers"}
+              
+              <FeatureCard
+                ficon={faWandMagicSparkles}
+                text={"Wonderous Offers"}
               />
-              </div>
             </div>
             <div className="col-lg-3 p-1 pt-0 pb-0">
-              <div className="card h-100 rounded-0 border-0">
-                <FeatureCard
-                ficon = {faTruckFast}
-                text = {"Fast Shipping"}
-                 />
-              </div>
+              <FeatureCard ficon={faTruckFast} text={"Fast Shipping"} />
             </div>
             <div className="col-lg-3 p-1 pt-0 pb-0">
-              <div className="card h-100 rounded-0 border-0">
-              <FeatureCard 
-                ficon = {faLeftLong}
-                text = {"Easy Returns"}
-              />
-              </div>
+              <FeatureCard ficon={faLeftLong} text={"Easy Returns"} />
             </div>
             <div className="col-lg-3 p-1 pt-0 pb-0 pe-0">
-              <div className="card h-100 rounded-0 border-0">
-              <FeatureCard 
-                ficon = {faPhone}
-                text = {"Reliable Customer Support"}
-              />
-              </div>
+              <FeatureCard ficon={faPhone} text={"Reliable Customer Support"} />
             </div>
           </div>
         </div>

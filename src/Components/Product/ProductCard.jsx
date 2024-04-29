@@ -271,6 +271,7 @@ const ProductCard = (props) => {
                   //     ? { width: "224", height: "168" }
                   //     : { width: "224", height: "168" }
                   // }
+                  style={{width: "250px"}}
                   className={props.mainCategory}
                 />
               </div>

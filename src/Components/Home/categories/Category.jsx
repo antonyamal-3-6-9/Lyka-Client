@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../home.scss";
-import { Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Button, Divider, styled, Paper } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
+
+
+const Container = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(2),
+  color: theme.palette.text.secondary,
+}));
 
 const Category = () => {
-  
   const API_BASE_URL = "http://localhost:8000/category/";
   const navigate = useNavigate();
 
@@ -15,7 +22,6 @@ const Category = () => {
 
   const [rootid, setRootId] = useState(0);
   const [mainId, setMainId] = useState(0);
-
 
   useEffect(() => {
     axios
@@ -34,17 +40,17 @@ const Category = () => {
       .catch((error) => console.error(error));
   }, []);
 
+
+
   return (
+
     <div
-      id="root-container"
+      // id="root-container"
       className=""
-      style={{marginTop: "70px"}}
+      style={{ }}
     >
-      <div className="row">
-        <div className="top-bar">
-          <ul
-            className="categories"
-          >
+      <div className="row m-0 p-0">
+          <ul className="categories">
             {data.map((item) => (
               <li
                 onMouseEnter={() => {
@@ -52,15 +58,16 @@ const Category = () => {
                 }}
                 key={item.root_id}
               >
-                <Button
-                  variant="text"
-                  onClick={() => {
-                    navigate(`/product/root/${item.name}`);
-                    localStorage.setItem("cat_id", item.root_id);
-                    window.location.reload();
-                  }}
-                >
-                  {item.name}
+                <Button variant="text" >
+                  <Link
+                    onClick={() => {
+                      localStorage.setItem("cat_id", item.root_id);
+                    }}
+                    style={{color: "#16213E" }}
+                    to={`/product/root/${item.name}`}
+                  >
+                    {item.name}
+                  </Link>
                 </Button>
                 <ul className="subcategories">
                   {mainData.map((mainItem) =>
@@ -70,33 +77,36 @@ const Category = () => {
                           setMainId(mainItem.main_id);
                         }}
                         key={mainItem.main_id}
+                        style={{listStyleType: "none"}}
                       >
-                        <Button
-                          variant="text"
+                      <Button>
+                        <Link
                           onClick={() => {
-                            navigate(`/product/main/${mainItem.name}`);
                             localStorage.setItem("cat_id", mainItem.main_id);
-                            window.location.reload();
                           }}
+                          to={`/product/main/${mainItem.name}`}
+                          style={{color: "#16213E" }}
                         >
                           {mainItem.name}
+                        </Link>
                         </Button>
                         <ul className="sub-subcategories">
                           {subData.map((subItem) =>
                             mainId && subItem.main === mainId ? (
                               <li key={subItem.sub_id}>
-                                <Button
-                                  variant="text"
+                              <Button>
+                                <Link
                                   onClick={() => {
-                                    navigate(`/product/sub/${subItem.name}`);
                                     localStorage.setItem(
                                       "cat_id",
                                       subItem.sub_id
                                     );
-                                    window.location.reload();
                                   }}
+                                  to={`/product/sub/${subItem.name}`}
+                                  style={{color: "#16213E" }}
                                 >
                                   {subItem.name}
+                                </Link>
                                 </Button>
                               </li>
                             ) : null
@@ -111,7 +121,7 @@ const Category = () => {
           </ul>
         </div>
       </div>
-    </div>
+
   );
 };
 

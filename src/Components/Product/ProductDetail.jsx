@@ -9,10 +9,10 @@ import FloatingAlert from "../FloatingAlert/FloatingAlert";
 import { useSelector } from "react-redux";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
-import { Button } from "@mui/material";
+import { Button, Divider } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
-import {Backdrop} from "@mui/material";
+import { Backdrop } from "@mui/material";
 import { CircularProgress } from "@mui/material";
 
 const Container = styled(Paper)(({ theme }) => ({
@@ -28,7 +28,7 @@ const ProductDetail = () => {
   const [variation, setVariation] = useState();
   const [similar, setSimilar] = useState();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
   const BASE_URL = "http://127.0.0.1:8000/product/";
 
@@ -55,7 +55,7 @@ const ProductDetail = () => {
     const fetchData = async () => {
       const item_id = localStorage.getItem("item_id");
       try {
-        setIsLoading(true)
+        setIsLoading(true);
         const productResponse = await axios.get(
           `${BASE_URL}get-item-details/${item_id}/`
         );
@@ -64,41 +64,43 @@ const ProductDetail = () => {
           setColor(productResponse.data.color_code.id);
           setVariation(productResponse.data.variant.id);
           similarProducts(productResponse.data.product.main_category.main_id);
-          setIsLoading(false)
+          setIsLoading(false);
         }
       } catch (error) {
         console.log(error);
-        setIsLoading(false)
+        setIsLoading(false);
       }
     };
     fetchData();
+    window.addEventListener("popstate", () => {
+      navigate(-1);
+    });
   }, []);
 
   const handleColorClick = async (color_id) => {
     try {
       const is_variant_color = "color";
-      setIsLoading(true)
+      setIsLoading(true);
       const colorResponse = await axios.get(
         `${BASE_URL}color-or-variation-exists/${unit.seller}/${unit.product.productId}/${color_id}/${variation}/${is_variant_color}/`
       );
       if (colorResponse.status === 200) {
         setUnit(colorResponse.data);
         setColor(colorResponse.data.color_code.id);
-        setIsLoading(false)
+        setIsLoading(false);
         navigate(`/product/${colorResponse.data.slug}/`);
-
       }
     } catch (error) {
       setAlertData("Given color not available");
       setAlertEnable(true);
       setAlertSeverity("error");
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
   const handleVariantClick = async (variant_id) => {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       const is_variant_color = "variant";
       const variantResponse = await axios.get(
         `${BASE_URL}color-or-variation-exists/${unit.seller}/${unit.product.productId}/${color}/${variant_id}/${is_variant_color}/`
@@ -107,13 +109,13 @@ const ProductDetail = () => {
         setUnit(variantResponse.data);
         setVariation(variantResponse.data.variant.id);
         navigate(`/product/${variantResponse.data.slug}/`);
-        setIsLoading(false)
+        setIsLoading(false);
       }
     } catch (error) {
       setAlertData("Given variant not available");
       setAlertEnable(true);
       setAlertSeverity("error");
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
@@ -147,7 +149,7 @@ const ProductDetail = () => {
 
     const token = localStorage.getItem("token");
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       const inCartResponse = await axios.get(
         `http://127.0.0.1:8000/cart/item-in-cart/${unit_id}/`,
         {
@@ -177,20 +179,20 @@ const ProductDetail = () => {
             setAlertData("Item Added to the cart");
             setAlertEnable(true);
             setAlertSeverity("success");
-            setIsLoading(false)
+            setIsLoading(false);
           }
         } catch (error) {
           setAlertData(error.response.data.message);
           setAlertEnable(true);
           setAlertSeverity("error");
-          setIsLoading(false)
+          setIsLoading(false);
         }
       }
     } catch (error) {
       setAlertData(error.response.data.message);
       setAlertEnable(true);
       setAlertSeverity("info");
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
@@ -211,7 +213,7 @@ const ProductDetail = () => {
     }
 
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       const orderCreateResponse = await axios.post(
         `http://127.0.0.1:8000/order/create-single-order/`,
         {
@@ -227,14 +229,14 @@ const ProductDetail = () => {
       );
       if (orderCreateResponse.status === 201) {
         sessionStorage.setItem("order_id", orderCreateResponse.data.order_id);
-        setIsLoading(false)
+        setIsLoading(false);
         navigate("/checkout");
       }
     } catch (error) {
       setAlertData(error.response.data.message);
       setAlertEnable(true);
       setAlertSeverity("error");
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
@@ -251,23 +253,26 @@ const ProductDetail = () => {
           enable={alertEnable}
           setEnable={setAlertEnable}
         />
-        <Backdrop
-          open={isLoading}
-        >
-          <CircularProgress/>
+        <Backdrop open={isLoading}>
+          <CircularProgress />
         </Backdrop>
         <Container>
           <div className="row w-100">
-            <div className="col-md-5">
-              <div className="main-img">
-                <ImageGallery images={unit.product.images} />
+            <div className="col-lg-6">
+              <div style={{ position: "sticky", top: "83px" }}>
+                <div className="main-img">
+                  <ImageGallery images={unit.product.images} />
+                </div>
               </div>
             </div>
-            <div className="col-md-7">
+            <div className="col-lg-1">
+            <Divider orientation="vertical"></Divider>
+            </div>
+            <div className="col-lg-5">
               <div id="details-section">
                 <div className="main-description px-2">
                   <p className="category text-dark">{`${unit.product.root_category.name}/${unit.product.main_category.name}/${unit.product.sub_category.name}`}</p>
-                  <h6 className="text-dark h6">
+                  <h6 className="text-dark h5">
                     {`${unit.product.brand} ${unit.product.name} ${unit.variant.variation} ${unit.color_code.color}`}
                   </h6>
                   <div className="price-area my-4">
@@ -325,7 +330,7 @@ const ProductDetail = () => {
                   <div className="row">
                     <div className="container-fluid">
                       <div className="col-lg-12">
-                        <div className="row ms-2 mb-3">
+                        <div className="row mt-4">
                           {unit.product.colors.map((color) => (
                             <div className="col-lg-2">
                               <a
@@ -338,17 +343,25 @@ const ProductDetail = () => {
                                 }`}
                               >
                                 <div
-                                  className={`card rounded-0 p-1 ${
-                                    unit.color_code.id === color.id
-                                      ? "border-3 border-primary"
-                                      : "border-0"
-                                  }`}
+                                  style={{
+                                    width: "40px",
+                                    height: "40px",
+                                    borderRadius: "50px",
+                                    backgroundColor:
+                                      unit.color_code.id === color.id
+                                        ? "#16213E"
+                                        : "white",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                  }}
                                 >
                                   <div
                                     style={{
                                       backgroundColor: color.color,
-                                      width: "84px",
-                                      height: "20px",
+                                      width: "25px",
+                                      height: "25px",
+                                      borderRadius: "150px",
                                     }}
                                   ></div>
                                 </div>
@@ -356,27 +369,30 @@ const ProductDetail = () => {
                             </div>
                           ))}
                         </div>
-                        <div className="row ms-2">
+                        <div className="row mt-4">
                           {unit.product.variations.map((variation) => (
-                            <div className="col-lg-2">
+                            <div
+                              className="col-lg-12"
+                              style={{
+                                borderColor:
+                                  unit.variant.id === variation.id
+                                    ? "#16213E"
+                                    : "white",
+                              }}
+                            >
                               <a
                                 href="#"
                                 onClick={() => handleVariantClick(variation.id)}
+                                style={{ color: "black" }}
                                 className={`disabled-link ${
                                   unit.variant.id === variation.id
                                     ? "disabled"
                                     : ""
                                 }`}
                               >
-                                <div
-                                  className={`card rounded-0 d-flex justify-content-center align-items-center ${
-                                    variation.id === unit.variant.id
-                                      ? "border-3 border-primary"
-                                      : "border-0"
-                                  }`}
-                                >
-                                  <p>{variation.variation}</p>
-                                </div>
+                                <p className="h6 text-dark">
+                                  {variation.variation}
+                                </p>
                               </a>
                             </div>
                           ))}
@@ -385,15 +401,20 @@ const ProductDetail = () => {
                     </div>
 
                     <div className="col-lg-12">
-                      <h2 className="text-center m-5">Key Features</h2>
+                      <h5 className="text-center mb-4 mt-4 h5 text-dark">
+                        Key Features
+                      </h5>
                       {Object.keys(unit.product.details.key_features).map(
                         (key) => (
                           <div className="row">
-                            <div className="col-lg-5">
-                              <p>{key}</p>
+                            <div className="col-lg-4">
+                              <span className="text-dark">{key}</span>
+                            </div>
+                            <div className="col-lg-1 d-flex justify-content-center">
+                              <span className="text-dark h6">:</span>
                             </div>
                             <div className="col-lg-7">
-                              <p className="text-dark">
+                              <p className="text-dark h6">
                                 {unit.product.details.key_features[key]}
                               </p>
                             </div>
@@ -402,15 +423,20 @@ const ProductDetail = () => {
                       )}
                     </div>
                     <div className="col-lg-12">
-                      <h2 className="text-center m-5">All Details</h2>
+                      <h5 className="text-center mb-4 h5 text-dark">
+                        All Details
+                      </h5>
                       {Object.keys(unit.product.details.all_details).map(
                         (key) => (
                           <div className="row">
-                            <div className="col-lg-5">
-                              <p>{key}</p>
+                            <div className="col-lg-4">
+                              <span className="text-dark">{key}</span>
+                            </div>
+                            <div className="col-lg-1">
+                            <span className="h6 text-dark">:</span>
                             </div>
                             <div className="col-lg-7">
-                              <p className="text-dark">
+                              <p className="text-dark h6">
                                 {unit.product.details.all_details[key]}
                               </p>
                             </div>
@@ -422,29 +448,6 @@ const ProductDetail = () => {
                 </div>
               </div>
             </div>
-          </div>
-          <div className="row">
-          <h4 className="h5 text-dark text-center mt-3">Similar Products</h4>
-          {similar.map((item, index) => (
-            <div className="col-sm-6 col-lg-3 mt-4 d-flex justify-content-center align-items-center" key={index}>
-              <div className="card" style={{ width: "18rem" }}>
-                <img className="card-img-top" src={`http://127.0.0.1:8000/${item.product.thumbnail}`} />
-                <div className="card-body">
-                  <h5 className="card-title">{item.product.brand} {item.product.name}</h5>
-                  <p className="card-text">
-                    {item.variant.variation} {item.color_code.color}
-                  </p>
-                  <Button variant="contained" style={{backgroundColor: "#16213E"}} onClick={() => {
-                    localStorage.setItem("item_id", item.unit_id)
-                    navigate(`/product/${item.slug}/`)
-                    window.location.reload()
-                  }}>
-                    View
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ))}
           </div>
         </Container>
       </div>

@@ -5,6 +5,7 @@ import axios from "axios";
 import "./product.scss";
 import { useParams } from "react-router-dom";
 
+
 const ProductByCategory = () => {
   const BASE_URL = "http://127.0.0.1:8000/product/";
 
@@ -16,7 +17,7 @@ const ProductByCategory = () => {
   const checkThumbnail = (response) => {
     for (let i = 0; i < response.length; i++) {
       if (response[i].product.thumbnail.indexOf("http://") === -1) {
-        const newString = "http://127.0.0.1:8000/";
+        const newString = "http://127.0.0.1:8000";
         response[i].product.thumbnail =
           newString + response[i].product.thumbnail;
       }
@@ -84,6 +85,23 @@ const ProductByCategory = () => {
     }
   };
 
+  const handleSort = (option) => {
+    let tempProducts = [...products];
+    if (option === "alphabetical") {
+      tempProducts.sort((productOne, productTwo) =>
+        productOne.product.brand.localeCompare(productTwo.product.brand)
+      );
+    } else if (option === "latest") {
+      tempProducts.sort((a, b) => new Date(a.product.added_on) - new Date(b.product.added_on));
+    } else if (option === "priceL"){
+      tempProducts.sort((a, b) => a.selling_price - b.selling_price);
+    } else if (option === "priceH"){
+      tempProducts.sort((a, b) => b.selling_price - a.selling_price);
+    }
+    setProducts(tempProducts);
+  };
+
+
   useEffect(() => {
     if (type === undefined && name === undefined) {
       fetchAll();
@@ -100,12 +118,15 @@ const ProductByCategory = () => {
     return null;
   }
 
+
   return (
     <>
+
+      <div className="container-fluid" id="product-container" style={{marginTop: "83px"}}>
       <ProductNav 
         name={name}
+        initiateSort={handleSort}
       />
-      <div className="container-fluid mt-2" id="product-container">
         {products.map((item) => (
           <div className="row m-3">
             <ProductCard

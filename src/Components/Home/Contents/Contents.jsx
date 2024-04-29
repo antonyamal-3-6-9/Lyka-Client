@@ -1,11 +1,13 @@
 import React from "react";
-import Features from "./Features/Features";
+import LatestTrending from "./Features/LatestTrending";
+import FeatureCard from "./Features/FeatureCard";
 
 
 const Contents = () => {
     return (
         <>
-            <Features />
+            <LatestTrending/>
+            <FeatureCard/>
         </>
     )
 }

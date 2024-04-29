@@ -15,15 +15,19 @@ import MoreIcon from "@mui/icons-material/MoreVert";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import { useSelector } from "react-redux";
-import { Logout, NotificationSignal } from "../../redux/actions/authUserActions";
-import { useNavigate } from "react-router-dom";
+import {
+  Logout,
+  NotificationSignal,
+} from "../../redux/actions/authUserActions";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
-import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import { Divider, TextField } from "@mui/material";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -79,13 +83,11 @@ export default function ResponsiveAppBar({ setOption }) {
   };
 
   const userName = useSelector((state) => state.userAuth.name);
-  const userRole = useSelector((state) => state.userAuth.role)
+  const userRole = useSelector((state) => state.userAuth.role);
 
-  console.log(userName, userRole)
+  console.log(userName, userRole);
 
-  const isLoggedIn = useSelector(
-    (state) => state.userAuth.isLoggedIn
-  );
+  const isLoggedIn = useSelector((state) => state.userAuth.isLoggedIn);
   const dispatch = useDispatch();
 
   const BASE_URL = "http://127.0.0.1:8000/customer/";
@@ -159,7 +161,7 @@ export default function ResponsiveAppBar({ setOption }) {
           aria-haspopup="true"
           color="inherit"
           onClick={() => {
-            dispatch(NotificationSignal())
+            dispatch(NotificationSignal());
           }}
         >
           <NotificationsActiveIcon />
@@ -200,7 +202,7 @@ export default function ResponsiveAppBar({ setOption }) {
         </IconButton>
         <p>{isLoggedIn ? userName : "Login"}</p>
       </MenuItem>
-      {isLoggedIn ?  (
+      {isLoggedIn ? (
         <MenuItem>
           <IconButton
             size="large"
@@ -225,30 +227,31 @@ export default function ResponsiveAppBar({ setOption }) {
   };
 
   return (
+    <div>
+
+ 
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="fixed" style={{ backgroundColor: "#16213E" }}>
+      <AppBar position="fixed" style={{ backgroundColor: "#E2F1F6", boxShadow: "none" }}>
         <Toolbar>
           <Typography
             variant="h6"
             noWrap
             component="div"
             sx={{ display: { xs: "none", sm: "block" } }}
-            style={{ paddingLeft: "100px" }}
+            style={{ paddingLeft: "100px", color: "#234456" }}
             onClick={() => {
               navigateLink("/");
             }}
           >
             <a>LYKA</a>
           </Typography>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
+          <Search style={{ color: "#234456" }}>
+            <TextField
               placeholder="Search"
               inputProps={{ "aria-label": "search" }}
-              style={{ width: "400px" }}
+              variant="standard"
             />
+            <SearchIcon />
           </Search>
           <Box sx={{ flexGrow: 1 }} />
           <Box
@@ -260,12 +263,9 @@ export default function ResponsiveAppBar({ setOption }) {
                 flexGrow: 0.2,
               },
             }}
-            style={{ paddingRight: "100px" }}
+            style={{ paddingRight: "100px"}}
           >
             <Box
-              onClick={() => {
-                navigateLink("/seller-login");
-              }}
               sx={{
                 display: {
                   xs: "none",
@@ -274,18 +274,18 @@ export default function ResponsiveAppBar({ setOption }) {
                   justifyContent: "center",
                 },
               }}
+              style={{color:"#234456" }}
             >
               <IconButton edge="end" size="large" color="inherit">
                 <AddBusinessIcon />
               </IconButton>
               <Typography>
-                <a>Start Selling</a>
+                <Link to="/seller-login" style={{ color: "#234456" }} className="h6" >
+                  Login as Seller
+                </Link>
               </Typography>
             </Box>
             <Box
-              onClick={() => {
-                navigateLink("/cart");
-              }}
               sx={{
                 display: {
                   xs: "none",
@@ -294,12 +294,15 @@ export default function ResponsiveAppBar({ setOption }) {
                   justifyContent: "center",
                 },
               }}
+              style={{color: "#234456" }}
             >
               <IconButton edge="end" size="large" color="inherit">
                 <ShoppingCartIcon />
               </IconButton>
               <Typography>
-                <a>Cart</a>
+                <Link to="/cart" style={{ color: "#234456" }} className="h6">
+                  Cart
+                </Link>
               </Typography>
             </Box>
             <Box
@@ -318,12 +321,15 @@ export default function ResponsiveAppBar({ setOption }) {
                   justifyContent: "center",
                 },
               }}
+              style={{color: "#234456"}}
             >
               <IconButton size="large" edge="end" color="inherit">
                 <AccountCircle />
               </IconButton>
               <Typography>
-                <a>{isLoggedIn && userRole === "customer" ? userName : "Login"}</a>
+                <a className="h6">
+                  {isLoggedIn && userRole === "customer" ? userName : "Login"}
+                </a>
               </Typography>
             </Box>
             {isLoggedIn && userRole === "Customer" ? (
@@ -339,12 +345,13 @@ export default function ResponsiveAppBar({ setOption }) {
                     justifyContent: "center",
                   },
                 }}
+                style={{color:"#234456" }}
               >
                 <IconButton size="large" edge="end" color="inherit">
                   <ArrowOutwardIcon />
                 </IconButton>
                 <Typography>
-                  <a>Logout</a>
+                  <a className="h6">Logout</a>
                 </Typography>
               </Box>
             ) : null}
@@ -358,12 +365,13 @@ export default function ResponsiveAppBar({ setOption }) {
                 },
               }}
               onClick={() => {
-                dispatch(NotificationSignal())
+                dispatch(NotificationSignal());
               }}
+              style={{color: "#234456" }}
             >
               <IconButton edge="end" size="large" color="inherit">
-              <Badge>
-                <NotificationsActiveIcon />
+                <Badge>
+                  <NotificationsActiveIcon />
                 </Badge>
               </IconButton>
               <Typography>
@@ -384,8 +392,11 @@ export default function ResponsiveAppBar({ setOption }) {
             </IconButton>
           </Box>
         </Toolbar>
+        <Divider/>
       </AppBar>
       {renderMobileMenu}
     </Box>
+   
+    </div>
   );
 }

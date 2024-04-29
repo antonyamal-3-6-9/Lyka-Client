@@ -84,7 +84,7 @@ const ImageGallery = ({ images }) => {
               ref={containerRef}
               onClick={handleImageClick}
               style={{
-                width: isFullScreen ? "70%" : imageRef.current?.naturalWidth,
+                width: isFullScreen ? "100%" : imageRef.current?.naturalWidth,
                 height: isFullScreen
                   ? "50%"
                   : imageRef.current?.naturalHeight,

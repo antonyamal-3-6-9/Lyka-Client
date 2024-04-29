@@ -30,7 +30,6 @@ import OrderDetails from "./Components/Order/OrderDetails.jsx";
 import CustomerProfile from "./Components/Customer/Profile/CustomerProfile.jsx";
 import ResponsiveAppBar from "./Components/Navbar/MuiNavBar.jsx";
 import ProductByCategory from "./Components/Product/ProductByCategory.jsx";
-import Category from "./Components/Home/categories/Category.jsx";
 import CustomerVerify from "./Components/Customer/Login and Register/CustomerVerify.jsx";
 import AdminHome from "../src/Components/Admin/AdminDashBoard/AdminHome.jsx";
 import { useSelector } from "react-redux";
@@ -62,11 +61,18 @@ function App() {
             element={
               <>
                 <ResponsiveAppBar />
-                <Category />
                 <ProductByCategory />
               </>
             }
           />
+          <Route
+            path="/product/all"
+            element={
+              <>
+              <ResponsiveAppBar/>
+              <ProductByCategory/>
+              </>
+            }/> Ly  
           <Route
             path="/product/:product_id"
             element={

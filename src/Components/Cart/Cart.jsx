@@ -285,17 +285,18 @@ const ShoppingCart = () => {
               <h2 className="text-center h2 mb-5">
                 {isLoggedIn ? "Empty Cart" : "Sign in to view cart"}
               </h2>
+              <div className="d-flex justify-content-center">
               <Button
                 to={isLoggedIn ? "/" : "/customer-login"}
                 onClick={() => {
                   navigate(isLoggedIn ? "/" : "/customer-login");
                 }}
                 variant="contained"
-                style={{alignItems: "center"}}
               >
                 {" "}
                 {isLoggedIn ? "Continue Shopping" : "Sign In"}
               </Button>
+              </div>
             </Item>
           </div>
         </>
