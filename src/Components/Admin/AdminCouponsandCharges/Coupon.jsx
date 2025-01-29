@@ -108,6 +108,7 @@ export default function Coupon({}) {
   };
 
   const toggleCoupon = async (id, index) => {
+    console.log(id)
     const token = localStorage.getItem("token");
     try {
       const toggleResponse = await axios.patch(

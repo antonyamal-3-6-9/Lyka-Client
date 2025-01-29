@@ -22,6 +22,7 @@ export default function CategoryActionModal({open, setOpen, initiateDeletion, x}
 
   const handleConfirm = () => {
         initiateDeletion(x.x, x.id)
+        setOpen(false)
   }
 
   return (

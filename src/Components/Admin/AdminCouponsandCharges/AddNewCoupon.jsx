@@ -138,7 +138,7 @@ export default function AddNewCouponModal({
       setOpen(false);
       alert("success");
       let tempCoupons = [...coupons];
-      tempCoupons.push(addCouponData);
+      tempCoupons.push(addResponse.data);
       setCoupons(tempCoupons);
     } catch (error) {
       alert("error");
